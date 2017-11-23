@@ -23,64 +23,63 @@ function log (msg) {
   }
 }
 
-gulp.task('lint-dev', function () {
-  log('JSHINT & JSCS - Analysing source scripts');
+gulp.task('lint', function () {
+  log('eslint - Running lint');
   return gulp
     .src(config.alljs)
     .pipe($.if(args.verbose, $.print()))
-    .pipe($.jscs())
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish', {verbose: true}))
-    .pipe($.jshint.reporter('fail'));
+    .pipe($.eslint())
+    .pipe($.eslint.format())
+    .pipe($.eslint.failAfterError());
 });
 
-gulp.task('unit-test', ['lint-dev'], function (done) {
-  log('Running unit test');
-  gulp
-    .src(config.test.unit.lib)
-    .pipe($.istanbul())
-    .pipe($.istanbul.hookRequire())
-    .on('finish', function () {
-      gulp.src(config.test.unit.spec)
-        .pipe($.babel())
-        .pipe($.injectModules())
-        .pipe($.mocha())
-        .pipe($.istanbul.writeReports(config.test.unit.reportOptions))
-        .pipe($.istanbul.enforceThresholds({ thresholds: { global: 90 } }))
-        .on('finish', done);
-    });
-});
-gulp.task('integration-test', ['unit-test'], function () {
-  log('Running integration test');
-  gulp
-    .src(config.test.integration.spec)
-    .pipe($.istanbul())
-    .pipe($.istanbul.hookRequire())
-    .on('finish', function () {
-      gulp
-        .src(config.test.integration.spec)
-        .pipe($.babel())
-        .pipe($.injectModules())
-        .pipe($.mocha())
-        .pipe($.istanbul.writeReports(config.test.integration.reportOptions))
-        .pipe($.istanbul.enforceThresholds({ thresholds: { global: 90 } }));
-    });
-});
-
-gulp.task('configure-dev', ['lint-dev'], function () {
-  log('Running configuration... ');
-  return gulp
-    .src('./.env.local')
-    .pipe($.rename('.env'))
-    .pipe(gulp.dest('./'));
-});
+// gulp.task('unit-test', ['lint'], function (done) {
+//   log('Running unit test');
+//   gulp
+//     .src(config.test.unit.lib)
+//     .pipe($.istanbul())
+//     .pipe($.istanbul.hookRequire())
+//     .on('finish', function () {
+//       gulp.src(config.test.unit.spec)
+//         .pipe($.babel())
+//         .pipe($.injectModules())
+//         .pipe($.mocha())
+//         .pipe($.istanbul.writeReports(config.test.unit.reportOptions))
+//         .pipe($.istanbul.enforceThresholds({ thresholds: { global: 90 } }))
+//         .on('finish', done);
+//     });
+// });
+// gulp.task('integration-test', ['unit-test'], function () {
+//   log('Running integration test');
+//   gulp
+//     .src(config.test.integration.spec)
+//     .pipe($.istanbul())
+//     .pipe($.istanbul.hookRequire())
+//     .on('finish', function () {
+//       gulp
+//         .src(config.test.integration.spec)
+//         .pipe($.babel())
+//         .pipe($.injectModules())
+//         .pipe($.mocha())
+//         .pipe($.istanbul.writeReports(config.test.integration.reportOptions))
+//         .pipe($.istanbul.enforceThresholds({ thresholds: { global: 90 } }));
+//     });
+// });
+//
+// gulp.task('configure-dev', ['lint'], function () {
+//   log('Running configuration... ');
+//   return gulp
+//     .src('./.env.local')
+//     .pipe($.rename('.env'))
+//     .pipe(gulp.dest('./'));
+// });
 
 function serve (isDev) {
   log('Running in ' + (isDev ? 'development' : 'production') + ' mode...');
   if (isDev) {
     $.nodemon({
       script: 'app.js',
-      tasks: ['lint-dev']
+      tasks: ['lint']
     });
   }
   else {
