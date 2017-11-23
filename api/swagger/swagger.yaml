@@ -1,0 +1,198 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: Grocer X App
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths
+basePath: /v1
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /Profile/{id}:
+    x-swagger-router-controller: users
+    get:
+      tags:
+        - profile
+      summary: Return user profile
+      operationId: getUserProfile
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
+              firstName:
+                type: string
+                example: John
+              lastName:
+                type: string
+                example: Stone
+              dateBirthday:
+                type: number
+                example: 587260800000
+                description: timestamp
+              address1:
+                type: string
+                example: Upper Thompson Road
+              address2:
+                type: string
+                example: East Cost Drive
+        # 404:
+        #   description: Profile not found
+        #   schema:
+        #     properties:
+        #       message:
+        #         type: string
+        #         example: Not found
+  /Users/login:
+    x-swagger-router-controller: users
+    post:
+      tags:
+        - user
+      summary: Return authenticated & authorized user
+      operationId: login
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserLogin"
+      responses:
+        200:
+          description: Successful login
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /Items:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: items
+    get:
+      tags:
+        - item
+      summary: Returns 'List of items
+      # used as the method name of the controller
+      operationId: listAllItems
+      parameters:
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/order"
+        - $ref: "#/parameters/orderBy"
+        - $ref: "#/parameters/type"
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              bookmark:
+                type: string
+                example: asdfasdfasdf213sadfasdf123
+              total:
+                type: number
+                example: 100
+              data:
+                type: array
+                items:
+                  - $ref: "#/definitions/ItemList"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  ItemList:
+    title: " "
+    type: object
+    properties:
+      id:
+        type: string
+      doc:
+        type: object
+        description: "Item object"
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  UserLogin:
+    title: User
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+        description: user e-mail
+      password:
+        type: string
+        description: user password
+parameters:
+  username:
+    in: path
+    name: username
+    type: string
+    required: true
+  id:
+    in: path
+    name: id
+    type: string
+    required: true
+  limit:
+    in: query
+    name: limit
+    type: number
+    required: false
+  skip:
+    in: query
+    name: skip
+    type: number
+    required: false
+  order:
+    in: query
+    name: order
+    type: string
+    enum:
+      - asc
+      - desc
+    required: false
+  orderBy:
+    in: query
+    name: orderBy
+    type: string
+    required: false
+  type:
+    in: query
+    name: type
+    type: string
+    required: false
