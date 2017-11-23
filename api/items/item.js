@@ -1,12 +1,7 @@
-"use strict";
-
-/*
-  * listItems
-*/
-function getAllView (items, filters) {
-  return items.viewAsync('designItem', 'list-all');
-}
-
-module.exports = {
-  getAllView: getAllView
+const Item = {
+  getAllView(items, filters) {
+    return items.viewAsync('designItem', 'list-all', filters);
+  },
 };
+
+module.exports = Item;

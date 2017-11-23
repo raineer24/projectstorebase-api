@@ -8,6 +8,7 @@
   "license": "",
   "main": "app.js",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "body-parser": "^1.16.0",
     "cloudant": "^1.7.0",
     "cookie-parser": "^1.4.3",
@@ -48,6 +49,7 @@
     "gulp-print": "^2.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-util": "^3.0.8",
+    "gulp-watch": "^4.3.11",
     "jshint": "^2.9.3",
     "jshint-stylish": "^2.2.1",
     "should": "^7.1.0",
