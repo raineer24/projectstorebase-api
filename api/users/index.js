@@ -1,8 +1,9 @@
-'use strict';
 
-const BluePromise = require('bluebird');
+
+// const BluePromise = require('bluebird');
 const User = require('./user');
-let user = {};
+
+const user = {};
 
 /**
 * User authentication and authorization
@@ -11,20 +12,15 @@ let user = {};
 * @return {Object}
 */
 user.login = (req, res) => {
-  let username = req.swagger.params.body.value.username;
-  let password =  req.swagger.params.body.value.password;
-
-  User.authenticate(username, password)
-    .then((userAuth) => {
-      return userAuth;
-    })
+  User.authenticate(req.swagger.params.body.value.username, req.swagger.params.body.value.password)
+    .then(userAuth => userAuth)
     .then(User.authorize)
     .then((response) => {
       res.json(response);
     })
     .catch(() => {
       res.status(403).json({
-        message: 'Not found'
+        message: 'Not found',
       });
     });
 };
