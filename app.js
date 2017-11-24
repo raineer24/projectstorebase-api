@@ -1,34 +1,33 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const morgan = require('morgan');
-const fs = require('fs');
+// const morgan = require('morgan');
+// const fs = require('fs');
 const path = require('path');
 const config = require('./config/config');
-const https = require('https');
+// const https = require('https');
+const log = require('color-logs')(true, true, __filename);
 
 const app = express();
 const apiSubPath = express();
 
 const cors = require('cors');
 
-var SwaggerExpress = require('swagger-express-mw');
-
 const SwaggerParser = require('swagger-parser');
-var SwaggerExpress = require('swagger-express-mw');
+const SwaggerExpress = require('swagger-express-mw');
 const SwaggerUi = require('swagger-tools/middleware/swagger-ui');
 
-const authenticate = require('./middleware/authenticate').authenticate;
-const authorize = require('./middleware/authorize').authorize;
+const { authenticate } = require('./middleware/authenticate').authenticate;
+const { authorize } = require('./middleware/authorize').authorize;
 
 
 // Validate swagger definition
 SwaggerParser.validate(config.swaggerFile)
   .then((result) => {
-    console.log('.... Validation OK', result.info);
+    log.info('Validation OK', result.info);
   })
   .catch((err) => {
-    console.log('Swagger Error:', err);
+    log.info('Swagger Error:', err);
   });
 
 // Initialise swagger definition
@@ -59,7 +58,7 @@ SwaggerParser.bundle(config.swaggerFile)
       app.use(express.static(path.join(__dirname, 'public')));
 
       apiSubPath.use((req, res, next) => {
-        res.setHeader('X-Powered-By', 'Chimera');
+        res.setHeader('X-Powered-By', 'EOS');
         next();
       });
       apiSubPath.get('/v1/swagger.json', (req, res) => {
@@ -69,12 +68,12 @@ SwaggerParser.bundle(config.swaggerFile)
       swaggerExpress.register(apiSubPath);
 
       app.use(apiSubPath);
-      app.listen(config.appEnv.port, '0.0.0.0', () => {
-        console.log(`++++ Server started on ${config.appEnv.hostname}:${config.appEnv.port}`);
+      app.listen(config.env.port, '0.0.0.0', () => {
+        log.info(`Server started on ${config.env.hostname}:${config.env.port}`);
       });
     });
   });
 
 process.on('uncaughtException', (err) => {
-  console.log(err);
+  log.error(err);
 });

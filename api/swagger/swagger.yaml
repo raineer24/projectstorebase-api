@@ -158,11 +158,11 @@ definitions:
         type: string
         description: user password
 parameters:
-  username:
-    in: path
-    name: username
-    type: string
-    required: true
+  # username:
+  #   in: path
+  #   name: username
+  #   type: string
+  #   required: true
   id:
     in: path
     name: id

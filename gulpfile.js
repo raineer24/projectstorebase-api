@@ -1,6 +1,3 @@
-/* jslint node: true */
-
-
 const gulp = require('gulp');
 const args = require('yargs').argv;
 const config = require('./gulp.config')();
@@ -12,11 +9,17 @@ gulp.task('help', $.taskListing);
 
 function log(msg) {
   if (typeof (msg) === 'object') {
-    for (const item in msg) {
-      if (msg.hasOwnProperty(item)) {
-        $.util.log($.util.colors.blue(msg[item]));
+    Object.keys(msg).forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(msg, key)) {
+        $.util.log($.util.colors.blue(msg[key]));
       }
-    }
+    });
+
+    // for (const item in msg) {
+    //   if (Object.prototype.hasOwnProperty.call(msg, item)) {
+    //     $.util.log($.util.colors.blue(msg[item]));
+    //   }
+    // }
   } else {
     $.util.log($.util.colors.blue(msg));
   }
@@ -92,6 +95,6 @@ gulp.task('watcher', () => {
 });
 
 gulp.task('test', ['integration-test'], () => { });
-gulp.task('develop', ['configure-dev'], () => { serve(true); });
+gulp.task('develop', [], () => { serve(true); });
 gulp.task('default', ['help'], () => { });
 gulp.task('production', () => { serve(false); });

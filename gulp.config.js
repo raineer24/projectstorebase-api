@@ -1,8 +1,7 @@
-/* jslint node: true */
+const config = {};
 
-
-module.exports = function () {
-  const config = {
+config.variables = () => {
+  const files = {
     env: 'development',
     alljs: [
       './api/**/*.js',
@@ -57,5 +56,7 @@ module.exports = function () {
 
   };
 
-  return config;
+  return files;
 };
+
+module.exports = config.variables;
