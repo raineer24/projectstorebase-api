@@ -1,19 +1,14 @@
-/* jslint node: true */
-
-
-const cloudant = {
-  hostname: 'norbsx.cloudant.com',
-  username: 'norbsx',
-  password: 'grocerxC0nn3ct',
-};
-const swaggerFile = 'api/swagger/swagger.yaml';
-const appEnv = {
-  hostname: 'localhost',
-  port: 10010,
-};
-
 module.exports = {
-  cloudant,
-  swaggerFile,
-  appEnv,
+  env: {
+    port: '6001',
+    hostname: 'localhost',
+  },
+  db: {
+    hostname: 'madbgrocerx.cvz1mnpjqgvm.ap-southeast-1.rds.amazonaws.com',
+    port: 3306,
+    username: 'grocerx',
+    password: '',
+    name: 'grocerystore',
+  },
+  swaggerFile: 'api/swagger/swagger.yaml',
 };
