@@ -21,12 +21,6 @@ const { authenticate } = require('./middleware/authenticate').authenticate;
 const { authorize } = require('./middleware/authorize').authorize;
 
 
-var c = new Client({
-  host: config.hostname,
-  user: config.username,
-  password: config.password
-});
-
 // Validate swagger definition
 SwaggerParser.validate(config.swaggerFile)
   .then((result) => {
