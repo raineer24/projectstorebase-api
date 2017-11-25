@@ -19,8 +19,9 @@ mysql -u grocerx -p xxxxx
 
 **API calls**
 
-Login
-`Request`
+**Login**
+
+Request
 ```
 POST
 /v1/user/login
@@ -29,7 +30,7 @@ POST
   "password":"password"
 }
 ```
-`Response`
+Response
 ```
 {
   "authorize": true,
@@ -53,8 +54,9 @@ POST
   }
 ```
 
-Register
-`Request`
+**Register**
+
+Request
 ```
 POST
 /v1/user/register
@@ -64,7 +66,7 @@ POST
   "uiid": ""
 },
 ```
-`Response`
+Response
 ```
 {
   "id": 5,
@@ -73,13 +75,14 @@ POST
 ```
 
 
-View profile
-`Request`
+**View profile**
+
+Request
 ```
 GET
 /v1/user/profile/1
 ```
-`Response`
+Response
 ```
 {
   "id": 1,
