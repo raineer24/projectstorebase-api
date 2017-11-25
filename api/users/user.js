@@ -10,9 +10,9 @@ const userAccountConn = BluePromise.promisifyAll(new conn({tableName: User.table
 
 /**
   * User authentication of username and password
-  * @param {String} username
-  * @param {String} password
-  * @return {Object}
+  * @param {string} username
+  * @param {string} password
+  * @return {object}
 */
 User.authenticate = (username, password) => new BluePromise((resolve, reject) => {
   User.getByUsernamePassword(username, password)
@@ -21,7 +21,6 @@ User.authenticate = (username, password) => new BluePromise((resolve, reject) =>
         reject('Not found');
         return;
       }
-      delete results[0].password;
 
       resolve(lodash.merge({
         authenticated: true,
@@ -36,8 +35,8 @@ User.authenticate = (username, password) => new BluePromise((resolve, reject) =>
 
 /**
   * Check user entitlement
-  * @param {Object} user
-  * @return {Object}
+  * @param {object} userAuth
+  * @return {object}
 */
 User.authorize = userAuth => new BluePromise((resolve, reject) => {
   if (!userAuth) {
@@ -55,8 +54,16 @@ User.authorize = userAuth => new BluePromise((resolve, reject) => {
   }, userAuth));
 });
 
-User.save = (username, password, email, uiid) => new BluePromise((resolve, reject) => {
-  User.getByUsernamePassword(username, password)
+/**
+  * Save User account
+  * @param {string} username
+  * @param {string} password
+  * @param {string} email
+  * @param {string} uiid
+  * @return {object}
+*/
+User.saveAccount = (username, password, email, uiid) => new BluePromise((resolve, reject) => {
+  User.getByValue(username, 'username')
     .then((results) => {
       if (results.length === 0) {
         var userAccountModel = conn.extend({
@@ -87,19 +94,71 @@ User.save = (username, password, email, uiid) => new BluePromise((resolve, rejec
     })
 });
 
+User.updateAccount = (id, record) => new BluePromise((resolve, reject) => {
+  User.getById(id)
+    .then((results) => {
+      if (!results.id) {
+        reject('Not Found');
+      } else {
+        var userAccountModel = conn.extend({
+          tableName: User.tableName,
+        });
+        var userAccount = BluePromise.promisifyAll(new userAccountModel(record));
+        userAccount.setAsync('id', id);
+        userAccount.saveAsync()
+          .then((response) => {
+            resolve(response.message);
+          })
+          .catch((err) => {
+            resolve(err);
+          });
+      }
+    })
+    .catch((err) => {
+      reject('Not Found');
+    });
+});
+
+/**
+  * Get userAccount by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+User.getByValue = (value, field) => {
+  return userAccountConn.findAsync('all', {where: field + " = '" + value + "'"});
+};
+
+/**
+  * Get userAccount by username and password
+  * @param {string} username
+  * @param {string} password
+  * @return {object<Promise>}
+*/
 User.getByUsernamePassword = (username, password) => {
   return userAccountConn.findAsync('all', {where: "username = '" + username + "' AND password = '" + password + "'"});
 };
 
+/**
+  * Get userAccount by id
+  * @param {integer} id
+  * @return {object<Promise>}
+*/
 User.getById = (id) => {
   return userAccountConn.readAsync(id);
 };
 
-User.cleanUp = (user, append) => {
-  delete user.password;
-  lodash.merge(user, append);
+/**
+  * Format response object and/or append additional object properties
+  * @param {object} object
+  * @param {object} properties
+  * @return {object}
+*/
+User.cleanResponse = (object, properties) => {
+  delete object.password;
+  lodash.merge(object, properties);
 
-  return user;
+  return object;
 };
 
 
