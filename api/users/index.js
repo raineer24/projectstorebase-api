@@ -9,21 +9,28 @@ const user = {};
 * @param {Object} res
 * @return {Object}
 */
-user.login = (req, res) => {
+user.loginAccount = (req, res) => {
   User.authenticate(req.swagger.params.body.value.username, req.swagger.params.body.value.password)
     .then(userAuth => userAuth)
     .then(User.authorize)
     .then((result) => {
-      return res.json(User.cleanUp(result, { message: 'Found' }));
+      return res.json(User.cleanResponse(result, { message: 'Found' }));
     })
-    .catch(() => {
+    .catch((err) => {
       return res.status(404).json({
         message: 'Not found',
       });
     });
 };
-user.register = (req, res) => {
-  User.save(req.swagger.params.body.value.email, req.swagger.params.body.value.password, req.swagger.params.body.value.email, req.swagger.params.body.value.uiid)
+
+/**
+* User registration
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.registerAccount = (req, res) => {
+  User.saveAccount(req.swagger.params.body.value.email, req.swagger.params.body.value.password, req.swagger.params.body.value.email, req.swagger.params.body.value.uiid)
     .then((id) => {
       return res.json({
         id: id,
@@ -37,10 +44,38 @@ user.register = (req, res) => {
     });
 };
 
+/**
+* User registration
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.updateAccount = (req, res) => {
+  User.updateAccount(query.validateParam(req.swagger.params, 'id', 0), req.swagger.params.body.value)
+    .then((id) => {
+      return res.json({
+        id: id,
+        message: 'Updated',
+      });
+    })
+    .catch((err) => {
+      return res.status(err === 'Not Found' ? 404 : 500).json({
+        message: err === 'Not Found' ? 'Not found' : 'Failed',
+      });
+    });
+};
+
+
+/**
+* View user profile
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
 user.viewProfile = (req, res) => {
   User.getById(query.validateParam(req.swagger.params, 'id', 0))
     .then((result) => {
-      return res.json(User.cleanUp(result, { message: 'Found' }));
+      return res.json(User.cleanResponse(result, { message: 'Found' }));
     })
     .catch((err) => {
       return res.status(404).json({
