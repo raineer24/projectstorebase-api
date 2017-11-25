@@ -18,13 +18,13 @@ consumes:
 produces:
   - application/json
 paths:
-  /Profile/{id}:
+  /User/Profile/{id}:
     x-swagger-router-controller: users
     get:
       tags:
         - profile
       summary: Return user profile
-      operationId: getUserProfile
+      operationId: viewProfile
       parameters:
         - $ref: "#/parameters/id"
       responses:
@@ -58,7 +58,7 @@ paths:
         #       message:
         #         type: string
         #         example: Not found
-  /Users/login:
+  /User/login:
     x-swagger-router-controller: users
     post:
       tags:
@@ -89,7 +89,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /Users/register:
+  /User/register:
     x-swagger-router-controller: users
     post:
       tags:
@@ -120,7 +120,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /Items:
+  /Item:
     # binds a127 app logic to a route
     x-swagger-router-controller: items
     get:
