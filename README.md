@@ -17,6 +17,18 @@ brew services start mariadb
 mysql -u grocerx -p xxxxx
 ```
 
+**Add local environment variables**
+```
+touch .env
+vi .env
+```
+`.env`
+```
+DB_HOSTNAME=localhost
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
 **API calls**
 
 **Login**
