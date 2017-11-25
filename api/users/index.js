@@ -52,9 +52,9 @@ user.registerAccount = (req, res) => {
 */
 user.updateAccount = (req, res) => {
   User.updateAccount(query.validateParam(req.swagger.params, 'id', 0), req.swagger.params.body.value)
-    .then((id) => {
+    .then((status) => {
       return res.json({
-        id: id,
+        status: status,
         message: 'Updated',
       });
     })

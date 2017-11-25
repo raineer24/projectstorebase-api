@@ -36,7 +36,7 @@ DB_PASSWORD=
 Request
 ```
 POST
-/v1/user/login
+/v1/user/account/login
 {
   "username":"norbs.knight@gmail.com",
   "password":"password"
@@ -66,12 +66,12 @@ Response
   }
 ```
 
-**Register**
+**Account register**
 
 Request
 ```
 POST
-/v1/user/register
+/v1/user/account/save
 {
   "username":"norbs.knight@gmail.com",
   "password":"password",
@@ -85,7 +85,25 @@ Response
   "message": "Saved"
 }
 ```
+**Account update**
 
+Request
+```
+POST
+/v1/user/account/1/save
+{
+  "username":"norbs.knight@gmail.com",
+  "password":"password",
+  "uiid": "12312312"
+},
+```
+Response
+```
+{
+  "status": "Rows matched: 1 Changed: 1 Warnings: 0",
+  "message": "Updated"
+}
+```
 
 **View profile**
 
