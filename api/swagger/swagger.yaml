@@ -89,6 +89,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /Users/register:
+    x-swagger-router-controller: users
+    post:
+      tags:
+        - user
+      summary: Register user account
+      operationId: register
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Successful registration
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /Items:
     # binds a127 app logic to a route
     x-swagger-router-controller: items
@@ -152,6 +183,19 @@ definitions:
       - password
     properties:
       username:
+        type: string
+        description: user e-mail
+      password:
+        type: string
+        description: user password
+  UserRegister:
+    title: UserRegister
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      email:
         type: string
         description: user e-mail
       password:

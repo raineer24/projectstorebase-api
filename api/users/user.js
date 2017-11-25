@@ -1,7 +1,8 @@
-
-
 const BluePromise = require('bluebird');
-
+const conn = require('../../service/connection');
+const Util = require('../helpers/util');
+const log = require('color-logs')(true, true, __filename);
+const lodash = require('lodash');
 const User = {};
 
 /**
@@ -11,16 +12,24 @@ const User = {};
   * @return {Object}
 */
 User.authenticate = (username, password) => new BluePromise((resolve, reject) => {
-  if (password !== 'norbert') {
-    reject(null);
-    return;
-  }
-  resolve({
-    authenticated: true,
-    firstName: 'Norbert',
-    lastName: 'Dela Pena',
-    dateTime: new Date().getTime(),
-  });
+  User.get(username, password)
+    .then((results) => {
+      if (parseInt(results.info.numRows, 10) === 0) {
+        reject('Not found');
+        return;
+      }
+      delete results[0].password;
+
+      resolve(lodash.merge({
+        authenticated: true,
+        token: Util.signToken(results[0].username),
+        dateTime: new Date().getTime(),
+      }, results[0]));
+    })
+    .catch(err => {
+      // console.log(err);
+      reject(err);
+    })
 });
 
 /**
@@ -33,10 +42,7 @@ User.authorize = userAuth => new BluePromise((resolve, reject) => {
     reject(null);
     return;
   }
-  resolve({
-    username: userAuth.username,
-    firstName: userAuth.firstName,
-    lastName: userAuth.lastName,
+  resolve(lodash.merge({
     authorize: true,
     roles: [
       'customer',
@@ -44,7 +50,39 @@ User.authorize = userAuth => new BluePromise((resolve, reject) => {
     ],
     dateAuthenticated: userAuth.dateTime,
     dateAuthorized: new Date().getTime(),
-  });
+  }, userAuth));
 });
+
+User.save = (username, password, email, uiid) => new BluePromise((resolve, reject) => {
+  User.get(username, password)
+    .then(() => {
+      reject('Found');
+    })
+    .catch(() => {
+      var prep = conn.prepare("INSERT INTO userAccount VALUES(0, :username, :password, :email, " + new Date().getTime() + ", :uiid, 0)");
+      conn.query(prep({ username: username, password: password, email: email, uiid: uiid }), function(err, rows) {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(conn.lastInsertId());
+        }
+      });
+    })
+});
+
+User.get = (username, password) => new BluePromise((resolve, reject) => {
+  var prep = conn.prepare('SELECT * FROM userAccount WHERE username = :username AND password = :password LIMIT 1');
+  conn.query(prep({ username: username, password: password }), function(err, rows) {
+    if (err) {
+      reject(err);
+    }
+    else {
+      resolve(rows);
+    }
+  });
+  conn.end();
+});
+
 
 module.exports = User;

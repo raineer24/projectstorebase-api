@@ -23,6 +23,8 @@
     "gulp-nodemon": "^2.2.1",
     "gulp-task-listing": "^1.0.1",
     "https": "^1.0.0",
+    "jsonwebtoken": "^8.1.0",
+    "lodash": "^4.17.4",
     "mariasql": "^0.2.6",
     "morgan": "^1.7.0",
     "path": "^0.12.7",
