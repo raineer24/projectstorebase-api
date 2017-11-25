@@ -58,13 +58,13 @@ paths:
         #       message:
         #         type: string
         #         example: Not found
-  /User/login:
+  /User/account/login:
     x-swagger-router-controller: users
     post:
       tags:
         - user
       summary: Return authenticated & authorized user
-      operationId: login
+      operationId: loginAccount
       parameters:
         - name: body
           in: body
@@ -89,13 +89,13 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /User/register:
+  /User/account/save:
     x-swagger-router-controller: users
     post:
       tags:
         - user
       summary: Register user account
-      operationId: register
+      operationId: registerAccount
       parameters:
         - name: body
           in: body
@@ -120,8 +120,39 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /User/account/{id}/save:
+    x-swagger-router-controller: users
+    put:
+      tags:
+        - user
+      summary: Update user account
+      operationId: updateAccount
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /Item:
-    # binds a127 app logic to a route
     x-swagger-router-controller: items
     get:
       tags:
