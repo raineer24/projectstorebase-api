@@ -56,7 +56,7 @@ User.save = (username, password, email, uiid) => new BluePromise((resolve, rejec
   User.get(username, password)
     .then((results) => {
       if (parseInt(results.info.numRows, 10) === 0) {
-        var prep = conn.prepare("INSERT INTO userAccount VALUES(0, :username, :password, :email, " + new Date().getTime() + ", :uiid, 0)");
+        var prep = conn.prepare("INSERT INTO userAccount VALUES(0, :username, :password, :email, 0, " + new Date().getTime() + ", " + new Date().getTime() + ", :uiid)");
         conn.query(prep({ username: username, password: password, email: email, uiid: uiid }), function(err, rows) {
           if (err) {
             reject(err);
