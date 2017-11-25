@@ -13,9 +13,8 @@ user.login = (req, res) => {
   User.authenticate(req.swagger.params.body.value.username, req.swagger.params.body.value.password)
     .then(userAuth => userAuth)
     .then(User.authorize)
-    .then((response) => {
-      response.message = 'Found';
-      return res.json(response);
+    .then((result) => {
+      return res.json(User.cleanUp(result, { message: 'Found' }));
     })
     .catch(() => {
       return res.status(404).json({
@@ -41,14 +40,12 @@ user.register = (req, res) => {
 user.viewProfile = (req, res) => {
   User.getById(query.validateParam(req.swagger.params, 'id', 0))
     .then((result) => {
-      result.message = 'Found';
-      return res.json(result);
+      return res.json(User.cleanUp(result, { message: 'Found' }));
     })
     .catch((err) => {
       return res.status(404).json({
         message: 'Not found',
       });
-
     });
 };
 
