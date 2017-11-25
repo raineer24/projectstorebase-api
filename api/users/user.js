@@ -86,5 +86,22 @@ User.get = (username, password) => new BluePromise((resolve, reject) => {
   // conn.end();
 });
 
+User.getById = (id) => new BluePromise((resolve, reject) => {
+  var prep = conn.prepare('SELECT * FROM userAccount WHERE id = :id LIMIT 1');
+  conn.query(prep({ id: id }), function(err, rows) {
+    if (err) {
+      reject(err);
+    }
+    else {
+      if (parseInt(rows.info.numRows, 10) === 0) {
+        reject(404);
+      }
+      else {
+        resolve(rows[0]);
+      }
+    }
+  });
+});
+
 
 module.exports = User;
