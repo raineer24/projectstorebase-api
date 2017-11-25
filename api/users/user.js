@@ -27,7 +27,6 @@ User.authenticate = (username, password) => new BluePromise((resolve, reject) =>
       }, results[0]));
     })
     .catch(err => {
-      // console.log(err);
       reject(err);
     })
 });
@@ -55,19 +54,22 @@ User.authorize = userAuth => new BluePromise((resolve, reject) => {
 
 User.save = (username, password, email, uiid) => new BluePromise((resolve, reject) => {
   User.get(username, password)
-    .then(() => {
-      reject('Found');
+    .then((results) => {
+      if (parseInt(results.info.numRows, 10) === 0) {
+        var prep = conn.prepare("INSERT INTO userAccount VALUES(0, :username, :password, :email, " + new Date().getTime() + ", :uiid, 0)");
+        conn.query(prep({ username: username, password: password, email: email, uiid: uiid }), function(err, rows) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(conn.lastInsertId());
+          }
+        });
+      } else {
+        reject('Found');
+      }
     })
-    .catch(() => {
-      var prep = conn.prepare("INSERT INTO userAccount VALUES(0, :username, :password, :email, " + new Date().getTime() + ", :uiid, 0)");
-      conn.query(prep({ username: username, password: password, email: email, uiid: uiid }), function(err, rows) {
-        if (err) {
-          reject(err);
-        }
-        else {
-          resolve(conn.lastInsertId());
-        }
-      });
+    .catch((err) => {
+      reject(err);
     })
 });
 
@@ -81,7 +83,7 @@ User.get = (username, password) => new BluePromise((resolve, reject) => {
       resolve(rows);
     }
   });
-  conn.end();
+  // conn.end();
 });
 
 
