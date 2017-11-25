@@ -1,11 +1,10 @@
-/* jslint node: true */
-
-
-const cloudant = require('cloudant');
+const Client = require('mariasql');
 const config = require('../config/config');
+// const log = require('color-logs')(true, true, __filename);
 
-module.exports = cloudant({
-  hostname: config.cloudant.host,
-  account: config.cloudant.username,
-  password: config.cloudant.password,
+module.exports = new Client({
+  host: config.db.hostname,
+  user: config.db.username,
+  password: config.db.password,
+  db: config.db.name
 });
