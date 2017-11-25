@@ -26,8 +26,10 @@ user.login = (req, res) => {
 user.register = (req, res) => {
   User.save(req.swagger.params.body.value.email, req.swagger.params.body.value.password, req.swagger.params.body.value.email, req.swagger.params.body.value.uiid)
     .then((id) => {
-      response.message = 'Saved';
-      return res.json(response);
+      return res.json({
+        id: id,
+        message: 'Saved',
+      });
     })
     .catch((err) => {
       return res.status(err === 'Found' ? 201 : 500).json({
