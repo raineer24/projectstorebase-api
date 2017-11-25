@@ -1,10 +1,10 @@
 CREATE TABLE grocerystore.userAccount
-(id BIGINT NOT NULL,
+(id BIGINT(50) NOT NULL AUTO_INCREMENT,
 username CHAR(60) NOT NULL,
 password VARCHAR(250) NOT NULL,
-email CHAR(100) NOT NULL,
-dateBirth INT,
-dateCreated INT NOT NULL,
-dateUpdated INT NOT NULL,
+email CHAR(100),
+dateBirth BIGINT(50),
+dateCreated BIGINT(50) NOT NULL,
+dateUpdated BIGINT(50) NOT NULL,
 uiid CHAR(150),
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
