@@ -3,7 +3,10 @@ const conn = require('../../service/connection');
 const Util = require('../helpers/util');
 const log = require('color-logs')(true, true, __filename);
 const lodash = require('lodash');
-const User = {};
+const User = {
+  tableName: 'userAccount'
+};
+const userAccountConn = BluePromise.promisifyAll(new conn({tableName: User.tableName}));
 
 /**
   * User authentication of username and password
@@ -12,9 +15,9 @@ const User = {};
   * @return {Object}
 */
 User.authenticate = (username, password) => new BluePromise((resolve, reject) => {
-  User.get(username, password)
+  User.getByUsernamePassword(username, password)
     .then((results) => {
-      if (parseInt(results.info.numRows, 10) === 0) {
+      if (results.length === 0) {
         reject('Not found');
         return;
       }
@@ -53,17 +56,28 @@ User.authorize = userAuth => new BluePromise((resolve, reject) => {
 });
 
 User.save = (username, password, email, uiid) => new BluePromise((resolve, reject) => {
-  User.get(username, password)
+  User.getByUsernamePassword(username, password)
     .then((results) => {
-      if (parseInt(results.info.numRows, 10) === 0) {
-        var prep = conn.prepare("INSERT INTO userAccount VALUES(0, :username, :password, :email, " + new Date().getTime() + ", :uiid, 0)");
-        conn.query(prep({ username: username, password: password, email: email, uiid: uiid }), function(err, rows) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(conn.lastInsertId());
-          }
+      if (results.length === 0) {
+        var userAccountModel = conn.extend({
+          tableName: User.tableName,
         });
+        var userAccount = BluePromise.promisifyAll(new userAccountModel({
+          username: username,
+          password: password,
+          email: email,
+          dateBirth: 0,
+          dateCreated: new Date().getTime(),
+          dateUpdated: new Date().getTime(),
+          uiid: uiid
+        }));
+        userAccount.saveAsync()
+          .then((response) => {
+            resolve(response.insertId);
+          })
+          .catch((err) => {
+            reject(err);
+          });
       } else {
         reject('Found');
       }
@@ -73,35 +87,20 @@ User.save = (username, password, email, uiid) => new BluePromise((resolve, rejec
     })
 });
 
-User.get = (username, password) => new BluePromise((resolve, reject) => {
-  var prep = conn.prepare('SELECT * FROM userAccount WHERE username = :username AND password = :password LIMIT 1');
-  conn.query(prep({ username: username, password: password }), function(err, rows) {
-    if (err) {
-      reject(err);
-    }
-    else {
-      resolve(rows);
-    }
-  });
-  // conn.end();
-});
+User.getByUsernamePassword = (username, password) => {
+  return userAccountConn.findAsync('all', {where: "username = '" + username + "' AND password = '" + password + "'"});
+};
 
-User.getById = (id) => new BluePromise((resolve, reject) => {
-  var prep = conn.prepare('SELECT * FROM userAccount WHERE id = :id LIMIT 1');
-  conn.query(prep({ id: id }), function(err, rows) {
-    if (err) {
-      reject(err);
-    }
-    else {
-      if (parseInt(rows.info.numRows, 10) === 0) {
-        reject(404);
-      }
-      else {
-        resolve(rows[0]);
-      }
-    }
-  });
-});
+User.getById = (id) => {
+  return userAccountConn.readAsync(id);
+};
+
+User.cleanUp = (user, append) => {
+  delete user.password;
+  lodash.merge(user, append);
+
+  return user;
+};
 
 
 module.exports = User;
