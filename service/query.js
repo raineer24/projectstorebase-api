@@ -1,14 +1,13 @@
-/* jslint node: true */
+const query = {};
 
-
-function validateParam(reqParams, name, defaultValue) {
+query.validateParam = (reqParams, name, defaultValue) => {
   if (typeof defaultValue === 'number') {
-    return reqParams.hasOwnProperty(name) && parseInt(reqParams[name].value) > 0 ? parseInt(reqParams[name].value) : defaultValue;
+    return Object.prototype.hasOwnProperty.call(reqParams, name) &&
+      parseInt(reqParams[name].value, 10) > 0 ? parseInt(reqParams[name].value, 10) : defaultValue;
   }
 
-  return reqParams.hasOwnProperty(name) && reqParams[name].value ? reqParams[name].value : defaultValue;
-}
-
-module.exports = {
-  validateParam,
+  return Object.prototype.hasOwnProperty.call(reqParams, name) &&
+    reqParams[name].value ? reqParams[name].value : defaultValue;
 };
+
+module.exports = query;
