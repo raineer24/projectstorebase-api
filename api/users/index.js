@@ -1,6 +1,6 @@
 // const BluePromise = require('bluebird');
 const User = require('./user');
-
+const query = require('../../service/query');
 const user = {};
 
 /**
@@ -35,6 +35,20 @@ user.register = (req, res) => {
       return res.status(err === 'Found' ? 201 : 500).json({
         message: err === 'Found' ? 'Existing' : 'Failed',
       });
+    });
+};
+
+user.viewProfile = (req, res) => {
+  User.getById(query.validateParam(req.swagger.params, 'id', 0))
+    .then((result) => {
+      result.message = 'Found';
+      return res.json(result);
+    })
+    .catch((err) => {
+      return res.status(404).json({
+        message: 'Not found',
+      });
+
     });
 };
 
