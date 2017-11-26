@@ -1,12 +1,13 @@
 const BluePromise = require('bluebird');
-const conn = require('../../service/connection');
+const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
-const log = require('color-logs')(true, true, __filename);
+// const log = require('color-logs')(true, true, __filename);
 const lodash = require('lodash');
+
 const User = {
-  tableName: 'userAccount'
+  tableName: 'userAccount',
 };
-const userAccountConn = BluePromise.promisifyAll(new conn({tableName: User.tableName}));
+const userAccountConn = BluePromise.promisifyAll(new Conn({ tableName: User.tableName }));
 
 /**
   * User authentication of username and password
@@ -28,9 +29,9 @@ User.authenticate = (username, password) => new BluePromise((resolve, reject) =>
         dateTime: new Date().getTime(),
       }, results[0]));
     })
-    .catch(err => {
+    .catch((err) => {
       reject(err);
-    })
+    });
 });
 
 /**
@@ -66,17 +67,17 @@ User.saveAccount = (username, password, email, uiid) => new BluePromise((resolve
   User.getByValue(username, 'username')
     .then((results) => {
       if (results.length === 0) {
-        var userAccountModel = conn.extend({
+        const UserAccountModel = Conn.extend({
           tableName: User.tableName,
         });
-        var userAccount = BluePromise.promisifyAll(new userAccountModel({
-          username: username,
-          password: password,
-          email: email,
+        const userAccount = BluePromise.promisifyAll(new UserAccountModel({
+          username,
+          password,
+          email,
           dateBirth: 0,
           dateCreated: new Date().getTime(),
           dateUpdated: new Date().getTime(),
-          uiid: uiid
+          uiid,
         }));
         userAccount.saveAsync()
           .then((response) => {
@@ -91,7 +92,7 @@ User.saveAccount = (username, password, email, uiid) => new BluePromise((resolve
     })
     .catch((err) => {
       reject(err);
-    })
+    });
 });
 
 User.updateAccount = (id, record) => new BluePromise((resolve, reject) => {
@@ -100,10 +101,10 @@ User.updateAccount = (id, record) => new BluePromise((resolve, reject) => {
       if (!results.id) {
         reject('Not Found');
       } else {
-        var userAccountModel = conn.extend({
+        const UserAccountModel = Conn.extend({
           tableName: User.tableName,
         });
-        var userAccount = BluePromise.promisifyAll(new userAccountModel(record));
+        const userAccount = BluePromise.promisifyAll(new UserAccountModel(record));
         userAccount.setAsync('id', id);
         userAccount.saveAsync()
           .then((response) => {
@@ -114,7 +115,7 @@ User.updateAccount = (id, record) => new BluePromise((resolve, reject) => {
           });
       }
     })
-    .catch((err) => {
+    .catch(() => {
       reject('Not Found');
     });
 });
@@ -125,9 +126,7 @@ User.updateAccount = (id, record) => new BluePromise((resolve, reject) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-User.getByValue = (value, field) => {
-  return userAccountConn.findAsync('all', {where: field + " = '" + value + "'"});
-};
+User.getByValue = (value, field) => userAccountConn.findAsync('all', { where: `${field} = '${value}'` });
 
 /**
   * Get userAccount by username and password
@@ -135,18 +134,14 @@ User.getByValue = (value, field) => {
   * @param {string} password
   * @return {object<Promise>}
 */
-User.getByUsernamePassword = (username, password) => {
-  return userAccountConn.findAsync('all', {where: "username = '" + username + "' AND password = '" + password + "'"});
-};
+User.getByUsernamePassword = (username, password) => userAccountConn.findAsync('all', { where: `username = '${username}' AND password = '${password}'` });
 
 /**
   * Get userAccount by id
   * @param {integer} id
   * @return {object<Promise>}
 */
-User.getById = (id) => {
-  return userAccountConn.readAsync(id);
-};
+User.getById = id => userAccountConn.readAsync(id);
 
 /**
   * Format response object and/or append additional object properties
