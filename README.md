@@ -8,13 +8,36 @@ npm install -g gulp
 npm install
 ```
 
-**Install MariaDB (OSX)**
+**Install MariaDB**
+
+OSX
 https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/
 ```
 brew install mariadb
 mysql.server start
 brew services start mariadb
 mysql -u grocerx -p xxxxx
+```
+
+Ubuntu
+```
+sudo apt update -y
+sudo apt install -y mariadb-server
+mysql -V
+sudo systemctl start mariadb.service
+sudo systemctl enable mariadb.service
+
+sudo /usr/bin/mysql_secure_installation
+Enter current password for root (enter for none): <Enter>
+Set root password? [Y/n]: Y
+New password: <your-MariaDB-root-password>
+Re-enter new password: <your-MariaDB-root-password>
+Remove anonymous users? [Y/n]: Y
+Disallow root login remotely? [Y/n]: Y
+Remove test database and access to it? [Y/n]: Y
+Reload privilege tables now? [Y/n]: Y
+
+mysql -u root -p
 ```
 
 **Add local environment variables**
