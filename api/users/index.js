@@ -11,7 +11,7 @@ const user = {};
 * @return {Object}
 */
 user.loginAccount = (req, res) => {
-  User.authenticate(req.swagger.params.body.value.username, req.swagger.params.body.value.password)
+  User.authenticate(req.swagger.params.body.value.username, req.swagger.params.body.value.password,  req.swagger.params.body.value.uiid)
     .then(userAuth => userAuth)
     .then(User.authorize)
     .then(result => res.json(User.cleanResponse(result, { message: 'Found' })))

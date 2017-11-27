@@ -15,8 +15,8 @@ const userAccountConn = BluePromise.promisifyAll(new Conn({ tableName: User.tabl
   * @param {string} password
   * @return {object}
 */
-User.authenticate = (username, password) => new BluePromise((resolve, reject) => {
-  User.getByUsernamePassword(username, password)
+User.authenticate = (username, password, uiid) => new BluePromise((resolve, reject) => {
+  User.getByUser(username, password, uiid)
     .then((results) => {
       if (results.length === 0) {
         reject('Not found');
@@ -134,7 +134,10 @@ User.getByValue = (value, field) => userAccountConn.findAsync('all', { where: `$
   * @param {string} password
   * @return {object<Promise>}
 */
-User.getByUsernamePassword = (username, password) => userAccountConn.findAsync('all', { where: `username = '${username}' AND password = '${password}'` });
+User.getByUser = (username, password, uiid) => {
+  let condition = `username = '${username}' AND ` + (!uiid ? `password = '${password}'` :  `uiid = '${uiid}'`);
+  return userAccountConn.findAsync('all', { where: condition });
+}
 
 /**
   * Get userAccount by id
