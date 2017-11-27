@@ -96,7 +96,7 @@ Request
 POST
 /v1/user/account/save
 {
-  "username":"norbs.knight@gmail.com",
+  "email":"norbs.knight@gmail.com",
   "password":"password",
   "uiid": ""
 },
