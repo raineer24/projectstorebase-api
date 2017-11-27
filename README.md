@@ -1,5 +1,6 @@
 # Grocerx API
 
+[![Build Status](https://travis-ci.com/n0rbs/grocer-api.svg?token=zrgsiisswgRdAXJmertS&branch=develop)](https://travis-ci.com/n0rbs/grocer-api)
 
 **Install**
 
