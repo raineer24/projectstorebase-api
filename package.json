@@ -27,6 +27,7 @@
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.4",
     "morgan": "^1.7.0",
+    "mysql": "^2.15.0",
     "mysql-model": "0.0.2",
     "path": "^0.12.7",
     "sql": "^0.78.0",
