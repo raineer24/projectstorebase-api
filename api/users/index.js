@@ -11,7 +11,11 @@ const user = {};
 * @return {Object}
 */
 user.loginAccount = (req, res) => {
-  User.authenticate(req.swagger.params.body.value.username, req.swagger.params.body.value.password,  req.swagger.params.body.value.uiid)
+  User.authenticate(
+    req.swagger.params.body.value.username,
+    req.swagger.params.body.value.password,
+    req.swagger.params.body.value.uiid,
+  )
     .then(userAuth => userAuth)
     .then(User.authorize)
     .then(result => res.json(User.cleanResponse(result, { message: 'Found' })))
@@ -30,7 +34,7 @@ user.registerAccount = (req, res) => {
   User.saveAccount(
     req.swagger.params.body.value.email,
     req.swagger.params.body.value.password, req.swagger.params.body.value.email,
-    req.swagger.params.body.value.uiid
+    req.swagger.params.body.value.uiid,
   )
     .then(id => res.json({ id, message: 'Saved' }))
     .catch(err => res.status(err === 'Found' ? 201 : 500).json({

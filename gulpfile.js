@@ -35,13 +35,13 @@ gulp.task('lint', () => {
     .pipe($.eslint.failAfterError());
 });
 
-gulp.task('unit-test', [], function (done) {
+gulp.task('unit-test', [], (done) => {
   log('Running unit test');
   gulp
     .src(config.test.unit.lib)
     .pipe($.istanbul())
     .pipe($.istanbul.hookRequire())
-    .on('finish', function () {
+    .on('finish', () => {
       gulp.src(config.test.unit.spec)
         .pipe($.babel())
         .pipe($.injectModules())
