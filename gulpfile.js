@@ -94,7 +94,7 @@ gulp.task('watcher', () => {
   gulp.watch(config.alljs, ['lint']);
 });
 
-gulp.task('test', ['integration-test'], () => { });
+gulp.task('test', ['lint'], () => { });
 gulp.task('develop', [], () => { serve(true); });
 gulp.task('default', ['help'], () => { });
 gulp.task('production', () => { serve(false); });
