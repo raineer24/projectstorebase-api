@@ -134,10 +134,7 @@ User.getByValue = (value, field) => userAccountConn.findAsync('all', { where: `$
   * @param {string} password
   * @return {object<Promise>}
 */
-User.getByUser = (username, password, uiid) => {
-  let condition = `username = '${username}' AND ` + (!uiid ? `password = '${password}'` :  `uiid = '${uiid}'`);
-  return userAccountConn.findAsync('all', { where: condition });
-}
+User.getByUser = (username, password, uiid) => userAccountConn.findAsync('all', { where: `username = '${username}' AND ${!uiid ? `password = '${password}'` : `uiid = '${uiid}'`}` });
 
 /**
   * Get userAccount by id
@@ -153,6 +150,7 @@ User.getById = id => userAccountConn.readAsync(id);
   * @return {object}
 */
 User.cleanResponse = (object, properties) => {
+  // eslint-disable-next-line
   delete object.password;
   lodash.merge(object, properties);
 

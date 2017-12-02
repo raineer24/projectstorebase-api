@@ -35,22 +35,22 @@ gulp.task('lint', () => {
     .pipe($.eslint.failAfterError());
 });
 
-// gulp.task('unit-test', ['lint'], function (done) {
-//   log('Running unit test');
-//   gulp
-//     .src(config.test.unit.lib)
-//     .pipe($.istanbul())
-//     .pipe($.istanbul.hookRequire())
-//     .on('finish', function () {
-//       gulp.src(config.test.unit.spec)
-//         .pipe($.babel())
-//         .pipe($.injectModules())
-//         .pipe($.mocha())
-//         .pipe($.istanbul.writeReports(config.test.unit.reportOptions))
-//         .pipe($.istanbul.enforceThresholds({ thresholds: { global: 90 } }))
-//         .on('finish', done);
-//     });
-// });
+gulp.task('unit-test', [], (done) => {
+  log('Running unit test');
+  gulp
+    .src(config.test.unit.lib)
+    .pipe($.istanbul())
+    .pipe($.istanbul.hookRequire())
+    .on('finish', () => {
+      gulp.src(config.test.unit.spec)
+        .pipe($.babel())
+        .pipe($.injectModules())
+        .pipe($.mocha())
+        .pipe($.istanbul.writeReports(config.test.unit.reportOptions))
+        .pipe($.istanbul.enforceThresholds({ thresholds: { global: 90 } }))
+        .on('finish', done);
+    });
+});
 // gulp.task('integration-test', ['unit-test'], function () {
 //   log('Running integration test');
 //   gulp
