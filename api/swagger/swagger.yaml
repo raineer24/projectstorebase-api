@@ -187,6 +187,37 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /Seller/account/save:
+    x-swagger-router-controller: sellers
+    post:
+      tags:
+        - seller
+      summary: Register seller account
+      operationId: registerAccount
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Successful registration
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
