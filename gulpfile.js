@@ -35,7 +35,7 @@ gulp.task('lint', () => {
     .pipe($.eslint.failAfterError());
 });
 
-gulp.task('unit-test', [], (done) => {
+gulp.task('unit-test', ['lint'], (done) => {
   log('Running unit test');
   gulp
     .src(config.test.unit.lib)
@@ -94,7 +94,7 @@ gulp.task('watcher', () => {
   gulp.watch(config.alljs, ['lint']);
 });
 
-gulp.task('test', ['lint'], () => { });
+gulp.task('test', ['unit-test'], () => { });
 gulp.task('develop', [], () => { serve(true); });
 gulp.task('default', ['help'], () => { });
 gulp.task('production', () => { serve(false); });
