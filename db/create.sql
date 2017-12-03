@@ -45,3 +45,15 @@ dateCreated BIGINT NOT NULL,
 dateUpdated BIGINT NOT NULL,
 userAccount_id BIGINT(50) NOT NULL,
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
+
+
+/* sellerAccount */
+CREATE TABLE grocerystore.sellerAccount
+(id BIGINT(50) NOT NULL AUTO_INCREMENT,
+username CHAR(60) NOT NULL,
+password VARCHAR(250) NOT NULL,
+email CHAR(100),
+name VARCHAR(250) NOT NULL,
+dateCreated BIGINT(50) NOT NULL,
+dateUpdated BIGINT(50) NOT NULL,
+PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
