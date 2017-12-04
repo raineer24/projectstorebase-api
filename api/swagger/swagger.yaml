@@ -71,7 +71,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/userLogin"
+            $ref: "#/definitions/UserLogin"
       responses:
         200:
           description: Successful login
@@ -102,7 +102,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/userRegister"
+            $ref: "#/definitions/UserRegister"
       responses:
         200:
           description: Successful registration
@@ -134,7 +134,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/userRegister"
+            $ref: "#/definitions/UserRegister"
       responses:
         200:
           description: Successful update
@@ -181,7 +181,7 @@ paths:
               data:
                 type: array
                 items:
-                  - $ref: "#/definitions/itemList"
+                  - $ref: "#/definitions/ItemList"
         # responses may fall through to errors
         default:
           description: Error
@@ -240,7 +240,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/userRegister"
+            $ref: "#/definitions/UserRegister"
       responses:
         200:
           description: Successful registration
@@ -272,7 +272,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/userRegister"
+            $ref: "#/definitions/UserRegister"
       responses:
         200:
           description: Successful registration
