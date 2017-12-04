@@ -18,7 +18,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /user/Profile/{id}:
+  /user/account/{id}:
     x-swagger-router-controller: users
     get:
       tags:
@@ -187,7 +187,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /seller/Profile/{id}:
+  /seller/profile/{id}:
     x-swagger-router-controller: sellers
     get:
       tags:
