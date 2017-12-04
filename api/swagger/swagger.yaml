@@ -187,6 +187,46 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /Seller/Profile/{id}:
+    x-swagger-router-controller: sellers
+    get:
+      tags:
+        - profile
+      summary: Return seller profile
+      operationId: viewProfile
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
+              firstName:
+                type: string
+                example: John
+              lastName:
+                type: string
+                example: Stone
+              dateBirthday:
+                type: number
+                example: 587260800000
+                description: timestamp
+              address1:
+                type: string
+                example: Upper Thompson Road
+              address2:
+                type: string
+                example: East Cost Drive
+        # 404:
+        #   description: Profile not found
+        #   schema:
+        #     properties:
+        #       message:
+        #         type: string
+        #         example: Not found
   /Seller/account/save:
     x-swagger-router-controller: sellers
     post:
