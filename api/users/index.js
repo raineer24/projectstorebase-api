@@ -63,7 +63,7 @@ user.updateAccount = (req, res) => {
 * @param {Object} res
 * @return {Object}
 */
-user.viewProfile = (req, res) => {
+user.viewAccount = (req, res) => {
   User.getById(query.validateParam(req.swagger.params, 'id', 0))
     .then(result => res.json(User.cleanResponse(result, { message: 'Found' })))
     .catch(() => res.status(404).json({

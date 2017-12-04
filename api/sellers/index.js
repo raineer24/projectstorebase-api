@@ -53,7 +53,7 @@ seller.updateAccount = (req, res) => {
 * @param {Object} res
 * @return {Object}
 */
-seller.viewProfile = (req, res) => {
+seller.viewAccount = (req, res) => {
   const objSeller = new Seller();
   objSeller.getById(query.validateParam(req.swagger.params, 'id', 0))
     .then(result => res.json(Seller.cleanResponse(result, { message: 'Found' })))
