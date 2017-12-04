@@ -134,7 +134,7 @@ Response
 Request
 ```
 GET
-/v1/user/profile/1
+/v1/user/account/1
 ```
 Response
 ```
