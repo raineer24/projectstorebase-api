@@ -18,7 +18,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /User/Profile/{id}:
+  /user/Profile/{id}:
     x-swagger-router-controller: users
     get:
       tags:
@@ -58,7 +58,7 @@ paths:
         #       message:
         #         type: string
         #         example: Not found
-  /User/account/login:
+  /user/account/login:
     x-swagger-router-controller: users
     post:
       tags:
@@ -71,7 +71,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/UserLogin"
+            $ref: "#/definitions/userLogin"
       responses:
         200:
           description: Successful login
@@ -89,7 +89,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /User/account/save:
+  /user/account/save:
     x-swagger-router-controller: users
     post:
       tags:
@@ -102,7 +102,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/UserRegister"
+            $ref: "#/definitions/userRegister"
       responses:
         200:
           description: Successful registration
@@ -120,7 +120,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /User/account/{id}/save:
+  /user/account/{id}/save:
     x-swagger-router-controller: users
     put:
       tags:
@@ -134,7 +134,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/UserRegister"
+            $ref: "#/definitions/userRegister"
       responses:
         200:
           description: Successful update
@@ -152,7 +152,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /Item:
+  /item:
     x-swagger-router-controller: items
     get:
       tags:
@@ -181,13 +181,13 @@ paths:
               data:
                 type: array
                 items:
-                  - $ref: "#/definitions/ItemList"
+                  - $ref: "#/definitions/itemList"
         # responses may fall through to errors
         default:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /Seller/Profile/{id}:
+  /seller/Profile/{id}:
     x-swagger-router-controller: sellers
     get:
       tags:
@@ -227,7 +227,7 @@ paths:
         #       message:
         #         type: string
         #         example: Not found
-  /Seller/account/save:
+  /seller/account/save:
     x-swagger-router-controller: sellers
     post:
       tags:
@@ -240,7 +240,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/UserRegister"
+            $ref: "#/definitions/userRegister"
       responses:
         200:
           description: Successful registration
@@ -258,7 +258,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /Seller/account/{id}/save:
+  /seller/account/{id}/save:
     x-swagger-router-controller: sellers
     post:
       tags:
@@ -272,7 +272,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/UserRegister"
+            $ref: "#/definitions/userRegister"
       responses:
         200:
           description: Successful registration
