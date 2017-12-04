@@ -24,7 +24,7 @@ paths:
       tags:
         - profile
       summary: Return user profile
-      operationId: viewProfile
+      operationId: viewAccount
       parameters:
         - $ref: "#/parameters/id"
       responses:
@@ -193,7 +193,7 @@ paths:
       tags:
         - profile
       summary: Return seller profile
-      operationId: viewProfile
+      operationId: viewAccount
       parameters:
         - $ref: "#/parameters/id"
       responses:
