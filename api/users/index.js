@@ -33,7 +33,8 @@ user.loginAccount = (req, res) => {
 user.registerAccount = (req, res) => {
   User.saveAccount(
     req.swagger.params.body.value.email,
-    req.swagger.params.body.value.password, req.swagger.params.body.value.email,
+    req.swagger.params.body.value.password,
+    req.swagger.params.body.value.email,
     req.swagger.params.body.value.uiid,
   )
     .then(id => res.json({ id, message: 'Saved' }))
