@@ -68,3 +68,13 @@ CREATE TABLE grocerystore.sellerAccount (
 	merchant_id bigint(19) DEFAULT 0,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+/* sellerEntitlement */
+CREATE TABLE grocerystore.sellerEntitlement
+(id BIGINT(50) NOT NULL AUTO_INCREMENT,
+type CHAR(50),
+enabled BIT DEFAULT 1,
+dateCreated BIGINT NOT NULL,
+dateUpdated BIGINT NOT NULL,
+sellerAccount_id BIGINT(50) NOT NULL,
+PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
