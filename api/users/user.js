@@ -74,7 +74,6 @@ User.saveAccount = (username, password, email, uiid) => new BluePromise((resolve
           username,
           password,
           email,
-          dateBirth: 0,
           dateCreated: new Date().getTime(),
           dateUpdated: new Date().getTime(),
           uiid,
