@@ -39,7 +39,7 @@ user.registerAccount = (req, res) => {
   )
     .then(id => res.json({ id, message: 'Saved' }))
     .catch(err => res.status(err === 'Found' ? 201 : 500).json({
-      message: err === 'Found' ? 'Existing' : 'Failed',
+      message: err === 'Found' ? 'Existing' : err,
     }));
 };
 
@@ -53,7 +53,7 @@ user.updateAccount = (req, res) => {
   User.updateAccount(query.validateParam(req.swagger.params, 'id', 0), req.swagger.params.body.value)
     .then(status => res.json({ status, message: 'Updated' }))
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
-      message: err === 'Not Found' ? 'Not found' : 'Failed',
+      message: err === 'Not Found' ? 'Not found' : err,
     }));
 };
 
