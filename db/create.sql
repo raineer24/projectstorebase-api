@@ -12,6 +12,7 @@ email CHAR(100),
 dateCreated BIGINT(50) NOT NULL,
 dateUpdated BIGINT(50) NOT NULL,
 uiid CHAR(150),
+merchant_id BIGINT(50) NOT NULL,
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
 
 /* userProfile */
@@ -32,7 +33,7 @@ phoneMobile CHAR(20),
 phoneHome CHAR(20),
 dateCreated BIGINT(50) NOT NULL,
 dateUpdated BIGINT(50) NOT NULL,
-userAccount_id VARCHAR(50) NOT NULL,
+userAccount_id BIGINT(50) NOT NULL,
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
 
 /* userEntitlement */
@@ -46,14 +47,24 @@ dateUpdated BIGINT NOT NULL,
 userAccount_id BIGINT(50) NOT NULL,
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
 
-
-/* sellerAccount */
-CREATE TABLE grocerystore.sellerAccount
+/* merchantAccount */
+CREATE TABLE grocerystore.merchantAccount
 (id BIGINT(50) NOT NULL AUTO_INCREMENT,
-username CHAR(60) NOT NULL,
-password VARCHAR(250) NOT NULL,
-email CHAR(100),
-name VARCHAR(250) NOT NULL,
+name VARCHAR(250),
 dateCreated BIGINT(50) NOT NULL,
 dateUpdated BIGINT(50) NOT NULL,
+enabled BIT(1) DEFAULT 1,
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
+
+/* sellerAccount */
+CREATE TABLE grocerystore.sellerAccount (
+	id bigint(19) NOT NULL auto_increment,
+	username char(60) NOT NULL,
+	password varchar(250) NOT NULL,
+	email char(100) DEFAULT 'NULL',
+	name varchar(250) NOT NULL,
+	dateCreated bigint(19) NOT NULL,
+	dateUpdated bigint(19) NOT NULL,
+	merchant_id bigint(19) DEFAULT 0,
+	PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
