@@ -4,10 +4,18 @@ const Util = require('../helpers/util');
 // const log = require('color-logs')(true, true, __filename);
 const lodash = require('lodash');
 
-const User = {
-  tableName: 'userAccount',
-};
-const userAccountConn = BluePromise.promisifyAll(new Conn({ tableName: User.tableName }));
+let that;
+
+function User(user) {
+  this.model = lodash.extend(user, {
+    dateCreated: new Date().getTime(),
+    dateUpdated: new Date().getTime(),
+  });
+  this.table = 'userAccount';
+  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+
+  that = this;
+}
 
 /**
   * User authentication of username and password
@@ -15,8 +23,8 @@ const userAccountConn = BluePromise.promisifyAll(new Conn({ tableName: User.tabl
   * @param {string} password
   * @return {object}
 */
-User.authenticate = (username, password, uiid) => new BluePromise((resolve, reject) => {
-  User.getByUser(username, password, uiid)
+User.prototype.authenticate = (username, password, uiid) => new BluePromise((resolve, reject) => {
+  that.getByUser(username, password, uiid)
     .then((results) => {
       if (results.length === 0) {
         reject('Not found');
@@ -39,7 +47,7 @@ User.authenticate = (username, password, uiid) => new BluePromise((resolve, reje
   * @param {object} userAuth
   * @return {object}
 */
-User.authorize = userAuth => new BluePromise((resolve, reject) => {
+User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
   if (!userAuth) {
     reject(null);
     return;
@@ -63,22 +71,13 @@ User.authorize = userAuth => new BluePromise((resolve, reject) => {
   * @param {string} uiid
   * @return {object}
 */
-User.saveAccount = (username, password, email, uiid) => new BluePromise((resolve, reject) => {
-  User.getByValue(username, 'username')
+User.prototype.saveAccount = () => new BluePromise((resolve, reject) => {
+  that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (results.length === 0) {
-        const UserAccountModel = Conn.extend({
-          tableName: User.tableName,
-        });
-        const userAccount = BluePromise.promisifyAll(new UserAccountModel({
-          username,
-          password,
-          email,
-          dateCreated: new Date().getTime(),
-          dateUpdated: new Date().getTime(),
-          uiid,
-        }));
-        userAccount.saveAsync()
+        const DbModel = Conn.extend({ tableName: that.table });
+        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
+        that.dbConn.saveAsync()
           .then((response) => {
             resolve(response.insertId);
           })
@@ -94,18 +93,16 @@ User.saveAccount = (username, password, email, uiid) => new BluePromise((resolve
     });
 });
 
-User.updateAccount = (id, record) => new BluePromise((resolve, reject) => {
+User.prototype.updateAccount = id => new BluePromise((resolve, reject) => {
   User.getById(id)
     .then((results) => {
       if (!results.id) {
         reject('Not Found');
       } else {
-        const UserAccountModel = Conn.extend({
-          tableName: User.tableName,
-        });
-        const userAccount = BluePromise.promisifyAll(new UserAccountModel(record));
-        userAccount.setAsync('id', id);
-        userAccount.saveAsync()
+        const DbModel = Conn.extend({ tableName: that.table });
+        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
+        that.dbConn.setAsync('id', that.model.id);
+        that.dbConn.saveAsync()
           .then((response) => {
             resolve(response.message);
           })
@@ -125,7 +122,7 @@ User.updateAccount = (id, record) => new BluePromise((resolve, reject) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-User.getByValue = (value, field) => userAccountConn.findAsync('all', { where: `${field} = '${value}'` });
+User.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
 
 /**
   * Get userAccount by username and password
@@ -133,14 +130,14 @@ User.getByValue = (value, field) => userAccountConn.findAsync('all', { where: `$
   * @param {string} password
   * @return {object<Promise>}
 */
-User.getByUser = (username, password, uiid) => userAccountConn.findAsync('all', { where: `username = '${username}' AND ${!uiid ? `password = '${password}'` : `uiid = '${uiid}'`}` });
+User.prototype.getByUser = (username, password, uiid) => that.dbConn.findAsync('all', { where: `username = '${username}' AND ${!uiid ? `password = '${password}'` : `uiid = '${uiid}'`}` });
 
 /**
   * Get userAccount by id
   * @param {integer} id
   * @return {object<Promise>}
 */
-User.getById = id => userAccountConn.readAsync(id);
+User.prototype.getById = id => that.dbConn.readAsync(id);
 
 /**
   * Format response object and/or append additional object properties
@@ -148,7 +145,7 @@ User.getById = id => userAccountConn.readAsync(id);
   * @param {object} properties
   * @return {object}
 */
-User.cleanResponse = (object, properties) => {
+User.prototype.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
   lodash.merge(object, properties);
