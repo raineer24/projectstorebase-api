@@ -187,7 +187,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /seller/profile/{id}/view:
+  /seller/account/{id}/view:
     x-swagger-router-controller: sellers
     get:
       tags:
