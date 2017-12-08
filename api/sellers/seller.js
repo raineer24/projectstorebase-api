@@ -52,15 +52,23 @@ Seller.prototype.create = () => new BluePromise((resolve, reject) => {
   * Update Seller account
   * @return {object}
 */
-Seller.prototype.update = () => new BluePromise((resolve, reject) => {
-  that.getById(that.model.id)
+Seller.prototype.update = id => new BluePromise((resolve, reject) => {
+  delete that.model.username;
+  if (!that.model.password || !that.model.newPassword) {
+    delete that.model.password;
+  } else {
+    delete that.model.newPassword;
+  }
+  that.model.dateUpdated = new Date().getTime();
+  that.getById(id)
     .then((results) => {
       if (!results.id) {
         reject('Not Found');
       } else {
         const DbModel = Conn.extend({ tableName: that.table });
         that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.setAsync('id', that.model.id);
+        that.model = lodash.merge(results, that.model);
+        that.dbConn.setAsync('id', id);
         that.dbConn.saveAsync()
           .then((response) => {
             resolve(response.message);
