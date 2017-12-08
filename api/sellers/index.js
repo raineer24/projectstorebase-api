@@ -12,12 +12,7 @@ const seller = {};
 * @return {Object}
 */
 seller.registerAccount = (req, res) => {
-  const objSeller = new Seller({
-    username: req.swagger.params.body.value.email,
-    password: req.swagger.params.body.value.password,
-    email: req.swagger.params.body.value.email,
-    name: req.swagger.params.body.value.name,
-  });
+  const objSeller = new Seller(req.swagger.params.body.value);
   objSeller.create()
     .then(id => res.json({ id, message: 'Saved' }))
     .catch(err => res.status(err === 'Found' ? 201 : 500).json({
@@ -32,14 +27,8 @@ seller.registerAccount = (req, res) => {
 * @return {Object}
 */
 seller.updateAccount = (req, res) => {
-  const objSeller = new Seller({
-    id: query.validateParam(req.swagger.params, 'id', 0),
-    username: req.swagger.params.body.value.email,
-    password: req.swagger.params.body.value.password,
-    email: req.swagger.params.body.value.email,
-    name: req.swagger.params.body.value.name,
-  });
-  objSeller.update()
+  const objSeller = new Seller(req.swagger.params.body.value);
+  objSeller.update(query.validateParam(req.swagger.params, 'id', 0))
     .then(status => res.json({ status, message: 'Updated' }))
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
       message: err === 'Not Found' ? 'Not found' : 'Failed',
