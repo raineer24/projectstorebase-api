@@ -23,8 +23,8 @@ function User(user) {
   * @param {string} password
   * @return {object}
 */
-User.prototype.authenticate = (username, password, uiid) => new BluePromise((resolve, reject) => {
-  that.getByUser(username, password, uiid)
+User.prototype.authenticate = () => new BluePromise((resolve, reject) => {
+  that.getByUser(that.model.username, that.model.password, that.model.uiid)
     .then((results) => {
       if (results.length === 0) {
         reject('Not found');
@@ -71,7 +71,7 @@ User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
   * @param {string} uiid
   * @return {object}
 */
-User.prototype.saveAccount = () => new BluePromise((resolve, reject) => {
+User.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (results.length === 0) {
@@ -93,15 +93,23 @@ User.prototype.saveAccount = () => new BluePromise((resolve, reject) => {
     });
 });
 
-User.prototype.updateAccount = id => new BluePromise((resolve, reject) => {
-  User.getById(id)
+User.prototype.update = id => new BluePromise((resolve, reject) => {
+  delete that.model.username;
+  if (!that.model.password || !that.model.newPassword) {
+    delete that.model.password;
+  } else {
+    delete that.model.newPassword;
+  }
+  that.model.dateUpdated = new Date().getTime();
+  that.getById(id)
     .then((results) => {
       if (!results.id) {
         reject('Not Found');
       } else {
         const DbModel = Conn.extend({ tableName: that.table });
         that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.setAsync('id', that.model.id);
+        that.model = lodash.merge(results, that.model);
+        that.dbConn.setAsync('id', id);
         that.dbConn.saveAsync()
           .then((response) => {
             resolve(response.message);
