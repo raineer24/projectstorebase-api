@@ -314,27 +314,19 @@ definitions:
     type: object
     required:
       - username
-      - password
     properties:
       username:
         type: string
         description: user e-mail
-      password:
-        type: string
-        description: user password
   UserRegister:
     title: UserRegister
     type: object
     required:
       - email
-      - password
     properties:
       email:
         type: string
         description: user e-mail
-      password:
-        type: string
-        description: user password
 parameters:
   # username:
   #   in: path
