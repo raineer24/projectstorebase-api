@@ -74,6 +74,13 @@ User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
 User.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
+      if (that.model.password === undefined) {
+        that.model.password = '';
+      }
+      if (that.model.uiid === undefined) {
+        that.model.uiid = '';
+      }
+      // TODO: Add validation
       if (results.length === 0) {
         const DbModel = Conn.extend({ tableName: that.table });
         that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
