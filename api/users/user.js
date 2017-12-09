@@ -74,18 +74,23 @@ User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
 User.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
-      if (results.length === 0) {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
-          .then((response) => {
-            resolve(response.insertId);
-          })
-          .catch((err) => {
-            reject(err);
-          });
+      if (!that.model.password && that.model.uiid) {
+        that.model.password = '';
+        if (results.length === 0) {
+          const DbModel = Conn.extend({ tableName: that.table });
+          that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
+          that.dbConn.saveAsync()
+            .then((response) => {
+              resolve(response.insertId);
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          reject('Found');
+        }
       } else {
-        reject('Found');
+        reject('Invalid');
       }
     })
     .catch((err) => {
