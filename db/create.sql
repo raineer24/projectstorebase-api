@@ -84,6 +84,8 @@ PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
 CREATE TABLE grocerystore.category
 (id BIGINT(50) NOT NULL AUTO_INCREMENT,
 name CHAR(60) NOT NULL,
+level CHAR(1) NOT NULL,
+category_id BIGINT(50) NOT NULL,
 enabled BIT DEFAULT 1,
 dateCreated BIGINT(50) NOT NULL,
 dateUpdated BIGINT(50) NOT NULL,
@@ -92,9 +94,19 @@ PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
 /* item */
 CREATE TABLE grocerystore.item
 (id BIGINT(50) NOT NULL AUTO_INCREMENT,
+code SMALLINT(10) NOT NULL,
 name VARCHAR(300) NOT NULL,
+brandName VARCHAR(50) NOT NULL,
 price CHAR(30) NOT NULL,
 displayPrice CHAR(30) NOT NULL,
+hasVat BIT DEFAULT 1,
+isSenior BIT DEFAULT 1,
+weighted BIT DEFAULT 1,
+packaging VARCHAR(20) NOT NULL,
+packageMeasurement SMALLINT(5) NOT NULL,
+sizing CHAR(6) NOT NULL,
+pacakgeMinimum FLOAT,
+packageIntervals FLOAT,
 availableOn BIGINT(50) NOT NULL,
 slug TINYTEXT NOT NULL,
 enabled BIT DEFAULT 1,
