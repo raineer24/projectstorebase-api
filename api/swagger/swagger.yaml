@@ -187,6 +187,35 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+    post:
+      tags:
+        - item
+      summary: create an item
+      operationId: addItem
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/ItemCreate"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /seller/account/{id}/view:
     x-swagger-router-controller: sellers
     get:
@@ -327,6 +356,19 @@ definitions:
       email:
         type: string
         description: user e-mail
+  ItemCreate:
+    title: ItemCreate
+    type: object
+    required:
+      - name
+      - code
+    properties:
+      name:
+        type: string
+        description: item name
+      code:
+        type: number
+        description: item specific code
 parameters:
   # username:
   #   in: path
