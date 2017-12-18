@@ -19,16 +19,14 @@
 -- Table structure for table `category`
 --
 
--- DROP DATABASE IF EXISTS `grocerystore`;
---
--- CREATE DATABASE `grocerystore`;
-
 DROP TABLE IF EXISTS `category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `category` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `name` char(60) NOT NULL,
+  `level` char(1) NOT NULL,
+  `category_id` bigint(50) NOT NULL,
   `enabled` bit(1) DEFAULT b'1',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
@@ -406,4 +404,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-18 14:10:32
+-- Dump completed on 2017-12-18 14:58:08
