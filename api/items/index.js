@@ -18,7 +18,7 @@ item.listAllItems = (req, res) => {
 item.addItem = (req, res) => {
   const objItem = new Item(req.swagger.params.body.value);
   objItem.create()
-    .then(id => res.json({ id, message: 'Created' }))
+    .then(id => res.json({ id, message: 'Existing' }))
     .catch(err => res.status(err === 'Found' ? 201 : 500).json({
       message: err === 'Found' ? 'Existing' : 'Failed',
     }));
