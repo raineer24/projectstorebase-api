@@ -1,4 +1,29 @@
 const query = {};
+const sql = require('sql');
+
+// function formatFields(table, fields) {
+//   if (!null && !Array.isArray(fields)) {
+//     return `${table}.${fields.join(`,${table}.`)}`;
+//   }
+//   return '*';
+// }
+
+query.composeQuery = (table, fields, filters, limit, offset) => {
+  sql.setDialect('mysql');
+  const dbTable = sql.define({
+    name: table,
+    columns: fields,
+  });
+  const sqlQuery = dbTable
+    .select(dbTable.star())
+    .from(dbTable)
+    .limit(limit)
+    .offset(offset)
+    .toQuery();
+
+  // TODO: Compose WHERE condition
+  return sqlQuery.text;
+};
 
 query.validateParam = (reqParams, name, defaultValue) => {
   if (typeof defaultValue === 'number') {
