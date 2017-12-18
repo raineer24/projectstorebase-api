@@ -35,6 +35,11 @@ gulp.task('lint', () => {
     .pipe($.eslint.failAfterError());
 });
 
+gulp.task('db-create', $.shell.task([
+  'mysql -u root -h localhost -e "DROP DATABASE IF EXISTS grocerystore;CREATE DATABASE grocerystore;"',
+  'mysql -u root -h localhost grocerystore < db/local.sql',
+]));
+
 gulp.task('unit-test', ['lint'], (done) => {
   log('Running unit test');
   gulp
@@ -81,7 +86,7 @@ function serve(isDev) {
   if (isDev) {
     $.nodemon({
       script: 'app.js',
-      tasks: ['lint'],
+      tasks: ['lint', 'db-create'],
     });
   } else {
     $.nodemon({
@@ -95,6 +100,6 @@ gulp.task('watcher', () => {
 });
 
 gulp.task('test', ['unit-test'], () => { });
-gulp.task('develop', [], () => { serve(true); });
+gulp.task('develop', ['db-create'], () => { serve(true); });
 gulp.task('default', ['help'], () => { });
 gulp.task('production', () => { serve(false); });

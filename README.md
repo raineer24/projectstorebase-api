@@ -53,6 +53,11 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
+**Run**
+```
+gulp develop
+```
+
 **API calls**
 
 **Login**
@@ -147,5 +152,65 @@ Response
   "dateUpdated": 1511635130349,
   "uiid": "",
   "message": "Found"
+}
+```
+
+**List item**
+
+Request
+```
+GET
+/v1/item?offset=0&limit=10
+```
+Response
+```
+{
+  "list": [
+    {
+      "id": 1,
+      "code": 122,
+      "name": "Mocha Latte",
+      "brandName": "Coffee Bean Mocha Latte",
+      "price": "150",
+      "displayPrice": "150",
+      "hasVat": 1,
+      "isSenior": 1,
+      "weighted": 1,
+      "packaging": "170",
+      "packageMeasurement": 170,
+      "sizing": "Medium",
+      "pacakgeMinimum": 1000,
+      "packageIntervals": 200,
+      "availableOn": 1513574267766,
+      "slug": "coffee-bean-mocha-latte-medium",
+      "enabled": 1,
+      "sellerAccount_id": 1,
+      "dateCreated": 1513576400173,
+      "dateUpdated": 1513576400173
+    },
+    {
+      "id": 2,
+      "code": 123,
+      "name": "Mocha Latte",
+      "brandName": "Coffee Bean Mocha Latte",
+      "price": "170",
+      "displayPrice": "170",
+      "hasVat": 1,
+      "isSenior": 1,
+      "weighted": 1,
+      "packaging": "170",
+      "packageMeasurement": 170,
+      "sizing": "Large",
+      "pacakgeMinimum": 1000,
+      "packageIntervals": 200,
+      "availableOn": 1513574267766,
+      "slug": "coffee-bean-mocha-latte-large",
+      "enabled": 1,
+      "sellerAccount_id": 1,
+      "dateCreated": 1513576486490,
+      "dateUpdated": 1513576486490
+    }
+  ],
+  "message": 2
 }
 ```

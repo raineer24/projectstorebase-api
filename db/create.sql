@@ -110,9 +110,10 @@ packageIntervals FLOAT,
 availableOn BIGINT(50) NOT NULL,
 slug TINYTEXT NOT NULL,
 enabled BIT DEFAULT 1,
+sellerAccount_id BIGINT(50) NOT NULL,
 dateCreated BIGINT(50) NOT NULL,
 dateUpdated BIGINT(50) NOT NULL,
-PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
+PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 
 /* itemTag */
 CREATE TABLE grocerystore.itemTag
