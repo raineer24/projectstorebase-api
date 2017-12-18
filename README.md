@@ -53,6 +53,11 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
+**Run**
+```
+gulp develop
+```
+
 **API calls**
 
 **Login**

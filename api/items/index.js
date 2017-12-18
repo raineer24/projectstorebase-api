@@ -9,7 +9,7 @@ const item = {};
 item.listAllItems = (req, res) => {
   const objItem = new Item({});
   objItem.findAll(query.validateParam(req.swagger.params, 'offset', 0), query.validateParam(req.swagger.params, 'limit', 10), [])
-    .then(result => res.json({ list: result, message: 'Updated' }))
+    .then(result => res.json({ list: result, message: result.length ? result.length : 0 }))
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
       message: err === 'Not Found' ? 'Not found' : err,
     }));
