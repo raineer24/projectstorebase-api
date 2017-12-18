@@ -1,22 +1,20 @@
-const BluePromise = require('bluebird');
-// const _ = require('underscore');
-const connection = require('../../service/connection');
+// const BluePromise = require('bluebird');
+// // const _ = require('underscore');
+// const connection = require('../../service/connection');
 // const query = require('../../service/query');
 const Item = require('./item');
 
-const items = BluePromise.promisifyAll(connection.use('item'));
+const item = {};
 
-const Items = {
-  listAllItems(req, res) {
-    // let skip = query.validateParam(req.swagger.params, 'skip', 0);
-    // let limit = query.validateParam(req.swagger.params, 'limit', 20);
-    // let order = query.validateParam(req.swagger.params, 'order', 'asc');
-    // let orderBy = query.validateParam(req.swagger.params, 'orderBy', '');
-
-    res.json({
-      message: Item.getAllView(items, null),
-    });
-  },
-
+item.listAllItems = (req, res) => {
+  const objItem = new Item({
+    id: 1,
+  });
+  objItem.findAll(0, 10, [])
+    .then(result => res.json({ list: result, message: 'Updated' }))
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
+      message: err === 'Not Found' ? 'Not found' : err,
+    }));
 };
-module.exports = Items;
+
+module.exports = item;
