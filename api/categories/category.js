@@ -37,20 +37,20 @@ Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) =
   };
   that.findAll(0, 5000)
     .then((results) => {
-      if (results.length === 0) {
+      if (results.length > 0) {
         lodash.forEach(results, (value) => {
-          if (value.level === 1) {
+          if (parseInt(value.level, 10) === 1) {
             structured.categories[`cat-${value.id}`] = {
               id: value.id,
               name: value.name,
             };
-          } else if (value.level === 2) {
+          } else if (parseInt(value.level, 10) === 2) {
             structured.subCategories[`subCat-${value.id}`] = {
               id: value.id,
               name: value.name,
             };
           } else {
-            structured.subCategories[`subCat-${value.id}`][`subFilter-${value.category_id}`] = {
+            structured.subCategories[`subCat-${value.category_id}`][`subFilter-${value.id}`] = {
               id: value.id,
               name: value.name,
             };
