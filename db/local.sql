@@ -69,6 +69,9 @@ CREATE TABLE `item` (
   `availableOn` bigint(50) NOT NULL,
   `slug` tinytext NOT NULL,
   `enabled` bit(1) DEFAULT b'1',
+  `category1` bigint(50) NOT NULL,
+  `category2` bigint(50) NOT NULL,
+  `category3` bigint(50) NOT NULL,
   `sellerAccount_id` bigint(50) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
@@ -82,7 +85,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,122,'Mocha Latte','Coffee Bean Mocha Latte','150','150','','','','170',170,'Medium',1000,200,1513574267766,'coffee-bean-mocha-latte-medium','',1,1513576400173,1513576400173),(2,123,'Mocha Latte','Coffee Bean Mocha Latte','170','170','','','','170',170,'Large',1000,200,1513574267766,'coffee-bean-mocha-latte-large','',1,1513576486490,1513576486490);
+INSERT INTO `item` VALUES (1,122,'Mocha Latte','Coffee Bean Mocha Latte','150','150','','','','170',170,'Medium',1000,200,1513574267766,'coffee-bean-mocha-latte-medium','',1,2,3,1,1513576400173,1513576400173),(2,123,'Mocha Latte','Coffee Bean Mocha Latte','170','170','','','','170',170,'Large',1000,200,1513574267766,'coffee-bean-mocha-latte-large','',1,2,3,1,1513576486490,1513576486490);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -405,4 +408,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-19 13:25:58
+-- Dump completed on 2017-12-19 14:01:39
