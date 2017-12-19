@@ -31,7 +31,7 @@ CREATE TABLE `category` (
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,6 +40,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` VALUES (1,'Fresh Deals','1',0,'',1513659772954,1513659772954),(2,'Perishables','1',0,'',1513659780369,1513659780369),(3,'Grocery','1',0,'',1513659789707,1513659789707),(4,'Household','1',0,'',1513659795129,1513659795129),(5,'Health and Beauty','1',0,'',1513659804473,1513659804473),(6,'Specialty Goods','1',0,'',1513659813072,1513659813072),(7,'Bakery','1',0,'',1513659818564,1513659818564),(8,'Pharmacy','1',0,'',1513659824798,1513659824798);
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -404,4 +405,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-18 14:58:08
+-- Dump completed on 2017-12-19 13:03:55
