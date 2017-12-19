@@ -216,6 +216,61 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /category/list:
+    x-swagger-router-controller: categories
+    get:
+      tags:
+        - category
+      summary: Returns structured categories
+      # used as the method name of the controller
+      operationId: listAllCategories
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              categories:
+                type: object
+                example: {}
+              subCategories:
+                type: object
+                example: {}
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /category:
+    x-swagger-router-controller: categories
+    post:
+      tags:
+        - category
+      summary: create a category
+      operationId: addCategory
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/CategoryCreate"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /seller/account/{id}/view:
     x-swagger-router-controller: sellers
     get:
@@ -369,6 +424,19 @@ definitions:
       code:
         type: number
         description: item specific code
+  CategoryCreate:
+    title: CategoryCreate
+    type: object
+    required:
+      - name
+      - level
+    properties:
+      name:
+        type: string
+        description: category name
+      level:
+        type: number
+        description: category level
 parameters:
   # username:
   #   in: path
