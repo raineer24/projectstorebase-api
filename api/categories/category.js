@@ -1,5 +1,5 @@
 const BluePromise = require('bluebird');
-const lodash = require('lodash');
+const _ = require('lodash');
 const Conn = require('../../service/connection');
 const Query = require('../../service/query');
 // const Util = require('../helpers/util');
@@ -12,7 +12,7 @@ let that;
   * @return {object}
 */
 function Category(category) {
-  this.model = lodash.extend(category, {
+  this.model = _.extend(category, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
@@ -32,29 +32,21 @@ Category.prototype.findAll = (offset, limit) => that.dbConn.queryAsync(Query.com
 
 Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) => {
   const structured = {
-    categories: {},
-    subCategories: {},
+    categories: [],
+    subCategories: [],
   };
   that.findAll(0, 5000)
     .then((results) => {
       if (results.length > 0) {
-        lodash.forEach(results, (value) => {
-          if (parseInt(value.level, 10) === 1) {
-            structured.categories[`cat-${value.id}`] = {
-              id: value.id,
-              name: value.name,
-            };
-          } else if (parseInt(value.level, 10) === 2) {
-            structured.subCategories[`subCat-${value.id}`] = {
-              id: value.id,
-              name: value.name,
-            };
-          } else {
-            structured.subCategories[`subCat-${value.category_id}`][`subFilter-${value.id}`] = {
-              id: value.id,
-              name: value.name,
-            };
-          }
+        structured.categories = _.filter(results, { category_id: 0 });
+        _.forEach(structured.categories, (value, key) => {
+          structured.categories[key].subCategories = _.filter(results, {
+            category_id: value.id,
+          });
+          _.forEach(structured.categories[key].subCategories, (subValue, subKey) => {
+            structured.categories[key].subCategories[subKey].subCategories
+            = _.filter(results, { category_id: subValue.id });
+          });
         });
         resolve(structured);
       } else {
