@@ -47,11 +47,13 @@ Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) =
           } else if (parseInt(value.level, 10) === 2) {
             structured.subCategories[`subCat-${value.id}`] = {
               id: value.id,
+              parent: value.category_id,
               name: value.name,
             };
           } else {
             structured.subCategories[`subCat-${value.category_id}`][`subFilter-${value.id}`] = {
               id: value.id,
+              parent: value.category_id,
               name: value.name,
             };
           }
