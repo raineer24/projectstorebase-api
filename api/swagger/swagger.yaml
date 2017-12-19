@@ -216,7 +216,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /category:
+  /category/list:
     x-swagger-router-controller: categories
     get:
       tags:
@@ -240,6 +240,8 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /category:
+    x-swagger-router-controller: categories
     post:
       tags:
         - category
