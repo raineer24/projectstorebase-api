@@ -155,6 +155,42 @@ Response
 }
 ```
 
+**Categories**
+
+Request
+```
+GET
+/v1/category/list
+```
+Response
+```
+{
+  "categories": {
+    "cat-1": {
+      "id": 1,
+    "name": "Fresh Deals"
+    },
+    "cat-2": {
+      "id": 2,
+      "name": "Perishables"
+    },
+    "cat-3": {
+      "id": 3,
+      "name": "Grocery"
+    },
+    ...
+  "subCategories": {
+    "subCat-9": {
+      "id": 9,
+      "name": "Organic fruits",
+    "subFilter-26": {
+      "id": 26,
+      "name": "Busy Organic Apple"
+    },
+    "subFilter-27":
+    ...
+```
+
 **List item**
 
 Request
