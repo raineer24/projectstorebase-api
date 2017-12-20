@@ -8,7 +8,13 @@ const item = {};
 
 item.listItems = (req, res) => {
   const objItem = new Item({});
-  objItem.findAll(query.validateParam(req.swagger.params, 'offset', 0), query.validateParam(req.swagger.params, 'limit', 10), [])
+
+  objItem.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+    keyword: query.validateParam(req.swagger.params, 'keyword', ''),
+    category1: query.validateParam(req.swagger.params, 'category1', ''),
+    category2: query.validateParam(req.swagger.params, 'category2', ''),
+    category3: query.validateParam(req.swagger.params, 'category3', ''),
+  })
     .then(result => res.json({ list: result, message: result.length ? result.length : 0 }))
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
       message: err === 'Not Found' ? 'Not found' : err,
