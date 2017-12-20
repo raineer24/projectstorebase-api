@@ -3,7 +3,7 @@
 // const connection = require('../../service/connection');
 const query = require('../../service/query');
 const Item = require('./item');
-const log = require('color-logs')(true, true, '');
+// const log = require('color-logs')(true, true, '');
 
 const item = {};
 
