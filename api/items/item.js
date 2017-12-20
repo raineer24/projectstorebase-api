@@ -28,7 +28,7 @@ function Item(item) {
   * @param {string} offset
   * @return {object}
 */
-Item.prototype.findAll = (offset, limit) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'name'], null, limit, offset));
+Item.prototype.findAll = (skip, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'name', 'category2', 'category3'], filters, limit, skip));
 
 /**
   * create
