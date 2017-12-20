@@ -1,5 +1,6 @@
 const query = {};
 const sql = require('sql');
+const log = require('color-logs')(true, true, '');
 
 // function formatFields(table, fields) {
 //   if (!null && !Array.isArray(fields)) {
@@ -8,21 +9,34 @@ const sql = require('sql');
 //   return '*';
 // }
 
-query.composeQuery = (table, fields, filters, limit, offset) => {
+query.composeQuery = (table, fields, filters, limit, skip) => {
   sql.setDialect('mysql');
   const dbTable = sql.define({
     name: table,
     columns: fields,
   });
+  let strSql;
+
   const sqlQuery = dbTable
     .select(dbTable.star())
     .from(dbTable)
     .limit(limit)
-    .offset(offset)
+    .offset(skip)
     .toQuery();
+  strSql = sqlQuery;
 
-  // TODO: Compose WHERE condition
-  return sqlQuery.text;
+  if (filters.keyword) {
+    strSql = `SELECT * FROM ${table} WHERE ${table}.name LIKE '%${filters.keyword}%' LIMIT ${skip}, ${limit};`;
+  } else if (filters.category2 && filters.category3) {
+    strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} OR ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
+  } else if (filters.category2) {
+    strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} LIMIT ${skip}, ${limit};`;
+  } else if (filters.category3) {
+    strSql = `SELECT * FROM ${table} WHERE ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
+  }
+  log.info(strSql);
+
+  return strSql;
 };
 
 query.validateParam = (reqParams, name, defaultValue) => {
