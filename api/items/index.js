@@ -6,7 +6,7 @@ const Item = require('./item');
 
 const item = {};
 
-item.listAllItems = (req, res) => {
+item.listItems = (req, res) => {
   const objItem = new Item({});
   objItem.findAll(query.validateParam(req.swagger.params, 'offset', 0), query.validateParam(req.swagger.params, 'limit', 10), [])
     .then(result => res.json({ list: result, message: result.length ? result.length : 0 }))
