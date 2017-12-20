@@ -159,9 +159,12 @@ paths:
         - item
       summary: Returns 'List of items
       # used as the method name of the controller
-      operationId: listAllItems
+      operationId: listItems
       parameters:
-        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/keyword"
+        - $ref: "#/parameters/category1"
+        - $ref: "#/parameters/category2"
+        - $ref: "#/parameters/category3"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/order"
         - $ref: "#/parameters/orderBy"
@@ -448,6 +451,26 @@ parameters:
     name: id
     type: string
     required: true
+  keyword:
+    in: query
+    name: keyword
+    type: string
+    required: false
+  category1:
+    in: query
+    name: category1
+    type: number
+    required: false
+  category2:
+    in: query
+    name: category2
+    type: number
+    required: false
+  category3:
+    in: query
+    name: category3
+    type: number
+    required: false
   limit:
     in: query
     name: limit
