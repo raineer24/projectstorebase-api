@@ -250,3 +250,22 @@ Response
   "message": 2
 }
 ```
+**Preview item**
+
+Request
+```
+GET
+/v1/item/1
+```
+Response
+```
+{
+  "id": 1,
+  "code": 122,
+  "name": "Mocha Latte",
+  "brandName": "Coffee Bean Mocha Latte",
+  "price": "150",
+  "displayPrice": "150",
+...
+}
+```
