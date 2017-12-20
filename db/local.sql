@@ -85,7 +85,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,122,'Mocha Latte','Coffee Bean Mocha Latte','150','150','','','','170',170,'Medium',1000,200,1513574267766,'coffee-bean-mocha-latte-medium','',1,2,3,1,1513576400173,1513576400173),(2,123,'Mocha Latte','Coffee Bean Mocha Latte','170','170','','','','170',170,'Large',1000,200,1513574267766,'coffee-bean-mocha-latte-large','',1,2,3,1,1513576486490,1513576486490);
+INSERT INTO `item` VALUES (1,122,'Mocha Latte','Coffee Bean Mocha Latte','150','150','','','','170',170,'Medium',1000,200,1513574267766,'coffee-bean-mocha-latte-medium','',1,2,3,1,1513576400173,1513576400173),(2,123,'Large Mocha','Coffee Bean Mocha Latte','170','170','','','','170',170,'Large',1000,200,1513574267766,'coffee-bean-mocha-latte-large','',1,2,4,1,1513576486490,1513576486490);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -408,4 +408,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-19 14:01:39
+-- Dump completed on 2017-12-21  0:24:26

@@ -165,6 +165,7 @@ paths:
         - $ref: "#/parameters/category1"
         - $ref: "#/parameters/category2"
         - $ref: "#/parameters/category3"
+        - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/order"
         - $ref: "#/parameters/orderBy"
