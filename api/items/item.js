@@ -31,6 +31,14 @@ function Item(item) {
 Item.prototype.findAll = (skip, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'name', 'category2', 'category3'], filters, limit, skip));
 
 /**
+  * findByID
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Item.prototype.findById = id => that.dbConn.readAsync(id);
+
+/**
   * create
   * @return {object/number}
 */
