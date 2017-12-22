@@ -25,14 +25,16 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
     .toQuery();
   strSql = sqlQuery.text;
 
-  if (filters.keyword) {
-    strSql = `SELECT * FROM ${table} WHERE ${table}.name LIKE '%${filters.keyword}%' LIMIT ${skip}, ${limit};`;
-  } else if (filters.category2 && filters.category3) {
-    strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} OR ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
-  } else if (filters.category2) {
-    strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} LIMIT ${skip}, ${limit};`;
-  } else if (filters.category3) {
-    strSql = `SELECT * FROM ${table} WHERE ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
+  if (filters) {
+    if (filters.keyword) {
+      strSql = `SELECT * FROM ${table} WHERE ${table}.name LIKE '%${filters.keyword}%' LIMIT ${skip}, ${limit};`;
+    } else if (filters.category2 && filters.category3) {
+      strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} OR ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
+    } else if (filters.category2) {
+      strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} LIMIT ${skip}, ${limit};`;
+    } else if (filters.category3) {
+      strSql = `SELECT * FROM ${table} WHERE ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
+    }
   }
   log.info(strSql);
 
