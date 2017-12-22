@@ -23,7 +23,7 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
     .limit(limit)
     .offset(skip)
     .toQuery();
-  strSql = sqlQuery;
+  strSql = sqlQuery.text;
 
   if (filters.keyword) {
     strSql = `SELECT * FROM ${table} WHERE ${table}.name LIKE '%${filters.keyword}%' LIMIT ${skip}, ${limit};`;
