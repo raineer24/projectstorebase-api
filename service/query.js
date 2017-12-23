@@ -30,6 +30,8 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
       strSql = `SELECT * FROM ${table} WHERE ${table}.name LIKE '%${filters.keyword}%' LIMIT ${skip}, ${limit};`;
     } else if (filters.category2 && filters.category3) {
       strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} OR ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
+    } else if (filters.category1) {
+      strSql = `SELECT * FROM ${table} WHERE ${table}.category1 = ${filters.category1} LIMIT ${skip}, ${limit};`;
     } else if (filters.category2) {
       strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} LIMIT ${skip}, ${limit};`;
     } else if (filters.category3) {
