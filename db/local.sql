@@ -206,7 +206,7 @@ CREATE TABLE `orderItem` (
   `dateUpdated` bigint(50) NOT NULL,
   `user_id` bigint(50) NOT NULL,
   `item_id` bigint(50) NOT NULL,
-  `processed` CHAR(1) DEFAULT `0`,
+  `processed` CHAR(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
