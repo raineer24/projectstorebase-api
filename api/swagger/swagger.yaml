@@ -52,7 +52,7 @@ paths:
                 type: string
                 example: East Cost Drive
         # 404:
-        #   description: Profile not found
+        #   description: ofile not found
         #   schema:
         #     properties:
         #       message:
@@ -144,6 +144,92 @@ paths:
               username:
                 type: string
                 example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /order/item/{id}:
+    x-swagger-router-controller: order
+    post:
+      tags:
+        - order
+      summary: Add an item to the order
+      operationId: addOrderItem
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderItem"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    put:
+      tags:
+        - order
+      summary: Update item count to the order
+      operationId: updateOrderItem
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderItem"
+      responses:
+        200:
+          description: Successful updated item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    delete:
+      tags:
+        - order
+      summary: Add an item to the order
+      operationId: removeOrderItem
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
         403:
           description: Unauthorized
           schema:
@@ -451,6 +537,23 @@ definitions:
       code:
         type: number
         description: item specific code
+  OrderItem:
+    title: ItemOrder
+    type: object
+    required:
+      - user_id
+      - item_id
+      - quantity
+    properties:
+      item_id:
+        type: number
+        description: order item id
+      user_id:
+        type: number
+        description: user id
+      quantity:
+        type: number
+        description: quantity of items
   CategoryCreate:
     title: CategoryCreate
     type: object
