@@ -6,7 +6,7 @@ const item = {};
 item.addOrderItem = (req, res) => {
   const objOrder = new Order(req.swagger.params.body.value);
   objOrder.create()
-    .then(id => res.json({ id, message: 'Existing' }))
+    .then(id => res.json({ id, message: 'Saved' }))
     .catch(err => res.status(err === 'Found' ? 201 : 500).json({
       message: err === 'Found' ? 'Existing' : 'Failed',
     }));
