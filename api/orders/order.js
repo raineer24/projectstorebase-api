@@ -28,7 +28,7 @@ function Order(category) {
   * @param {string} offset
   * @return {object}
 */
-Order.prototype.findAll = (offset, limit) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'user_id', 'item_id'], null, limit, offset));
+Order.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'user_id', 'item_id'], filters, limit, offset));
 
 /**
   * create
