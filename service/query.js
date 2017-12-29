@@ -36,6 +36,8 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
       strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} LIMIT ${skip}, ${limit};`;
     } else if (filters.category3) {
       strSql = `SELECT * FROM ${table} WHERE ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
+    } else if (filters.session_id) {
+      strSql = `SELECT * FROM ${table} WHERE ${table}.session_id = ${filters.session_id} LIMIT ${skip}, ${limit};`;
     }
   }
   log.info(strSql);
