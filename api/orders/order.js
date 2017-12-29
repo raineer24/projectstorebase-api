@@ -87,4 +87,12 @@ Order.prototype.update = id => new BluePromise((resolve, reject) => {
 
 Order.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
 
+/**
+  * Get userAccount by id
+  * @param {integer} id
+  * @return {object<Promise>}
+*/
+Order.prototype.getById = id => that.dbConn.readAsync(id);
+
+
 module.exports = Order;
