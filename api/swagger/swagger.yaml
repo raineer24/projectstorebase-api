@@ -152,6 +152,32 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /order/{key}:
+    x-swagger-router-controller: orders
+    get:
+      tags:
+        - order
+      summary: Get items from the current order
+      operationId: getOrderItems
+      parameters:
+        - $ref: "#/parameters/key"
+      responses:
+        200:
+          description: Fetch all order items
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /order/item:
     x-swagger-router-controller: orders
     post:
@@ -578,6 +604,11 @@ parameters:
   #   type: string
   #   required: true
   id:
+    in: path
+    name: id
+    type: string
+    required: true
+  key:
     in: path
     name: id
     type: string
