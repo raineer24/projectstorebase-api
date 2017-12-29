@@ -152,7 +152,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order/{key}:
+  /order/{key}/item:
     x-swagger-router-controller: orders
     get:
       tags:

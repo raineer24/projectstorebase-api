@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-// const morgan = require('morgan');
+const morgan = require('morgan');
 // const fs = require('fs');
 const path = require('path');
 const config = require('./config/config');
@@ -56,6 +56,7 @@ SwaggerParser.bundle(config.swaggerFile)
       app.use(bodyParser.json());
       app.use(SwaggerUi(swaggerExpress.runner.swagger));
       app.use(express.static(path.join(__dirname, 'public')));
+      app.use(morgan('combined'));
 
       apiSubPath.use((req, res, next) => {
         res.setHeader('X-Powered-By', 'EOS');

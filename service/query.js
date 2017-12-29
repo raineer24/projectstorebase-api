@@ -1,13 +1,6 @@
 const query = {};
 const sql = require('sql');
-const log = require('color-logs')(true, true, '');
-
-// function formatFields(table, fields) {
-//   if (!null && !Array.isArray(fields)) {
-//     return `${table}.${fields.join(`,${table}.`)}`;
-//   }
-//   return '*';
-// }
+// const log = require('color-logs')(true, true, '');
 
 query.composeQuery = (table, fields, filters, limit, skip) => {
   sql.setDialect('mysql');
@@ -40,7 +33,7 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
       strSql = `SELECT * FROM ${table} WHERE ${table}.session_id = ${filters.session_id} LIMIT ${skip}, ${limit};`;
     }
   }
-  log.info(strSql);
+  // log.info(strSql);
 
   return strSql;
 };
