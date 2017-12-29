@@ -183,12 +183,15 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /order/item/{orderId}:
+    x-swagger-router-controller: orders
     put:
       tags:
         - order
       summary: Update item count to the order
       operationId: updateOrderItem
       parameters:
+        - $ref: "#/parameters/orderId"
         - name: body
           in: body
           description: post contents
@@ -212,8 +215,6 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order/item/{orderId}:
-    x-swagger-router-controller: order
     delete:
       tags:
         - order
