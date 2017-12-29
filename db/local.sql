@@ -206,6 +206,7 @@ CREATE TABLE `orderItem` (
   `session_id` char(60) NOT NULL,
   `user_id` bigint(50) NOT NULL,
   `item_id` bigint(50) NOT NULL,
+  `quantity` char(5) DEFAULT NULL,
   `processed` char(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
@@ -409,4 +410,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-29 21:32:03
+-- Dump completed on 2017-12-29 22:11:05
