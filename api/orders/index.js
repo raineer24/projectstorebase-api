@@ -15,7 +15,7 @@ orderItem.addOrderItem = (req, res) => {
 orderItem.updateOrderItem = (req, res) => {
   const objOrder = new Order(req.swagger.params.body.value);
   objOrder.update(query.validateParam(req.swagger.params, 'orderId', 0))
-    .then(id => res.json({ id, message: 'Updated' }))
+    .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch(err => res.status(err === 'Not found' ? 404 : 500).json({
       message: err === 'Not found' ? 'Not found' : 'Failed',
     }));
