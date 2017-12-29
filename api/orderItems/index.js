@@ -44,7 +44,7 @@ orderItem.updateOrderItem = (req, res) => {
 */
 orderItem.getOrderItems = (req, res) => {
   new Log({ message: 'ORDER_ITEM_GET', type: 'INFO' }).create();
-  new OrderItem({}).objOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+  new OrderItem({}).findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     session_id: query.validateParam(req.swagger.params, 'key', 0),
   })
     .then(result => res.json(result))
