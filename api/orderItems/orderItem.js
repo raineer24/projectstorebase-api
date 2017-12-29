@@ -11,12 +11,12 @@ let that;
   * @param {object} category
   * @return {object}
 */
-function Order(category) {
+function OrderItem(category) {
   this.model = _.extend(category, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'orderItem';
+  this.table = 'OrderItemItem';
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;
@@ -28,13 +28,13 @@ function Order(category) {
   * @param {string} offset
   * @return {object}
 */
-Order.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'user_id', 'item_id'], filters, limit, offset));
+OrderItem.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'user_id', 'item_id'], filters, limit, offset));
 
 /**
   * create
   * @return {object/number}
 */
-Order.prototype.create = () => new BluePromise((resolve, reject) => {
+OrderItem.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.item_id, 'item_id')
     .then((results) => {
       if (results.length === 0) {
@@ -60,7 +60,7 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 
-Order.prototype.update = id => new BluePromise((resolve, reject) => {
+OrderItem.prototype.update = id => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
     .then((results) => {
@@ -85,14 +85,14 @@ Order.prototype.update = id => new BluePromise((resolve, reject) => {
     });
 });
 
-Order.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+OrderItem.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
 
 /**
   * Get userAccount by id
   * @param {integer} id
   * @return {object<Promise>}
 */
-Order.prototype.getById = id => that.dbConn.readAsync(id);
+OrderItem.prototype.getById = id => that.dbConn.readAsync(id);
 
 
-module.exports = Order;
+module.exports = OrderItem;

@@ -1,8 +1,8 @@
 const query = require('../../service/query');
-const Order = require('./order');
+const OrderItem = require('./orderItem');
 const Log = require('../logs/log');
 
-const order = {};
+const orderItem = {};
 
 /**
 * Add an orderItem
@@ -10,9 +10,9 @@ const order = {};
 * @param {Object} res
 * @return {Object}
 */
-order.addOrderItem = (req, res) => {
+orderItem.addOrderItem = (req, res) => {
   new Log({ message: 'ORDER_ITEM_ADD', type: 'INFO' }).create();
-  new Order(req.swagger.params.body.value).create()
+  new OrderItem(req.swagger.params.body.value).create()
     .then(id => res.json({ id, message: 'Saved' }))
     .catch((err) => {
       new Log({ message: `ORDER_ITEM_ADD ${err}`, type: 'ERROR' }).create();
@@ -26,9 +26,9 @@ order.addOrderItem = (req, res) => {
 * @param {Object} res
 * @return {Object}
 */
-order.updateOrderItem = (req, res) => {
+orderItem.updateOrderItem = (req, res) => {
   new Log({ message: 'ORDER_ITEM_UPDATE', type: 'INFO' }).create();
-  new Order(req.swagger.params.body.value).update(query.validateParam(req.swagger.params, 'orderId', 0))
+  new OrderItem(req.swagger.params.body.value).update(query.validateParam(req.swagger.params, 'orderId', 0))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `ORDER_ITEM_UPDATE ${err}`, type: 'ERROR' }).create();
@@ -42,9 +42,9 @@ order.updateOrderItem = (req, res) => {
 * @param {Object} res
 * @return {Object}
 */
-order.getOrderItems = (req, res) => {
+orderItem.getOrderItems = (req, res) => {
   new Log({ message: 'ORDER_ITEM_GET', type: 'INFO' }).create();
-  new Order({}).objOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+  new OrderItem({}).objOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     session_id: query.validateParam(req.swagger.params, 'key', 0),
   })
     .then(result => res.json(result))
@@ -54,4 +54,4 @@ order.getOrderItems = (req, res) => {
     });
 };
 
-module.exports = order;
+module.exports = orderItem;
