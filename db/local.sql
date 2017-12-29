@@ -200,13 +200,13 @@ DROP TABLE IF EXISTS `orderItem`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `orderItem` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `name` char(60) NOT NULL,
   `enabled` bit(1) DEFAULT b'1',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
+  `session_id` char(60) NOT NULL,
   `user_id` bigint(50) NOT NULL,
   `item_id` bigint(50) NOT NULL,
-  `processed` CHAR(1) DEFAULT '0',
+  `processed` char(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -409,4 +409,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-21  0:24:26
+-- Dump completed on 2017-12-29 21:32:03
