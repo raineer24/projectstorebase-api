@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const random = require('randomstring');
 // const log = require('color-logs')(true, true, __filename);
 
 const Util = {};
@@ -10,5 +11,7 @@ Util.signToken = (username) => {
 
   return token;
 };
+
+Util.generateKey = () => random.generate(50);
 
 module.exports = Util;
