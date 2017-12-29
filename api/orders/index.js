@@ -2,9 +2,15 @@ const query = require('../../service/query');
 const Order = require('./order');
 const Log = require('../logs/log');
 
-const orderItem = {};
+const order = {};
 
-orderItem.addOrderItem = (req, res) => {
+/**
+* Add an orderItem
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+order.addOrderItem = (req, res) => {
   new Log({ message: 'ORDER_ITEM_ADD', type: 'INFO' }).create();
   new Order(req.swagger.params.body.value).create()
     .then(id => res.json({ id, message: 'Saved' }))
@@ -14,7 +20,13 @@ orderItem.addOrderItem = (req, res) => {
     });
 };
 
-orderItem.updateOrderItem = (req, res) => {
+/**
+* Update an orderItem
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+order.updateOrderItem = (req, res) => {
   new Log({ message: 'ORDER_ITEM_UPDATE', type: 'INFO' }).create();
   new Order(req.swagger.params.body.value).update(query.validateParam(req.swagger.params, 'orderId', 0))
     .then(msg => res.json({ message: `Updated ${msg}` }))
@@ -24,7 +36,13 @@ orderItem.updateOrderItem = (req, res) => {
     });
 };
 
-orderItem.getOrderItems = (req, res) => {
+/**
+* Get orderItems
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+order.getOrderItems = (req, res) => {
   new Log({ message: 'ORDER_ITEM_GET', type: 'INFO' }).create();
   new Order({}).objOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     session_id: query.validateParam(req.swagger.params, 'key', 0),
@@ -36,4 +54,4 @@ orderItem.getOrderItems = (req, res) => {
     });
 };
 
-module.exports = orderItem;
+module.exports = order;
