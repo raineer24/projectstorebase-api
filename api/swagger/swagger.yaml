@@ -152,7 +152,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order/item/{id}:
+  /order/item:
     x-swagger-router-controller: order
     post:
       tags:
@@ -541,16 +541,19 @@ definitions:
     title: ItemOrder
     type: object
     required:
-      - user_id
+      - session_id
       - item_id
       - quantity
     properties:
-      item_id:
-        type: number
-        description: order item id
+      session_id:
+        type: string
+        description: user session id
       user_id:
         type: number
         description: user id
+      item_id:
+        type: number
+        description: order item id
       quantity:
         type: number
         description: quantity of items
