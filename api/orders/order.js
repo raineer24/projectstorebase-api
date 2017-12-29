@@ -16,7 +16,7 @@ function Order(category) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'orderitem';
+  this.table = 'orderItem';
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;
@@ -28,7 +28,7 @@ function Order(category) {
   * @param {string} offset
   * @return {object}
 */
-Order.prototype.findAll = (offset, limit) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'user_id', 'item_id'], null, limit, offset));
+Order.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'user_id', 'item_id'], filters, limit, offset));
 
 /**
   * create
@@ -84,3 +84,15 @@ Order.prototype.update = id => new BluePromise((resolve, reject) => {
       reject('Not Found');
     });
 });
+
+Order.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+
+/**
+  * Get userAccount by id
+  * @param {integer} id
+  * @return {object<Promise>}
+*/
+Order.prototype.getById = id => that.dbConn.readAsync(id);
+
+
+module.exports = Order;

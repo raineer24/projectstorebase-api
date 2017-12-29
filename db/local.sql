@@ -200,15 +200,16 @@ DROP TABLE IF EXISTS `orderItem`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `orderItem` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `name` char(60) NOT NULL,
   `enabled` bit(1) DEFAULT b'1',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
+  `session_id` char(60) NOT NULL,
   `user_id` bigint(50) NOT NULL,
   `item_id` bigint(50) NOT NULL,
-  `processed` CHAR(1) DEFAULT '0',
+  `quantity` char(5) DEFAULT NULL,
+  `processed` char(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,6 +218,7 @@ CREATE TABLE `orderItem` (
 
 LOCK TABLES `orderItem` WRITE;
 /*!40000 ALTER TABLE `orderItem` DISABLE KEYS */;
+INSERT INTO `orderItem` VALUES (1,'',1514558673412,1514558673416,'123123asdfadsf9012312312lk3j2k1j312',0,1,'11','0'),(2,'',1514558586392,1514558586392,'123123asdfadsf9012312312lk3j2k1j312',0,2,'13','0');
 /*!40000 ALTER TABLE `orderItem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -409,4 +411,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-21  0:24:26
+-- Dump completed on 2017-12-29 22:44:42
