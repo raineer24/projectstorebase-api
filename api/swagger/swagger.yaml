@@ -152,8 +152,8 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order/{key}/item:
-    x-swagger-router-controller: orders
+  /orderItem:
+    x-swagger-router-controller: orderItems
     get:
       tags:
         - order
@@ -178,8 +178,6 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order/item:
-    x-swagger-router-controller: orders
     post:
       tags:
         - order
@@ -209,8 +207,8 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order/item/{orderId}:
-    x-swagger-router-controller: orders
+  /orderItem/{orderId}:
+    x-swagger-router-controller: orderItems
     put:
       tags:
         - order
@@ -609,7 +607,7 @@ parameters:
     type: string
     required: true
   key:
-    in: path
+    in: query
     name: key
     type: string
     required: true
