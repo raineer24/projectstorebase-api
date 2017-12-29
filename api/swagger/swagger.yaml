@@ -566,11 +566,11 @@ definitions:
     title: ItemOrder
     type: object
     required:
-      - session_id
+      - orderkey
       - item_id
       - quantity
     properties:
-      session_id:
+      orderkey:
         type: string
         description: user session id
       user_id:
