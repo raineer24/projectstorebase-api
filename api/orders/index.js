@@ -21,4 +21,15 @@ orderItem.updateOrderItem = (req, res) => {
     }));
 };
 
+orderItem.getOrderItems = (req, res) => {
+  const objOrder = new Order({});
+  objOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+    session_id: query.validateParam(req.swagger.params, 'key', 0),
+  })
+    .then(result => res.json(result))
+    .catch(err => res.status(err === 'Not found' ? 404 : 500).json({
+      message: err === 'Not found' ? 'Not found' : 'Failed',
+    }));
+};
+
 module.exports = orderItem;
