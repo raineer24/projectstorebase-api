@@ -610,7 +610,7 @@ parameters:
     required: true
   key:
     in: path
-    name: id
+    name: key
     type: string
     required: true
   orderId:
