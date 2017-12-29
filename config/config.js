@@ -2,7 +2,7 @@ require('dotenv').config();
 
 module.exports = {
   env: {
-    port: '8081',
+    port: process.env.PORT || '8081',
     hostname: 'localhost',
   },
   db: {
