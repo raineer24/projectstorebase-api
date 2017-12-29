@@ -16,7 +16,7 @@ function Order(category) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'orderitem';
+  this.table = 'orderItem';
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;
@@ -84,3 +84,7 @@ Order.prototype.update = id => new BluePromise((resolve, reject) => {
       reject('Not Found');
     });
 });
+
+Order.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+
+module.exports = Order;
