@@ -157,7 +157,7 @@ CREATE TABLE `log` (
   `type` char(60) DEFAULT NULL,
   `dateCreated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -166,7 +166,7 @@ CREATE TABLE `log` (
 
 LOCK TABLES `log` WRITE;
 /*!40000 ALTER TABLE `log` DISABLE KEYS */;
-INSERT INTO `log` VALUES (1,'Get order items',NULL,'INFO',1514571706718);
+INSERT INTO `log` VALUES (1,'Get order items',NULL,'INFO',1514571706718),(2,'ORDER_ITEM_UPDATE',NULL,'INFO',1514583192212);
 /*!40000 ALTER TABLE `log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,15 +179,17 @@ DROP TABLE IF EXISTS `order`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `order` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `number` char(30) NOT NULL,
-  `itemTotal` char(30) NOT NULL,
-  `total` char(30) NOT NULL,
+  `orderkey` char(150) DEFAULT NULL,
+  `number` char(30) DEFAULT '0',
+  `itemTotal` char(30) DEFAULT '0',
+  `total` char(30) DEFAULT '0',
   `shipmentTotal` char(30) DEFAULT NULL,
   `adjustmentTotal` char(30) DEFAULT NULL,
   `paymentTotal` char(30) DEFAULT NULL,
   `dateCompleted` bigint(50) DEFAULT NULL,
   `shipmentStatus` char(20) DEFAULT NULL,
   `paymenttStatus` char(20) DEFAULT NULL,
+  `status` char(20) DEFAULT NULL,
   `email` char(100) DEFAULT NULL,
   `specialInstructions` tinytext DEFAULT NULL,
   `includedTaxTotal` char(100) DEFAULT NULL,
@@ -197,14 +199,13 @@ CREATE TABLE `order` (
   `taxTotal` char(100) DEFAULT NULL,
   `currency` char(10) DEFAULT NULL,
   `totalQuantity` char(5) DEFAULT NULL,
-  `token` char(150) DEFAULT NULL,
   `billingAddress01` varchar(250) DEFAULT NULL,
   `billingAddress02` varchar(250) DEFAULT NULL,
   `shippingAddress01` varchar(250) DEFAULT NULL,
   `shippingAddress02` varchar(250) DEFAULT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
-  `userAccount_id` bigint(50) NOT NULL,
+  `userAccount_id` bigint(50) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -230,9 +231,10 @@ CREATE TABLE `orderItem` (
   `enabled` bit(1) DEFAULT b'1',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
-  `session_id` char(60) NOT NULL,
+  `orderkey` char(60) NOT NULL,
   `user_id` bigint(50) NOT NULL,
   `item_id` bigint(50) NOT NULL,
+  `order_id` bigint(50) DEFAULT 0,
   `quantity` char(5) DEFAULT NULL,
   `processed` char(1) DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -245,7 +247,7 @@ CREATE TABLE `orderItem` (
 
 LOCK TABLES `orderItem` WRITE;
 /*!40000 ALTER TABLE `orderItem` DISABLE KEYS */;
-INSERT INTO `orderItem` VALUES (1,'',1514558673412,1514558673416,'123123asdfadsf9012312312lk3j2k1j312',0,1,'11','0'),(2,'',1514558586392,1514558586392,'123123asdfadsf9012312312lk3j2k1j312',0,2,'13','0');
+INSERT INTO `orderItem` VALUES (1,'',1514583192247,1514583192252,'ObOAATm3c3nH1DAHQM8Qb6U37OHFBG7XH9EgnsrrWofFReyxMh',0,1,0,'11','0'),(2,'',1514558586392,1514558586392,'123123asdfadsf9012312312lk3j2k1j312',0,2,0,'13','0');
 /*!40000 ALTER TABLE `orderItem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -438,4 +440,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-30  2:21:52
+-- Dump completed on 2017-12-30  5:33:15
