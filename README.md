@@ -28,15 +28,21 @@ mysql -V
 sudo systemctl start mariadb.service
 sudo systemctl enable mariadb.service
 
-sudo /usr/bin/mysql_secure_installation
-Enter current password for root (enter for none): <Enter>
-Set root password? [Y/n]: Y
-New password: <your-MariaDB-root-password>
-Re-enter new password: <your-MariaDB-root-password>
-Remove anonymous users? [Y/n]: Y
-Disallow root login remotely? [Y/n]: Y
-Remove test database and access to it? [Y/n]: Y
-Reload privilege tables now? [Y/n]: Y
+sudo su -
+mysql -u root -p
+Having done this I thought about how to access without having to do the sudo, which is just a matter of running these mysql queries
+
+GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '<password>';
+GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '<password>';
+FLUSH PRIVILEGES;
+or
+
+UPDATE mysql.user SET plugin = 'mysql_native_password' WHERE user = 'root' AND plugin = 'unix_socket';
+FLUSH PRIVILEGES;
+Then restarting mariadb:
+
+sudo service mysql stop
+sudo service mysql start
 
 mysql -u root -p
 ```
