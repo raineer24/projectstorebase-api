@@ -18,6 +18,28 @@ consumes:
 produces:
   - application/json
 paths:
+  /:
+    x-swagger-router-controller: users
+    get:
+      tags:
+        - profile
+      summary: Return user profile
+      operationId: connectDb
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
+        # 404:
+        #   description: ofile not found
+        #   schema:
+        #     properties:
+        #       message:
+        #         type: string
+        #         example: Not found
   /user/account/{id}/view:
     x-swagger-router-controller: users
     get:

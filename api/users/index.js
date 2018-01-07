@@ -4,6 +4,15 @@ const query = require('../../service/query');
 
 const user = {};
 
+user.connectDb = (req, res) => {
+  const objUser = new User({});
+  objUser.testConnection()
+    .then(result => res.json({ message: result }))
+    .catch(() => res.status(404).json({
+      message: 'Not found',
+    }));
+};
+
 /**
 * User authentication and authorization
 * @param {Object} req

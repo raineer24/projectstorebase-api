@@ -17,6 +17,14 @@ function User(user) {
   that = this;
 }
 
+User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
+  if (that.dbConn) {
+    resolve(that.dbConn);
+    return;
+  }
+  reject('Not found');
+});
+
 /**
   * User authentication of username and password
   * @param {string} username
