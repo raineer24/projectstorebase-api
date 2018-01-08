@@ -4,14 +4,14 @@ node_js:
 env:
   matrix:
   - CXX=g++-4.8 TRAVIS=true
-# deploy:
-#   provider: elasticbeanstalk
-#   access_key_id: AKIAIGXY23ZL6N7QLW2A
-#   secret_access_key:
-#     secure: BLvhyiRni2/7DEqzwrEtWWi27hYCdT4OwrxmPbVHuy88YcE6uzZj0iwCECMu4ITafjL12vjhgcePecdDxUnps6t+Ncr2BHSETTIzA7yTduInJQGbWjeWskBmrr0yrc+hRiIfdfXbSJIG0gSgR/lzt5mYEz+Dd7zSXOUtW+RRKLbxIeu/bcdK2F/xvTbVPLYfKBRuoQ+BIuNqn7k35WCqm/9CVVy+sMYp+X8+jMq5au6xBBx1PzDNxi5N1smI/6UIDOQ0dL+71dS3TjW/5gVnuWIvhObnrp9hTjun7lruUs16h+luqmpT0TVp/OFA1jRJRnCOj4zHyS8GhlVv1zaX9XW8HuaIamsA7ZJDkQT5ElGqV6pH80xpAiKIP8TfgomCH6M6WXoGMz6KLPnnfCjefKus8QC5yt+dpO824ZcJ3vjRkX8uS0FSWj+RjjptCEwl++EzoxNyVyjs56bdSy6rBydiIB3l+hjWGrz1p2qUaeznMVg+1ZMRxO/Dx/49ciqZ9y5+cwvo9L392Z/tmfBJhkakzecd2Bxx1yuMBhyu05iC/3+1oEwWYjiwXckEmB1/IQPs7xmnJUXuEks37VFY6r5DHvODyoH9A8TU9ETpihN1ScCD7amXWwpz1+I+svTFbpsrkyerc/22C99YxS51svKAXO6iFWo1kJXf/WIM4cw=
-#   region: us-east-1
-#   app: grocer-api
-#   env: development
-#   bucket_name: the-target-S3-bucket
-#   on:
-#     - develop
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: AKIAIGXY23ZL6N7QLW2A
+  secret_access_key:
+    secure: BLvhyiRni2/7DEqzwrEtWWi27hYCdT4OwrxmPbVHuy88YcE6uzZj0iwCECMu4ITafjL12vjhgcePecdDxUnps6t+Ncr2BHSETTIzA7yTduInJQGbWjeWskBmrr0yrc+hRiIfdfXbSJIG0gSgR/lzt5mYEz+Dd7zSXOUtW+RRKLbxIeu/bcdK2F/xvTbVPLYfKBRuoQ+BIuNqn7k35WCqm/9CVVy+sMYp+X8+jMq5au6xBBx1PzDNxi5N1smI/6UIDOQ0dL+71dS3TjW/5gVnuWIvhObnrp9hTjun7lruUs16h+luqmpT0TVp/OFA1jRJRnCOj4zHyS8GhlVv1zaX9XW8HuaIamsA7ZJDkQT5ElGqV6pH80xpAiKIP8TfgomCH6M6WXoGMz6KLPnnfCjefKus8QC5yt+dpO824ZcJ3vjRkX8uS0FSWj+RjjptCEwl++EzoxNyVyjs56bdSy6rBydiIB3l+hjWGrz1p2qUaeznMVg+1ZMRxO/Dx/49ciqZ9y5+cwvo9L392Z/tmfBJhkakzecd2Bxx1yuMBhyu05iC/3+1oEwWYjiwXckEmB1/IQPs7xmnJUXuEks37VFY6r5DHvODyoH9A8TU9ETpihN1ScCD7amXWwpz1+I+svTFbpsrkyerc/22C99YxS51svKAXO6iFWo1kJXf/WIM4cw=
+  region: ap-southeast-2
+  app: grocer-api
+  env: grocer-api-dev
+  bucket_name: elasticbeanstalk-ap-southeast-2-259994102961
+  on:
+    - develop
