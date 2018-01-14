@@ -68,7 +68,7 @@ CREATE TABLE `item` (
   `packageIntervals` float DEFAULT NULL,
   `availableOn` bigint(50) NOT NULL,
   `slug` tinytext NOT NULL,
-  `imageKey` varchar(50) DEFAULT NULL,
+  `imageKey` varchar(250) DEFAULT NULL,
   `enabled` bit(1) DEFAULT b'1',
   `category1` bigint(50) NOT NULL,
   `category2` bigint(50) NOT NULL,
@@ -441,4 +441,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-11 17:46:13
+-- Dump completed on 2018-01-14 17:33:02
