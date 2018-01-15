@@ -19,7 +19,9 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
   strSql = sqlQuery.text;
 
   if (filters) {
-    if (filters.keyword) {
+    if (filters.itemId && filters.orderKey) {
+      strSql = `SELECT * FROM ${table}.item_id = ${filters.itemId} OR ${table}.orderKey = ${filters.orderKey} LIMIT ${skip}, ${limit};`;
+    } else if (filters.keyword) {
       strSql = `SELECT * FROM ${table} WHERE ${table}.name LIKE '%${filters.keyword}%' LIMIT ${skip}, ${limit};`;
     } else if (filters.category2 && filters.category3) {
       strSql = `SELECT * FROM ${table} WHERE ${table}.category2 = ${filters.category2} OR ${table}.category3 = ${filters.category3} LIMIT ${skip}, ${limit};`;
