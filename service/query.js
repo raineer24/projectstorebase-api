@@ -1,6 +1,6 @@
 const query = {};
 const sql = require('sql');
-// const log = require('color-logs')(true, true, '');
+const log = require('color-logs')(true, true, '');
 
 query.composeQuery = (table, fields, filters, limit, skip) => {
   sql.setDialect('mysql');
@@ -19,8 +19,8 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
   strSql = sqlQuery.text;
 
   if (filters) {
-    if (filters.itemId && filters.orderKey) {
-      strSql = `SELECT * FROM ${table}.item_id = ${filters.itemId} AND ${table}.orderKey = ${filters.orderKey} LIMIT ${skip}, ${limit};`;
+    if (filters.itemId && filters.orderkey) {
+      strSql = `SELECT * FROM ${table} WHERE ${table}.item_id = ${filters.itemId} AND ${table}.orderkey = '${filters.orderkey}' LIMIT ${skip}, ${limit};`;
     } else if (filters.keyword) {
       strSql = `SELECT * FROM ${table} WHERE ${table}.name LIKE '%${filters.keyword}%' LIMIT ${skip}, ${limit};`;
     } else if (filters.category2 && filters.category3) {
@@ -35,7 +35,7 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
       strSql = `SELECT * FROM ${table} WHERE ${table}.session_id = ${filters.session_id} LIMIT ${skip}, ${limit};`;
     }
   }
-  // log.info(strSql);
+  log.info(strSql);
 
   return strSql;
 };
