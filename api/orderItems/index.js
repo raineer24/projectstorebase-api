@@ -1,8 +1,8 @@
 const query = require('../../service/query');
-const Order = require('../orders/order');
+// const Order = require('../orders/order');
 const OrderItem = require('./orderItem');
 const Log = require('../logs/log');
-const Util = require('../helpers/util');
+// const Util = require('../helpers/util');
 
 const orderItem = {};
 
@@ -13,27 +13,34 @@ const orderItem = {};
 * @return {Object}
 */
 orderItem.addOrderItem = (req, res) => {
-  const tempKey = Util.generateKey();
-  const objOrder = new Order({
-    orderkey: req.swagger.params.body.value.orderkey ? req.swagger.params.body.value.orderkey :
-      tempKey,
-  });
-  new Log({ message: 'ORDER_CREATE', type: 'INFO' }).create();
-  objOrder.create()
-    .then((key) => {
-      new Log({ message: 'ORDER_ITEM_CREATE', type: 'INFO' }).create();
-      req.swagger.params.body.value.orderkey = key;
-      new OrderItem(req.swagger.params.body.value).create()
-        .then(id => res.json({ id, message: 'Saved' }))
-        .catch((err) => {
-          new Log({ message: `ORDER_ITEM_CREATE ${err}`, type: 'ERROR' }).create();
-          return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
-        });
-    })
+  // const tempKey = Util.generateKey();
+  new Log({ message: 'ORDER_ITEM_CREATE', type: 'INFO' }).create();
+  new OrderItem(req.swagger.params.body.value).create()
+    .then(id => res.json({ id, message: 'Saved' }))
     .catch((err) => {
-      new Log({ message: `ORDER_CREATE ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `ORDER_ITEM_CREATE ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
     });
+  // const objOrder = new Order(req.swagger.params.body.value);
+  // new Log({ message: 'ORDER_CREATE', type: 'INFO' }).create();
+  // console.log('create');
+  // objOrder.create()
+  //   .then((key) => {
+  //     new Log({ message: 'ORDER_ITEM_CREATE', type: 'INFO' }).create();
+  //     req.swagger.params.body.value.orderkey = key;
+  //     new OrderItem(req.swagger.params.body.value).create()
+  //       .then(id => res.json({ id, message: 'Saved' }))
+  //       .catch((err) => {
+  //         new Log({ message: `ORDER_ITEM_CREATE ${err}`, type: 'ERROR' }).create();
+  //         return res.status(err === 'Found' ? 201 : 500).json({
+  // message: err === 'Found' ? 'Existing' : err });
+  //       });
+  //   })
+  //   .catch((err) => {
+  //     new Log({ message: `ORDER_CREATE ${err}`, type: 'ERROR' }).create();
+  //     return res.status(err === 'Found' ? 201 : 500).json({
+  // message: err === 'Found' ? 'Existing' : err });
+  //   });
 };
 
 /**

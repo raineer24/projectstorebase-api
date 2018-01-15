@@ -38,7 +38,7 @@ OrderItem.prototype.create = () => new BluePromise((resolve, reject) => {
   // that.getByValue(that.model.item_id, 'item_id')
   that.findAll(0, 1, {
     itemId: that.model.item_id,
-    orderKey: that.model.orderKey,
+    orderkey: that.model.orderkey,
   })
     .then((results) => {
       if (results.length === 0) {
