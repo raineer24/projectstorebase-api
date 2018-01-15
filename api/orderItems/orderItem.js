@@ -35,7 +35,11 @@ OrderItem.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync
   * @return {object/number}
 */
 OrderItem.prototype.create = () => new BluePromise((resolve, reject) => {
-  that.getByValue(that.model.item_id, 'item_id')
+  // that.getByValue(that.model.item_id, 'item_id')
+  that.findAll(0, 1, {
+    itemId: that.model.item_id,
+    orderkey: that.model.orderkey,
+  })
     .then((results) => {
       if (results.length === 0) {
         if (that.model.id) {
