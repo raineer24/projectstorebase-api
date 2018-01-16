@@ -16,7 +16,7 @@ function OrderItem(category) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'OrderItem';
+  this.table = 'orderItem';
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;
