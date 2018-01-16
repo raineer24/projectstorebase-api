@@ -19,7 +19,10 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
   strSql = sqlQuery.text;
 
   if (filters) {
-    if (filters.itemId && filters.orderkey) {
+    if (filters.categoryList) {
+      const condition = filters.categoryList.join(` OR ${table}.id = `);
+      strSql = `SELECT * FROM ${table} WHERE ${table}.id = ${condition} LIMIT ${skip}, ${limit};`;
+    } else if (filters.itemId && filters.orderkey) {
       strSql = `SELECT * FROM ${table} WHERE ${table}.item_id = ${filters.itemId} AND ${table}.orderkey = '${filters.orderkey}' LIMIT ${skip}, ${limit};`;
     } else if (filters.keyword) {
       strSql = `SELECT * FROM ${table} WHERE ${table}.name LIKE '%${filters.keyword}%' LIMIT ${skip}, ${limit};`;

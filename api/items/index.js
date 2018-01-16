@@ -10,13 +10,20 @@ const item = {};
 
 item.listItems = (req, res) => {
   new Log({ message: 'ITEM_LIST', type: 'INFO' }).create();
-  new Item({}).findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+  const instItem = new Item({});
+  instItem.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     keyword: query.validateParam(req.swagger.params, 'keyword', ''),
     category1: query.validateParam(req.swagger.params, 'category1', ''),
     category2: query.validateParam(req.swagger.params, 'category2', ''),
     category3: query.validateParam(req.swagger.params, 'category3', ''),
   })
-    .then(result => res.json({ list: result, message: result.length ? result.length : 0 }))
+    .then(result => result)
+    .then(instItem.getRelatedCategories)
+    .then(result => res.json({
+      list: result.list,
+      categories: result.categories,
+      message: result.length ? result.length : 0,
+    }))
     .catch((err) => {
       new Log({ message: `ITEM_LIST ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
