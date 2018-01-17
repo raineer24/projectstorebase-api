@@ -68,7 +68,7 @@ orderItem.updateOrderItem = (req, res) => {
 orderItem.getOrderItems = (req, res) => {
   new Log({ message: 'ORDER_ITEM_GET', type: 'INFO' }).create();
   new OrderItem({}).findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    session_id: query.validateParam(req.swagger.params, 'key', 0),
+    orderkey: query.validateParam(req.swagger.params, 'key', ''),
   })
     .then(result => res.json(result))
     .catch((err) => {
