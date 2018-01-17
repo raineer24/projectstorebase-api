@@ -28,14 +28,14 @@ function Category(category) {
   * @param {string} offset
   * @return {object}
 */
-Category.prototype.findAll = (offset, limit) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'name'], null, limit, offset));
+Category.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'name'], filters, limit, offset));
 
 Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) => {
   const structured = {
     categories: [],
     subCategories: [],
   };
-  that.findAll(0, 5000)
+  that.findAll(0, 5000, null)
     .then((results) => {
       if (results.length > 0) {
         structured.categories = _.filter(results, { category_id: 0 });

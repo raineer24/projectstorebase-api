@@ -2,6 +2,8 @@ const BluePromise = require('bluebird');
 const lodash = require('lodash');
 const Conn = require('../../service/connection');
 const Query = require('../../service/query');
+// const _ = require('lodash');
+const Category = require('../categories/category');
 // const Util = require('../helpers/util');
 
 let that;
@@ -21,6 +23,28 @@ function Item(item) {
 
   that = this;
 }
+
+Item.prototype.getRelatedCategories = results => new BluePromise((resolve, reject) => {
+  const list = [];
+
+  results.forEach((obj) => {
+    list.push(obj.category1);
+  });
+
+  new Category({}).findAll(0, 10, {
+    categoryList: list,
+  })
+    .then((catResult) => {
+      resolve({
+        list: results,
+        categories: catResult,
+      });
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+
 
 /**
   * findAll
