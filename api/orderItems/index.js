@@ -13,7 +13,6 @@ const orderItem = {};
 * @return {Object}
 */
 orderItem.addOrderItem = (req, res) => {
-  // const tempKey = Util.generateKey();
   new Log({ message: 'ORDER_ITEM_CREATE', type: 'INFO' }).create();
   new OrderItem(req.swagger.params.body.value).create()
     .then(id => res.json({ id, message: 'Saved' }))
@@ -74,6 +73,16 @@ orderItem.getOrderItems = (req, res) => {
     .catch((err) => {
       new Log({ message: `ORDER_ITEM_GET ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    });
+};
+
+orderItem.removeOrderItem = (req, res) => {
+  new Log({ message: 'ORDER_ITEM_REMOVE', type: 'INFO' }).create();
+  new OrderItem({}).removeById(query.validateParam(req.swagger.params, 'orderId', 0))
+    .then(message => res.json({ message }))
+    .catch((err) => {
+      new Log({ message: `ORDER_ITEM_REMOVE ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
     });
 };
 

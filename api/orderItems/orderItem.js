@@ -99,4 +99,28 @@ OrderItem.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', 
 OrderItem.prototype.getById = id => that.dbConn.readAsync(id);
 
 
+OrderItem.prototype.removeById = id => new BluePromise((resolve, reject) => {
+  that.getById(id)
+    .then((results) => {
+      if (!results.id) {
+        reject('Not Found');
+      } else {
+        const DbModel = Conn.extend({ tableName: that.table });
+        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
+        that.model = _.merge(results, that.model);
+        that.dbConn.setAsync('id', id);
+        that.dbConn.removeAsync()
+          .then(() => {
+            resolve('Deleted');
+          })
+          .catch((err) => {
+            resolve(err);
+          });
+      }
+    })
+    .catch(() => {
+      reject('Not Found');
+    });
+});
+
 module.exports = OrderItem;
