@@ -1,6 +1,7 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const Conn = require('../../service/connection');
+const config = require('../../config/config');
 // const Query = require('../../service/query');
 // const Util = require('../helpers/util');
 
@@ -17,8 +18,7 @@ function Order(category) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.dbName = 'grocerystore';
-  this.table = 'grocerystore.order';
+  this.table = `${config.db.name}.order`;
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;
@@ -60,6 +60,5 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
   * @return {object<Promise>}
 */
 Order.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${that.table}.${field} = '${value}'` });
-
 
 module.exports = Order;
