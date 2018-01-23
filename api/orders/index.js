@@ -2,7 +2,7 @@ const query = require('../../service/query');
 // const Order = require('../orders/order');
 const Order = require('./order');
 const Log = require('../logs/log');
-// const Util = require('../helpers/util');
+const Util = require('../helpers/util');
 
 const order = {};
 
@@ -39,3 +39,20 @@ order.getOrder = (req, res) => {
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
     });
 };
+
+/**
+* Generate orderkey
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+order.generateOrderKey = (req, res) => {
+  new Log({ message: 'ORDERKEY_GENERATE', type: 'INFO' }).create();
+  const orderkey = Util.generateOrderKey();
+  if (orderkey) {
+    return res.json({ orderkey });
+  }
+  return res.status(500).json({ message: 'Failed to generate' });
+};
+
+module.exports = order;

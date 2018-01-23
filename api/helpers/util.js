@@ -12,6 +12,6 @@ Util.signToken = (username) => {
   return token;
 };
 
-Util.generateKey = () => random.generate(50);
+Util.generateOrderKey = () => random.generate(20) + new Date().getTime() + random.generate(20);
 
 module.exports = Util;
