@@ -174,7 +174,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order/key:
+  /orderkey:
     x-swagger-router-controller: orders
     get:
       tags:
@@ -190,6 +190,61 @@ paths:
               orderkey:
                 type: string
                 example: jFUDt1qCaZQK0nFw1516694733016V170CfjO8ILwN8sS
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /order:
+    x-swagger-router-controller: orders
+    get:
+      tags:
+        - order
+      summary: Get current order
+      operationId: getOrder
+      parameters:
+        - $ref: "#/parameters/key"
+      responses:
+        200:
+          description: Get order record
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    post:
+      tags:
+        - order
+      summary: Create an order
+      operationId: addOrder
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderEntry"
+      responses:
+        200:
+          description: Successful created order
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
         403:
           description: Unauthorized
           schema:
@@ -608,6 +663,15 @@ definitions:
       code:
         type: number
         description: item specific code
+  OrderEntry:
+    title: OrderEntry
+    type: object
+    required:
+      - orderkey
+    properties:
+      orderkey:
+        type: string
+        description: user session id
   OrderItem:
     title: ItemOrder
     type: object
