@@ -396,6 +396,116 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+
+  /timeslotorder:
+    x-swagger-router-controller: timeslotorders
+    get:
+      tags:
+        - timeslotOrder
+      summary: Get all timeslots
+      operationId: getTimeslotOrderAll
+      responses:
+        200:
+          description: Fetch all timeslotorders
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    post:
+      tags:
+        - timeslotOrder
+      summary: Add a timeslotOrder
+      operationId: addTimeslotOrder
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/TimeslotOrderEntry"
+      responses:
+        200:
+          description: Successful created
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /timeslotorder/{orderId}:
+    x-swagger-router-controller: timeslotorders
+    get:
+      tags:
+        - timeslotOrder
+      summary: Get timeslotorder record
+      operationId: getTimeslotOrder
+      parameters:
+        - $ref: "#/parameters/orderId"
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 123445
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    put:
+      tags:
+        - timeslotOrder
+      summary: Update timeslot order
+      operationId: updateTimeslotOrder
+      parameters:
+        - $ref: "#/parameters/orderId"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/TimeslotOrderEntry"
+      responses:
+        200:
+          description: Successful updated
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /item:
     x-swagger-router-controller: items
     get:
@@ -695,6 +805,23 @@ definitions:
       code:
         type: number
         description: item specific code
+  TimeslotOrderEntry:
+    title: TimeslotOrderEntry
+    type: object
+    required:
+      - timeslot_id
+      - order_id
+      - date
+    properties:
+      timeslot_id:
+        type: number
+        description: timeslot id
+      order_id:
+        type: number
+        description: order id
+      date:
+        type: string
+        description: date of time slot
   OrderEntry:
     title: OrderEntry
     type: object
