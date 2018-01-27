@@ -38,8 +38,8 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
         const DbModel = Conn.extend({ tableName: that.table });
         that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
         that.dbConn.saveAsync()
-          .then(() => {
-            resolve(that.model.orderkey);
+          .then((response) => {
+            resolve(response.insertId);
           })
           .catch((err) => {
             reject(err);
@@ -54,7 +54,7 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * Get userAccount by value
+  * Get <db-name>.order by value
   * @param {any} value
   * @param {string} field
   * @return {object<Promise>}

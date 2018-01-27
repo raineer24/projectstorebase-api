@@ -206,7 +206,7 @@ paths:
       summary: Get current order
       operationId: getOrder
       parameters:
-        - $ref: "#/parameters/key"
+        - $ref: "#/parameters/orderkey"
       responses:
         200:
           description: Get order record
@@ -257,7 +257,7 @@ paths:
     x-swagger-router-controller: orderItems
     get:
       tags:
-        - order
+        - orderItem
       summary: Get items from the current order
       operationId: getOrderItems
       parameters:
@@ -281,7 +281,7 @@ paths:
                 example: Unauthorized
     post:
       tags:
-        - order
+        - orderItem
       summary: Add an item to the order
       operationId: addOrderItem
       parameters:
@@ -312,7 +312,7 @@ paths:
     x-swagger-router-controller: orderItems
     put:
       tags:
-        - order
+        - orderItem
       summary: Update item count to the order
       operationId: updateOrderItem
       parameters:
@@ -342,7 +342,7 @@ paths:
                 example: Unauthorized
     delete:
       tags:
-        - order
+        - orderItem
       summary: Add an item to the order
       operationId: removeOrderItem
       parameters:
@@ -719,6 +719,11 @@ parameters:
   key:
     in: query
     name: key
+    type: string
+    required: true
+  orderkey:
+    in: query
+    name: orderkey
     type: string
     required: true
   orderId:
