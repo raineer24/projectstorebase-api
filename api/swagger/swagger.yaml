@@ -322,7 +322,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/OrderItem"
+            $ref: "#/definitions/OrderItemEntry"
       responses:
         200:
           description: Successful created item
@@ -354,7 +354,7 @@ paths:
           description: post contents
           required: true
           schema:
-            $ref: "#/definitions/OrderItem"
+            $ref: "#/definitions/OrderItemEntry"
       responses:
         200:
           description: Successful updated order item
@@ -698,13 +698,13 @@ definitions:
   OrderEntry:
     title: OrderEntry
     type: object
-    required:
-      - orderkey
+    # required:
+    #   - orderkey
     properties:
       orderkey:
         type: string
         description: user session id
-  OrderItem:
+  OrderItemEntry:
     title: ItemOrder
     type: object
     required:
@@ -724,13 +724,6 @@ definitions:
       quantity:
         type: number
         description: quantity of items
-  OrderEntry:
-    title: ItemOrder
-    type: object
-    properties:
-      orderkey:
-        type: string
-        description: user session id
   CategoryCreate:
     title: CategoryCreate
     type: object
