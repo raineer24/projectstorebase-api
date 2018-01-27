@@ -31,6 +31,14 @@ Item.prototype.getRelatedCategories = results => new BluePromise((resolve, rejec
     list.push(obj.category1);
   });
 
+  if (list.length === 0) {
+    resolve({
+      list: results,
+      categories: [],
+    });
+    return;
+  }
+
   new Category({}).findAll(0, 10, {
     categoryList: list,
   })
