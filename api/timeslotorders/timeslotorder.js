@@ -12,7 +12,7 @@ let that;
 */
 function TimeslotOrder(timeslotorder) {
   this.model = _.extend(timeslotorder, {
-    number: 0,
+    datetime: new Date(timeslotorder.date).getTime(),
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
