@@ -2,6 +2,7 @@ const query = require('../../service/query');
 // const Order = require('../orders/order');
 const TimeslotOrder = require('./timeslotorder');
 const Log = require('../logs/log');
+const moment = require('moment');
 
 const timeslotOrder = {};
 
@@ -52,9 +53,22 @@ timeslotOrder.getTimeslotOrder = (req, res) => {
 */
 timeslotOrder.getTimeslotOrderAll = (req, res) => {
   new Log({ message: 'TIMESLOT_ORDER_GET_ALL', type: 'INFO' }).create();
-  return res.json({
-    list: [],
-  });
+  const instTimeslotOrder = new TimeslotOrder({});
+  instTimeslotOrder.findAll(0, 100, {
+    current: moment().format('YYYY-MM-DD'),
+  })
+    .then(results => results)
+    .then(instTimeslotOrder.formatTimeslots)
+    .then((resOrder) => {
+      if (resOrder.length === 0) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(resOrder);
+    })
+    .catch((err) => {
+      new Log({ message: `TIMESLOT_ORDER_GET_ALL ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    });
 };
 
 /**
