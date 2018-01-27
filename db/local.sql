@@ -369,6 +369,67 @@ LOCK TABLES `sellerTag` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `timeslot`
+--
+
+DROP TABLE IF EXISTS `timeslot`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `timeslot` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `range` varchar(250) NOT NULL,
+  `d1max` smallint(5) NOT NULL,
+  `d2max` smallint(5) NOT NULL,
+  `d3max` smallint(5) NOT NULL,
+  `d4max` smallint(5) NOT NULL,
+  `d5max` smallint(5) NOT NULL,
+  `d6max` smallint(5) NOT NULL,
+  `d7max` smallint(5) NOT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `timeslot`
+--
+
+LOCK TABLES `timeslot` WRITE;
+/*!40000 ALTER TABLE `timeslot` DISABLE KEYS */;
+/*!40000 ALTER TABLE `timeslot` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `timeslotorder`
+--
+
+DROP TABLE IF EXISTS `timeslotorder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `timeslotorder` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  `date` char(50) NOT NULL,
+  `datetime` bigint(50) NOT NULL,
+  `confirmed` bit(1) DEFAULT b'0',
+  `timeslot_id` varchar(50) NOT NULL,
+  `order_id` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `timeslotorder`
+--
+
+LOCK TABLES `timeslotorder` WRITE;
+/*!40000 ALTER TABLE `timeslotorder` DISABLE KEYS */;
+/*!40000 ALTER TABLE `timeslotorder` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `userAccount`
 --
 
@@ -475,4 +536,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-28  2:20:15
+-- Dump completed on 2018-01-28  2:38:04
