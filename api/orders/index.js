@@ -32,8 +32,13 @@ order.addOrder = (req, res) => {
 order.getOrder = (req, res) => {
   const objOrder = new Order({});
   new Log({ message: 'ORDER_GET', type: 'INFO' }).create();
-  objOrder.getByValue(query.validateParam(req.swagger.params, 'key', ''), 'orderkey')
-    .then(id => res.json({ id, message: 'Saved' }))
+  objOrder.getByValue(query.validateParam(req.swagger.params, 'orderkey', ''), 'orderkey')
+    .then((resOrder) => {
+      if (resOrder.length === 0) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(resOrder[0]);
+    })
     .catch((err) => {
       new Log({ message: `ORDER_GET ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
