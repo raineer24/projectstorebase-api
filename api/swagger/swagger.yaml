@@ -253,6 +253,38 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /order/{id}:
+    x-swagger-router-controller: orders
+    put:
+      tags:
+        - order
+      summary: Update order record
+      operationId: updateOrder
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderEntry"
+      responses:
+        200:
+          description: Successful updated order
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /orderItem:
     x-swagger-router-controller: orderItems
     get:
@@ -325,7 +357,7 @@ paths:
             $ref: "#/definitions/OrderItem"
       responses:
         200:
-          description: Successful updated item
+          description: Successful updated order item
           schema:
             type: object
             properties:
@@ -349,7 +381,7 @@ paths:
         - $ref: "#/parameters/orderId"
       responses:
         200:
-          description: Successful created item
+          description: Successful deleted
           schema:
             type: object
             properties:
@@ -692,6 +724,13 @@ definitions:
       quantity:
         type: number
         description: quantity of items
+  OrderEntry:
+    title: ItemOrder
+    type: object
+    properties:
+      orderkey:
+        type: string
+        description: user session id
   CategoryCreate:
     title: CategoryCreate
     type: object
