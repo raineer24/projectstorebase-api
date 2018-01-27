@@ -54,6 +54,14 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
+  * Get record by id
+  * @param {integer} id
+  * @return {object<Promise>}
+*/
+Order.prototype.getById = id => that.dbConn.readAsync(id);
+
+
+/**
   * create
   * @return {object/number}
 */
@@ -78,7 +86,7 @@ Order.prototype.update = id => new BluePromise((resolve, reject) => {
       }
     })
     .catch(() => {
-      reject('Not Found');
+      reject('Not found');
     });
 });
 
