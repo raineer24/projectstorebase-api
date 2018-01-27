@@ -2,6 +2,8 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const Conn = require('../../service/connection');
 const Query = require('../../service/query');
+const Timeslot = require('../timeslots/timeslot');
+const moment = require('moment');
 
 let that;
 
@@ -76,6 +78,75 @@ TimeslotOrder.prototype.update = id => new BluePromise((resolve, reject) => {
     })
     .catch(() => {
       reject('Not Found');
+    });
+});
+
+function getMax(day) {
+  let max = 'd7max';
+  switch (day) {
+    case 'Mon':
+      max = 'd1max';
+      break;
+    case 'Tue':
+      max = 'd2max';
+      break;
+    case 'Wed':
+      max = 'd3max';
+      break;
+    case 'Thu':
+      max = 'd4max';
+      break;
+    case 'Fri':
+      max = 'd5max';
+      break;
+    case 'Sat':
+      max = 'd6max';
+      break;
+    default:
+      break;
+  }
+  return max;
+}
+
+function formatWithRange(tsoResult) {
+  const obj = {};
+  tsoResult.forEach((row) => {
+    if (!obj[`${row.date}-${row.id}`]) {
+      obj[`${row.date}-${row.id}`] = 0;
+    }
+    obj[`${row.date}-${row.id}`] = obj[`${row.date}-${row.id}`] + 1;
+  });
+  return obj;
+}
+
+TimeslotOrder.prototype.formatTimeslots = tsoResult => new BluePromise((resolve, reject) => {
+  const formatted = [];
+  const bookedSlots = formatWithRange(tsoResult);
+
+  new Timeslot({}).findAll(0, 100, {})
+    .then((results) => {
+      /*eslint-disable */
+      for (let n = 0; n <= 7; n++) {
+        const currDate = moment().add(n, 'days').format('YYYY-MM-DD');
+        const maxValue = getMax(moment().add(n, 'days').format('ddd'));
+        formatted.push({
+          date: currDate,
+          range: [],
+        });
+        results.forEach((tsValue) => {
+          // const tmax = tsValue[maxValue];
+          formatted[n].range.push({
+            range: tsValue.range,
+            timeslotId: tsValue.id,
+            booked: bookedSlots[`${currDate}-${tsValue.id}`] ? bookedSlots[`${currDate}-${tsValue.id}`] : 0,
+            max: tsValue[maxValue],
+          });
+        });
+      }
+      resolve(formatted);
+    })
+    .catch(() => {
+      reject([]);
     });
 });
 
