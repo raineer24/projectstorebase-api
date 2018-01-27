@@ -46,6 +46,22 @@ order.getOrder = (req, res) => {
 };
 
 /**
+* Update an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+order.updateOrder = (req, res) => {
+  new Log({ message: 'ORDER_UPDATE', type: 'INFO' }).create();
+  new Order(req.swagger.params.body.value).update(query.validateParam(req.swagger.params, 'id', 0))
+    .then(msg => res.json({ message: `Updated ${msg}` }))
+    .catch((err) => {
+      new Log({ message: `ORDER_UPDATE ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    });
+};
+
+/**
 * Generate orderkey
 * @param {Object} req
 * @param {Object} res
