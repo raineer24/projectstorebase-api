@@ -92,7 +92,7 @@ OrderItem.prototype.update = id => new BluePromise((resolve, reject) => {
 OrderItem.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
 
 /**
-  * Get userAccount by id
+  * Get record by id
   * @param {integer} id
   * @return {object<Promise>}
 */
