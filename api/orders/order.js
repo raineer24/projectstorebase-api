@@ -90,6 +90,32 @@ Order.prototype.update = id => new BluePromise((resolve, reject) => {
     });
 });
 
+Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject) => {
+  that.model.dateUpdated = new Date().getTime();
+  that.getByValue(orderkey, 'orderkey')
+    .then((resultList) => {
+      if (resultList.length === 0) {
+        reject('Not found');
+      } else {
+        const results = resultList[0];
+        const DbModel = Conn.extend({ tableName: that.table });
+        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
+        that.model = _.merge(results, that.model);
+        that.dbConn.setAsync('id', results.id);
+        that.dbConn.saveAsync()
+          .then((response) => {
+            resolve(response.message);
+          })
+          .catch((err) => {
+            resolve(err);
+          });
+      }
+    })
+    .catch(() => {
+      reject('Not found');
+    });
+});
+
 /**
   * Get <db-name>.order by value
   * @param {any} value
