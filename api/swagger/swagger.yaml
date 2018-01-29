@@ -253,7 +253,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order/{id}:
+  /order/{orderkeypath}:
     x-swagger-router-controller: orders
     put:
       tags:
@@ -261,7 +261,7 @@ paths:
       summary: Update order record
       operationId: updateOrder
       parameters:
-        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/orderkeypath"
         - name: body
           in: body
           description: post contents
@@ -883,6 +883,11 @@ parameters:
   orderkey:
     in: query
     name: orderkey
+    type: string
+    required: true
+  orderkeypath:
+    in: path
+    name: orderkeypath
     type: string
     required: true
   orderId:

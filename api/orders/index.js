@@ -53,7 +53,7 @@ order.getOrder = (req, res) => {
 */
 order.updateOrder = (req, res) => {
   new Log({ message: 'ORDER_UPDATE', type: 'INFO' }).create();
-  new Order(req.swagger.params.body.value).update(query.validateParam(req.swagger.params, 'id', 0))
+  new Order(req.swagger.params.body.value).updateByOrderkey(query.validateParam(req.swagger.params, 'orderkeypath', ''))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `ORDER_UPDATE ${err}`, type: 'ERROR' }).create();
