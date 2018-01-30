@@ -7,12 +7,12 @@ const Query = require('../../service/query');
 let that;
 
 /**
-  * Category constructor
-  * @param {object} category
+  * OrderItem constructor
+  * @param {object} orderItem
   * @return {object}
 */
-function OrderItem(category) {
-  this.model = _.extend(category, {
+function OrderItem(orderItem) {
+  this.model = _.extend(orderItem, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
