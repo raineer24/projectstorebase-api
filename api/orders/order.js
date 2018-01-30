@@ -8,12 +8,12 @@ const config = require('../../config/config');
 let that;
 
 /**
-  * Category constructor
-  * @param {object} category
+  * Order constructor
+  * @param {object} order
   * @return {object}
 */
-function Order(category) {
-  this.model = _.extend(category, {
+function Order(order) {
+  this.model = _.extend(order, {
     number: 0,
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
