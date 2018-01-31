@@ -123,7 +123,7 @@ INSERT INTO `item` VALUES (3,'4800361381024','Bear Brand 33 G Swak Pack','Nestle
 UNLOCK TABLES;
 
 --
--- Table structure for table `itemCategory`
+-- Table structure for table `itemcategory`
 --
 
 DROP TABLE IF EXISTS `itemcategory`;
@@ -141,16 +141,16 @@ CREATE TABLE `itemcategory` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `itemCategory`
+-- Dumping data for table `itemcategory`
 --
 
 LOCK TABLES `itemcategory` WRITE;
-/*!40000 ALTER TABLE `itemCategory` DISABLE KEYS */;
-/*!40000 ALTER TABLE `itemCategory` ENABLE KEYS */;
+/*!40000 ALTER TABLE `itemcategory` DISABLE KEYS */;
+/*!40000 ALTER TABLE `itemcategory` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `itemTag`
+-- Table structure for table `itemtag`
 --
 
 DROP TABLE IF EXISTS `itemtag`;
@@ -168,12 +168,12 @@ CREATE TABLE `itemtag` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `itemTag`
+-- Dumping data for table `itemtag`
 --
 
 LOCK TABLES `itemtag` WRITE;
-/*!40000 ALTER TABLE `itemTag` DISABLE KEYS */;
-/*!40000 ALTER TABLE `itemTag` ENABLE KEYS */;
+/*!40000 ALTER TABLE `itemtag` DISABLE KEYS */;
+/*!40000 ALTER TABLE `itemtag` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -262,10 +262,21 @@ CREATE TABLE `order` (
   `taxTotal` char(100) DEFAULT NULL,
   `currency` char(10) DEFAULT NULL,
   `totalQuantity` char(5) DEFAULT NULL,
+  `firstname` char(50) DEFAULT NULL,
+  `lastname` char(50) DEFAULT NULL,
+  `phone` char(20) DEFAULT NULL,
   `billingAddress01` varchar(250) DEFAULT NULL,
   `billingAddress02` varchar(250) DEFAULT NULL,
+  `billCity` char(50) DEFAULT NULL,
+  `billPostalcode` char(10) DEFAULT NULL,
+  `billCountry` char(50) DEFAULT NULL,
+  `billCountry_id` bigint(10) DEFAULT 0,
   `shippingAddress01` varchar(250) DEFAULT NULL,
   `shippingAddress02` varchar(250) DEFAULT NULL,
+  `city` char(50) DEFAULT NULL,
+  `postalcode` char(10) DEFAULT NULL,
+  `country` char(50) DEFAULT NULL,
+  `country_id` bigint(10) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   `userAccount_id` bigint(50) DEFAULT 0,
@@ -280,7 +291,6 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,'ObOAATm3c3nH1DAHQM8Qb6U37OHFBG7XH9EgnsrrWofFReyxMh','0','0','0',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'245 as fortuna street',NULL,1517075811056,1517075811059,0,0),(2,'kmIScrP1mSDSoxvNjCuD151733760275118rzKY9RmgMenzG9NKOX','0','0','14.25',NULL,NULL,NULL,NULL,NULL,NULL,'address',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2',NULL,NULL,NULL,NULL,1517338087364,1517338087367,0,0);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -596,4 +606,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-31  2:53:43
+-- Dump completed on 2018-02-01  7:55:21
