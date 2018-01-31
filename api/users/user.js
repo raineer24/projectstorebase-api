@@ -11,7 +11,7 @@ function User(user) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'userAccount';
+  this.table = 'useraccount';
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;

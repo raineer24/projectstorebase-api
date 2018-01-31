@@ -16,7 +16,7 @@ function Seller(seller) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'sellerAccount';
+  this.table = 'selleraccount';
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;

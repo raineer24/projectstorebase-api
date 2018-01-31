@@ -9,7 +9,7 @@ let that;
 
 /**
   * Constructor
-  * @param {object} timeslotOrder
+  * @param {object} timeslotorder
   * @return {object}
 */
 function TimeslotOrder(timeslotorder) {
@@ -18,7 +18,7 @@ function TimeslotOrder(timeslotorder) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'timeslotOrder';
+  this.table = 'timeslotorder';
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;
