@@ -126,10 +126,10 @@ UNLOCK TABLES;
 -- Table structure for table `itemCategory`
 --
 
-DROP TABLE IF EXISTS `itemCategory`;
+DROP TABLE IF EXISTS `itemcategory`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `itemCategory` (
+CREATE TABLE `itemcategory` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `item_id` bigint(50) NOT NULL,
   `category_id` bigint(50) NOT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE `itemCategory` (
 -- Dumping data for table `itemCategory`
 --
 
-LOCK TABLES `itemCategory` WRITE;
+LOCK TABLES `itemcategory` WRITE;
 /*!40000 ALTER TABLE `itemCategory` DISABLE KEYS */;
 /*!40000 ALTER TABLE `itemCategory` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -153,10 +153,10 @@ UNLOCK TABLES;
 -- Table structure for table `itemTag`
 --
 
-DROP TABLE IF EXISTS `itemTag`;
+DROP TABLE IF EXISTS `itemtag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `itemTag` (
+CREATE TABLE `itemtag` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `item_id` bigint(50) NOT NULL,
   `tag_id` bigint(50) NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE `itemTag` (
 -- Dumping data for table `itemTag`
 --
 
-LOCK TABLES `itemTag` WRITE;
+LOCK TABLES `itemtag` WRITE;
 /*!40000 ALTER TABLE `itemTag` DISABLE KEYS */;
 /*!40000 ALTER TABLE `itemTag` ENABLE KEYS */;
 UNLOCK TABLES;
