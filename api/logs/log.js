@@ -5,8 +5,8 @@ const Conn = require('../../service/connection');
 let that;
 
 /**
-  * Item constructor
-  * @param {object} item
+  * Log constructor
+  * @param {object} log
   * @return {object}
 */
 function Log(log) {
