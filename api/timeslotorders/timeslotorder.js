@@ -167,4 +167,21 @@ TimeslotOrder.prototype.getByValue = (value, field) => that.dbConn.findAsync('al
 */
 TimeslotOrder.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'order_id', 'timeslot_id'], filters, limit, offset));
 
+/**
+  * confirmOrder
+  * @param {int} orderId
+  * @return {order_id}
+*/
+TimeslotOrder.prototype.confirmOrder = (orderId) => new BluePromise((resolve, reject) => {
+  const DbModel = Conn.extend({ tableName: that.table });
+  that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
+  that.dbConn.saveAsync(`order_id = '${orderId}'`)
+    .then((response) => {
+      resolve(orderId);
+    })
+    .catch((err) => {
+      resolve(err);
+    });
+});
+
 module.exports = TimeslotOrder;
