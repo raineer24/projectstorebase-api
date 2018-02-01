@@ -85,7 +85,7 @@ order.generateOrderKey = (req, res) => {
 order.confirmOrder = (req, res) => {
   new Log({ message: 'ORDER_CONFIRM', type: 'INFO' }).create();
   new Order(req.swagger.params.body.value).processOrder(query.validateParam(req.swagger.params, 'id', 0))
-    .then(msg => res.json({ message: `Processed order ${msg}` }))
+    .then(msg => res.json({ message: `Processed order ${msg}`, transaction: msg }))
     .catch((err) => {
       new Log({ message: `ORDER_CONFIRM ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
