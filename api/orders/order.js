@@ -2,6 +2,8 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const Conn = require('../../service/connection');
 const config = require('../../config/config');
+const Timeslotorder = require('../timeslotorders/timeslotorder');
+const Transaction = require('../transactions/transaction');
 // const Query = require('../../service/query');
 // const Util = require('../helpers/util');
 
@@ -65,7 +67,7 @@ Order.prototype.getById = id => that.dbConn.readAsync(id);
   * create
   * @return {object/number}
 */
-Order.prototype.update = id => new BluePromise((resolve, reject) => {
+Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
     .then((results) => {
@@ -78,7 +80,7 @@ Order.prototype.update = id => new BluePromise((resolve, reject) => {
         that.dbConn.setAsync('id', id);
         that.dbConn.saveAsync()
           .then((response) => {
-            resolve(response.message);
+            resolve(confirmOrder ? id : response.message);
           })
           .catch((err) => {
             resolve(err);
@@ -123,5 +125,22 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
   * @return {object<Promise>}
 */
 Order.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${that.table}.${field} = '${value}'` });
+
+Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
+  that.update(id, true) // update(order_id, confirmOrder)
+    .then(new Timeslotorder({ confirmed: 1 }).confirmOrder) // Update timeslotorder
+    .then(new Transaction({
+      order_id: id,
+      action: 'CONFIRM_PAYMENT',
+    }).create) // Create transaction
+    .then((transactionId) => {
+      resolve(transactionId);
+    })
+    .catch((err) => {
+      reject(err);
+    });
+  // Create notification
+});
+
 
 module.exports = Order;
