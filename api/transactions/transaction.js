@@ -2,6 +2,7 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const Conn = require('../../service/connection');
 const Query = require('../../service/query');
+const random = require('randomstring');
 
 let that;
 
@@ -12,6 +13,8 @@ let that;
 */
 function Transaction(transaction) {
   this.model = _.extend(transaction, {
+    number: random.generate(30) + new Date().getTime(),
+    comments: transaction.comments || '',
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
@@ -39,10 +42,11 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
   const DbModel = Conn.extend({ tableName: that.table });
   that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
   that.dbConn.saveAsync()
-    .then((response) => {
-      resolve(response.insertId);
+    .then(() => {
+      resolve(that.model.number);
     })
     .catch((err) => {
+      console.log(err);
       reject(err);
     });
 });
