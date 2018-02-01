@@ -123,7 +123,7 @@ INSERT INTO `item` VALUES (3,'4800361381024','Bear Brand 33 G Swak Pack','Nestle
 UNLOCK TABLES;
 
 --
--- Table structure for table `itemCategory`
+-- Table structure for table `itemcategory`
 --
 
 DROP TABLE IF EXISTS `itemcategory`;
@@ -141,12 +141,12 @@ CREATE TABLE `itemcategory` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `itemCategory`
+-- Dumping data for table `itemcategory`
 --
 
 LOCK TABLES `itemcategory` WRITE;
-/*!40000 ALTER TABLE `itemCategory` DISABLE KEYS */;
-/*!40000 ALTER TABLE `itemCategory` ENABLE KEYS */;
+/*!40000 ALTER TABLE `itemcategory` DISABLE KEYS */;
+/*!40000 ALTER TABLE `itemcategory` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
