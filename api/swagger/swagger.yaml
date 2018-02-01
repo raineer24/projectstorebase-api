@@ -285,6 +285,38 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /order/{id}/payment:
+    x-swagger-router-controller: orders
+    put:
+      tags:
+        - order
+      summary: Confirm payment for the order
+      operationId: confirmOrder
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderEntry"
+      responses:
+        200:
+          description: Successful updated order
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /orderItem:
     x-swagger-router-controller: orderItems
     get:
