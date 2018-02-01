@@ -76,4 +76,20 @@ order.generateOrderKey = (req, res) => {
   return res.status(500).json({ message: 'Failed to generate' });
 };
 
+/**
+* confirm an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+order.confirmOrder = (req, res) => {
+  new Log({ message: 'ORDER_CONFIRM', type: 'INFO' }).create();
+  new Order(req.swagger.params.body.value).processOrder(query.validateParam(req.swagger.params, 'id', 0))
+    .then(msg => res.json({ message: `Processed order ${msg}` }))
+    .catch((err) => {
+      new Log({ message: `ORDER_CONFIRM ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    });
+};
+
 module.exports = order;
