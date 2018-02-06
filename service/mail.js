@@ -14,7 +14,7 @@ function Mailer(options) {
     auth: {
       user: config.mail.username,
       pass: config.mail.password,
-    }
+    },
   });
 }
 
