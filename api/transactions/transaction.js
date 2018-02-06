@@ -46,7 +46,6 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
       resolve(that.model.number);
     })
     .catch((err) => {
-      console.log(err);
       reject(err);
     });
 });
