@@ -19,7 +19,9 @@ query.composeQuery = (table, fields, filters, limit, skip) => {
   strSql = sqlQuery.text;
 
   if (filters) {
-    if (filters.categoryList) {
+    if (filters.orderId && filters.timeslotId) {
+      strSql = `SELECT * FROM ${table} WHERE ${table}.order_id = ${filters.orderId} && ${table}.order_id = ${filters.timeslotId} LIMIT ${skip}, ${limit};`;
+    } else if (filters.categoryList) {
       const condition = filters.categoryList.join(` OR ${table}.id = `);
       strSql = `SELECT * FROM ${table} WHERE ${table}.id = ${condition} LIMIT ${skip}, ${limit};`;
     } else if (filters.itemId && filters.orderkey) {
