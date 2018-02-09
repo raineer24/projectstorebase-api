@@ -58,7 +58,10 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
 
 TimeslotOrder.prototype.update = orderId => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
-  that.getByValue(orderId, 'order_id')
+  that.findAll(0, 1, {
+    orderId: that.model.orderId,
+    timeslotId: that.model.timeslot_id,
+  })
     .then((results) => {
       if (!results.id) {
         reject('Not Found');
