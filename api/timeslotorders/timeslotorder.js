@@ -59,7 +59,7 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
 TimeslotOrder.prototype.update = orderId => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.findAll(0, 1, {
-    orderId: that.model.orderId,
+    orderId,
     timeslotId: that.model.timeslot_id,
   })
     .then((results) => {
