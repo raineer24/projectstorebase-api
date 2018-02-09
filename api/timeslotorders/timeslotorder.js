@@ -56,9 +56,12 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
-TimeslotOrder.prototype.update = id => new BluePromise((resolve, reject) => {
+TimeslotOrder.prototype.update = orderId => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
-  that.getById(id)
+  that.findAll(0, 1, {
+    orderId,
+    timeslotId: that.model.timeslot_id,
+  })
     .then((results) => {
       if (!results.id) {
         reject('Not Found');
@@ -66,7 +69,7 @@ TimeslotOrder.prototype.update = id => new BluePromise((resolve, reject) => {
         const DbModel = Conn.extend({ tableName: that.table });
         that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
         that.model = _.merge(results, that.model);
-        that.dbConn.setAsync('id', id);
+        that.dbConn.setAsync('id', results.id);
         that.dbConn.saveAsync()
           .then((response) => {
             resolve(response.message);
