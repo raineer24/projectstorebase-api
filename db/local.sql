@@ -251,7 +251,7 @@ CREATE TABLE `order` (
   `paymentTotal` char(30) DEFAULT NULL,
   `dateCompleted` bigint(50) DEFAULT NULL,
   `shipmentStatus` char(20) DEFAULT NULL,
-  `paymenttStatus` char(20) DEFAULT NULL,
+  `paymentStatus` char(20) DEFAULT NULL,
   `status` char(20) DEFAULT NULL,
   `email` char(100) DEFAULT NULL,
   `specialInstructions` tinytext DEFAULT NULL,
@@ -608,4 +608,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-09 20:48:41
+-- Dump completed on 2018-02-10 21:04:14
