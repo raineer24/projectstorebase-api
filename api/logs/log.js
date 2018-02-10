@@ -1,6 +1,8 @@
-const BluePromise = require('bluebird');
+// const BluePromise = require('bluebird');
 const lodash = require('lodash');
-const Conn = require('../../service/connection');
+// const Conn = require('../../service/connection');
+const ConnNew = require('../../service/connectionnew');
+const sql = require('sql');
 
 let that;
 
@@ -10,25 +12,24 @@ let that;
   * @return {object}
 */
 function Log(log) {
+  sql.setDialect('mysql');
+
   this.model = lodash.extend(log, {
     dateCreated: new Date().getTime(),
   });
   this.table = 'log';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+  this.sqlTable = sql.define({
+    name: this.table,
+    columns: ['id', 'message', 'url', 'type', 'dateCreated'],
+  });
 
   that = this;
 }
 
-Log.prototype.create = () => new BluePromise((resolve, reject) => {
-  const DbModel = Conn.extend({ tableName: that.table });
-  that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-  that.dbConn.saveAsync()
-    .then((response) => {
-      resolve(response.insertId);
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
+Log.prototype.create = () => {
+  const query = that.sqlTable.insert(that.model).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 module.exports = Log;
