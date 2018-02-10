@@ -1,6 +1,4 @@
-// const BluePromise = require('bluebird');
 const lodash = require('lodash');
-// const Conn = require('../../service/connection');
 const ConnNew = require('../../service/connectionnew');
 const sql = require('sql');
 
@@ -31,5 +29,13 @@ Log.prototype.create = () => {
   const query = that.sqlTable.insert(that.model).toQuery();
   return that.dbConnNew.queryAsync(query.text, query.values);
 };
+
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Log.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 module.exports = Log;
