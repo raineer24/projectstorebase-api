@@ -1,8 +1,9 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const Conn = require('../../service/connection');
+const ConnNew = require('../../service/connectionnew');
 const Query = require('../../service/query');
-// const Util = require('../helpers/util');
+const sql = require('sql');
 
 let that;
 
@@ -12,12 +13,30 @@ let that;
   * @return {object}
 */
 function OrderItem(orderItem) {
+  sql.setDialect('mysql');
+
   this.model = _.extend(orderItem, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = 'orderitem';
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+  this.sqlTable = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'enabled',
+      'dateCreated',
+      'dateUpdated',
+      'orderkey',
+      'user_id',
+      'item_id',
+      'order_id',
+      'quantity',
+      'processed',
+    ],
+  });
 
   that = this;
 }
