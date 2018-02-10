@@ -1,7 +1,6 @@
 const BluePromise = require('bluebird');
 const lodash = require('lodash');
 const sql = require('sql');
-const Conn = require('../../service/connection');
 const ConnNew = require('../../service/connectionnew');
 const Category = require('../categories/category');
 
@@ -22,7 +21,6 @@ function Item(item) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'item';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
   this.dbConnNew = ConnNew;
   this.sqlTable = sql.define({
     name: this.table,

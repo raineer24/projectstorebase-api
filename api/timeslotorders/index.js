@@ -14,13 +14,16 @@ const timeslotOrder = {};
 * @return {Object}
 */
 timeslotOrder.addTimeslotOrder = (req, res) => {
-  const objTimeslotOrder = new TimeslotOrder(req.swagger.params.body.value);
   new Log({ message: 'TIMESLOT_ORDER_CREATE', type: 'INFO' }).create();
-  objTimeslotOrder.create()
+  const instTimeslotOrder = new TimeslotOrder(req.swagger.params.body.value);
+  instTimeslotOrder.create()
     .then(id => res.json({ id, message: 'Saved' }))
     .catch((err) => {
       new Log({ message: `TIMESLOT_ORDER_CREATE ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instTimeslotOrder.release();
     });
 };
 
@@ -32,7 +35,8 @@ timeslotOrder.addTimeslotOrder = (req, res) => {
 */
 timeslotOrder.getTimeslotOrder = (req, res) => {
   new Log({ message: 'TIMESLOT_ORDER_GET', type: 'INFO' }).create();
-  new TimeslotOrder({}).getByValue(query.validateParam(req.swagger.params, 'orderId', ''), 'order_id')
+  const instTimeslotOrder = new TimeslotOrder({});
+  instTimeslotOrder.getByValue(query.validateParam(req.swagger.params, 'orderId', ''), 'order_id')
     .then((resOrder) => {
       if (resOrder.length === 0) {
         return res.status(404).json({ message: 'Not found' });
@@ -42,6 +46,9 @@ timeslotOrder.getTimeslotOrder = (req, res) => {
     .catch((err) => {
       new Log({ message: `TIMESLOT_ORDER_GET ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instTimeslotOrder.release();
     });
 };
 
@@ -68,6 +75,9 @@ timeslotOrder.getTimeslotOrderAll = (req, res) => {
     .catch((err) => {
       new Log({ message: `TIMESLOT_ORDER_GET_ALL ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instTimeslotOrder.release();
     });
 };
 
@@ -79,11 +89,15 @@ timeslotOrder.getTimeslotOrderAll = (req, res) => {
 */
 timeslotOrder.updateTimeslotOrder = (req, res) => {
   new Log({ message: 'TIMESLOT_ORDER_UPDATE', type: 'INFO' }).create();
-  new TimeslotOrder(req.swagger.params.body.value).update(query.validateParam(req.swagger.params, 'orderId', 0))
+  const instTimeslotOrder = new TimeslotOrder(req.swagger.params.body.value);
+  instTimeslotOrder.update(query.validateParam(req.swagger.params, 'orderId', 0))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `TIMESLOT_ORDER_UPDATE ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instTimeslotOrder.release();
     });
 };
 

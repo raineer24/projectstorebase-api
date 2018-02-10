@@ -1,9 +1,9 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
-const Conn = require('../../service/connection');
 const ConnNew = require('../../service/connectionnew');
-const Query = require('../../service/query');
 const sql = require('sql');
+
+const log = require('color-logs')(true, true, 'Category');
 
 let that;
 
@@ -20,7 +20,6 @@ function OrderItem(orderItem) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'orderitem';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
   this.dbConnNew = ConnNew;
   this.sqlTable = sql.define({
     name: this.table,
@@ -47,14 +46,35 @@ function OrderItem(orderItem) {
   * @param {string} offset
   * @return {object}
 */
-OrderItem.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'user_id', 'item_id'], filters, limit, offset));
+OrderItem.prototype.findAll = (skip, limit, filters) => {
+  let query = null;
+  if (filters.itemId && filters.orderkey) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.item_id.equals(filters.itemId)
+        .and(that.sqlTable.orderkey.equals(filters.orderkey)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 /**
   * create
   * @return {object/number}
 */
 OrderItem.prototype.create = () => new BluePromise((resolve, reject) => {
-  // that.getByValue(that.model.item_id, 'item_id')
   that.findAll(0, 1, {
     itemId: that.model.item_id,
     orderkey: that.model.orderkey,
@@ -64,9 +84,8 @@ OrderItem.prototype.create = () => new BluePromise((resolve, reject) => {
         if (that.model.id) {
           delete that.model.id;
         }
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.insert(that.model).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -82,24 +101,26 @@ OrderItem.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
-
-OrderItem.prototype.update = id => new BluePromise((resolve, reject) => {
+/**
+  * update
+  * @return {object/number}
+*/
+OrderItem.prototype.update = orderItemId => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
-  that.getById(id)
+  that.getById(orderItemId)
     .then((results) => {
       if (!results.id) {
         reject('Not Found');
       } else {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
         that.model = _.merge(results, that.model);
-        that.dbConn.setAsync('id', id);
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(orderItemId)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
           .catch((err) => {
-            resolve(err);
+            reject(err);
           });
       }
     })
@@ -108,32 +129,50 @@ OrderItem.prototype.update = id => new BluePromise((resolve, reject) => {
     });
 });
 
-OrderItem.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
 
 /**
-  * Get record by id
-  * @param {integer} id
+  * Get by value
+  * @param {any} value
+  * @param {string} field
   * @return {object<Promise>}
 */
-OrderItem.prototype.getById = id => that.dbConn.readAsync(id);
+OrderItem.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
+/**
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+OrderItem.prototype.findById = id => that.getByValue(id, 'id');
+OrderItem.prototype.getById = id => that.getByValue(id, 'id');
 
+/**
+  * removeById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
 OrderItem.prototype.removeById = id => new BluePromise((resolve, reject) => {
   that.getById(id)
     .then((results) => {
       if (!results.id) {
         reject('Not Found');
       } else {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.model = _.merge(results, that.model);
-        that.dbConn.setAsync('id', id);
-        that.dbConn.removeAsync()
+        const query = that.sqlTable.delete(that.model)
+          .where(that.sqlTable.id.equals(id)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then(() => {
             resolve('Deleted');
           })
           .catch((err) => {
-            resolve(err);
+            reject(err);
           });
       }
     })
@@ -141,5 +180,13 @@ OrderItem.prototype.removeById = id => new BluePromise((resolve, reject) => {
       reject('Not Found');
     });
 });
+
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+OrderItem.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 module.exports = OrderItem;

@@ -13,7 +13,7 @@ category.listAllCategories = (req, res) => {
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
     })
     .finally(() => {
-      instCategory.close();
+      instCategory.release();
     });
 };
 
@@ -27,7 +27,7 @@ category.addCategory = (req, res) => {
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })
     .finally(() => {
-      instCategory.close();
+      instCategory.release();
     });
 };
 

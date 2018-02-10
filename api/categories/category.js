@@ -72,7 +72,7 @@ Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) =
     categories: [],
     subCategories: [],
   };
-  that.findAll(0, 5000, null)
+  that.findAll(0, 5000, {})
     .then((results) => {
       if (results.length > 0) {
         structured.categories = _.filter(results, { category_id: 0 });

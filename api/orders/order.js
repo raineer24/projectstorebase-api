@@ -1,11 +1,12 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
-const Conn = require('../../service/connection');
+const ConnNew = require('../../service/connectionnew');
 const config = require('../../config/config');
 const Timeslotorder = require('../timeslotorders/timeslotorder');
 const Transaction = require('../transactions/transaction');
-// const Query = require('../../service/query');
-// const Util = require('../helpers/util');
+const sql = require('sql');
+
+// const log = require('color-logs')(true, true, 'Category');
 
 let that;
 
@@ -15,13 +16,62 @@ let that;
   * @return {object}
 */
 function Order(order) {
+  sql.setDialect('mysql');
+
   this.model = _.extend(order, {
     number: 0,
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = `${config.db.name}.order`;
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+  this.sqlTable = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'orderkey',
+      'number',
+      'itemTotal',
+      'total',
+      'shipmentTotal',
+      'adjustmentTotal',
+      'paymentTotal',
+      'dateCompleted',
+      'shipmentStatus',
+      'paymentStatus',
+      'status',
+      'email',
+      'specialInstructions',
+      'includedTaxTotal',
+      'additionalTaxTotal',
+      'displayIncludedTaxTotal',
+      'displayAdditionalTaxTotal',
+      'taxTotal',
+      'currency',
+      'totalQuantity',
+      'firstname',
+      'lastname',
+      'phone',
+      'billingAddress01',
+      'billingAddress02',
+      'billCity',
+      'billPostalcode',
+      'billCountry',
+      'billCountry_id',
+      'shippingAddress01',
+      'shippingAddress02',
+      'city',
+      'postalcode',
+      'country',
+      'country_id',
+      'paymentMode',
+      'paymentInstructions',
+      'dateCreated',
+      'dateUpdated',
+      'userAccount_id',
+      'address_id',
+    ],
+  });
 
   that = this;
 }
@@ -37,9 +87,8 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
         if (that.model.id) {
           delete that.model.id;
         }
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.insert(that.model).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -56,15 +105,16 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * Get record by id
-  * @param {integer} id
-  * @return {object<Promise>}
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
 */
-Order.prototype.getById = id => that.dbConn.readAsync(id);
-
+Order.prototype.findById = id => that.getByValue(id, 'id');
+Order.prototype.getById = id => that.getByValue(id, 'id');
 
 /**
-  * create
+  * update
   * @return {object/number}
 */
 Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
@@ -74,16 +124,15 @@ Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject)
       if (!results.id) {
         reject('Not Found');
       } else {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
         that.model = _.merge(results, that.model);
-        that.dbConn.setAsync('id', id);
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(id)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(confirmOrder ? id : response.message);
           })
           .catch((err) => {
-            resolve(err);
+            reject(err);
           });
       }
     })
@@ -100,16 +149,15 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
         reject('Not found');
       } else {
         const results = resultList[0];
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
         that.model = _.merge(results, that.model);
-        that.dbConn.setAsync('id', results.id);
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(results.id)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
           .catch((err) => {
-            resolve(err);
+            reject(err);
           });
       }
     })
@@ -119,12 +167,19 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
 });
 
 /**
-  * Get <db-name>.order by value
+  * Get by value
   * @param {any} value
   * @param {string} field
   * @return {object<Promise>}
 */
-Order.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${that.table}.${field} = '${value}'` });
+Order.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
 
 Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
   that.update(id, true) // update(order_id, confirmOrder)
@@ -142,5 +197,12 @@ Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
   // Create notification
 });
 
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Order.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 module.exports = Order;
