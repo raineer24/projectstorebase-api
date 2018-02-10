@@ -27,26 +27,37 @@ item.listItems = (req, res) => {
     .catch((err) => {
       new Log({ message: `ITEM_LIST ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+    })
+    .finally(() => {
+      instItem.release();
     });
 };
 
 item.previewItem = (req, res) => {
   new Log({ message: 'ITEM_GET', type: 'INFO' }).create();
-  new Item().findById(query.validateParam(req.swagger.params, 'id', 0))
+  const instItem = new Item();
+  instItem.findById(query.validateParam(req.swagger.params, 'id', 0))
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `ITEM_GET ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+    })
+    .finally(() => {
+      instItem.release();
     });
 };
 
 item.addItem = (req, res) => {
   new Log({ message: 'ITEM_ADD', type: 'INFO' }).create();
-  Item(req.swagger.params.body.value).create()
+  const instItem = new Item(req.swagger.params.body.value);
+  instItem.create()
     .then(id => res.json({ id, message: 'Existing' }))
     .catch((err) => {
       new Log({ message: `ITEM_ADD ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
+    })
+    .finally(() => {
+      instItem.release();
     });
 };
 
