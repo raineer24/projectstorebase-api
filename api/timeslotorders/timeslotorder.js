@@ -1,9 +1,11 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
-const Conn = require('../../service/connection');
-const Query = require('../../service/query');
+const sql = require('sql');
+const ConnNew = require('../../service/connectionnew');
 const Timeslot = require('../timeslots/timeslot');
 const moment = require('moment');
+
+const log = require('color-logs')(true, true, 'Category');
 
 let that;
 
@@ -13,13 +15,28 @@ let that;
   * @return {object}
 */
 function TimeslotOrder(timeslotorder) {
+  sql.setDialect('mysql');
+
   this.model = _.extend(timeslotorder, {
     datetime: new Date(timeslotorder.date).getTime(),
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = 'timeslotorder';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+  this.sqlTable = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'dateCreated',
+      'dateUpdated',
+      'date',
+      'datetime',
+      'confirmed',
+      'timeslot_id',
+      'order_id',
+    ],
+  });
 
   that = this;
 }
@@ -38,9 +55,8 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
         if (that.model.id) {
           delete that.model.id;
         }
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.insert(that.model).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -66,16 +82,15 @@ TimeslotOrder.prototype.update = orderId => new BluePromise((resolve, reject) =>
       if (!results.id) {
         reject('Not Found');
       } else {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
         that.model = _.merge(results, that.model);
-        that.dbConn.setAsync('id', results.id);
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(results.id)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
           .catch((err) => {
-            resolve(err);
+            reject(err);
           });
       }
     })
@@ -154,13 +169,27 @@ TimeslotOrder.prototype.formatTimeslots = tsoResult => new BluePromise((resolve,
 });
 
 /**
-  * Get record by id
-  * @param {integer} id
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+TimeslotOrder.prototype.findById = id => that.getByValue(id, 'id');
+TimeslotOrder.prototype.getById = id => that.getByValue(id, 'id');
+
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
   * @return {object<Promise>}
 */
-TimeslotOrder.prototype.getById = id => that.dbConn.readAsync(id);
-
-TimeslotOrder.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${that.table}.${field} = '${value}'` });
+TimeslotOrder.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 /**
   * findAll
@@ -168,7 +197,29 @@ TimeslotOrder.prototype.getByValue = (value, field) => that.dbConn.findAsync('al
   * @param {string} offset
   * @return {object}
 */
-TimeslotOrder.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'order_id', 'timeslot_id'], filters, limit, offset));
+TimeslotOrder.prototype.findAll = (skip, limit, filters) => {
+  let query = null;
+  if (filters.orderId && filters.timeslotId) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.order_id.equals(filters.orderId)
+        .and(that.sqlTable.timeslot_id.equals(filters.timeslotId)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 /**
   * confirmOrder
@@ -176,15 +227,36 @@ TimeslotOrder.prototype.findAll = (offset, limit, filters) => that.dbConn.queryA
   * @return {order_id}
 */
 TimeslotOrder.prototype.confirmOrder = (orderId) => new BluePromise((resolve, reject) => {
-  const DbModel = Conn.extend({ tableName: that.table });
-  that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-  that.dbConn.saveAsync(`order_id = '${orderId}'`)
-    .then((response) => {
-      resolve(orderId);
+  // TODO: get the timeslotorder record
+  that.getByValue(orderId, 'order_id')
+    .then((resultSet) => {
+      if (resultSet.length === 0) {
+        reject('Not found');
+      } else {
+        delete that.model.datetime;
+        // that.model = _.merge(resultSet[0], that.model);
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.order_id.equals(orderId)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
+          .then((response) => {
+            resolve(orderId);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      }
     })
     .catch((err) => {
-      resolve(err);
+      reject(err);
     });
 });
+
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+TimeslotOrder.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 module.exports = TimeslotOrder;

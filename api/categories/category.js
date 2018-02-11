@@ -1,8 +1,9 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
-const Conn = require('../../service/connection');
-const Query = require('../../service/query');
-// const Util = require('../helpers/util');
+const sql = require('sql');
+const ConnNew = require('../../service/connectionnew');
+
+const log = require('color-logs')(true, true, 'Category');
 
 let that;
 
@@ -12,12 +13,26 @@ let that;
   * @return {object}
 */
 function Category(category) {
+  sql.setDialect('mysql');
+
   this.model = _.extend(category, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = 'category';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+  this.sqlTable = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'name',
+      'level',
+      'category_id',
+      'enabled',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
 
   that = this;
 }
@@ -26,16 +41,38 @@ function Category(category) {
   * findAll
   * @param {string} limit
   * @param {string} offset
+  * @param {string} filters <Array>
   * @return {object}
 */
-Category.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'name'], filters, limit, offset));
+Category.prototype.findAll = (skip, limit, filters) => {
+  let query = null;
+  if (filters.id) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.id.equals(filters.id))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) => {
   const structured = {
     categories: [],
     subCategories: [],
   };
-  that.findAll(0, 5000, null)
+  that.findAll(0, 5000, {})
     .then((results) => {
       if (results.length > 0) {
         structured.categories = _.filter(results, { category_id: 0 });
@@ -59,6 +96,14 @@ Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) =
 });
 
 /**
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Category.prototype.findById = id => that.getByValue(id, 'id');
+
+/**
   * create
   * @return {object/number}
 */
@@ -69,9 +114,8 @@ Category.prototype.create = () => new BluePromise((resolve, reject) => {
         if (that.model.id) {
           delete that.model.id;
         }
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.insert(that.model).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -88,11 +132,25 @@ Category.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * Get sellerAccount by value
+  * Get by value
   * @param {any} value
   * @param {string} field
   * @return {object<Promise>}
 */
-Category.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+Category.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Category.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 module.exports = Category;

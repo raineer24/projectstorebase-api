@@ -1,5 +1,4 @@
 const query = require('../../service/query');
-// const Order = require('../orders/order');
 const Order = require('./order');
 const Log = require('../logs/log');
 const Util = require('../helpers/util');
@@ -13,13 +12,16 @@ const order = {};
 * @return {Object}
 */
 order.addOrder = (req, res) => {
-  const objOrder = new Order(req.swagger.params.body.value);
   new Log({ message: 'ORDER_CREATE', type: 'INFO' }).create();
-  objOrder.create()
+  const instOrder = new Order(req.swagger.params.body.value);
+  instOrder.create()
     .then(id => res.json({ id, message: 'Saved' }))
     .catch((err) => {
       new Log({ message: `ORDER_CREATE ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instOrder.release();
     });
 };
 
@@ -30,18 +32,21 @@ order.addOrder = (req, res) => {
 * @return {Object}
 */
 order.getOrder = (req, res) => {
-  const objOrder = new Order({});
   new Log({ message: 'ORDER_GET', type: 'INFO' }).create();
-  objOrder.getByValue(query.validateParam(req.swagger.params, 'orderkey', ''), 'orderkey')
-    .then((resOrder) => {
-      if (resOrder.length === 0) {
+  const instOrder = new Order({});
+  instOrder.getByValue(query.validateParam(req.swagger.params, 'orderkey', ''), 'orderkey')
+    .then((resultList) => {
+      if (resultList.length === 0) {
         return res.status(404).json({ message: 'Not found' });
       }
-      return res.json(resOrder[0]);
+      return res.json(resultList[0]);
     })
     .catch((err) => {
       new Log({ message: `ORDER_GET ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instOrder.release();
     });
 };
 
@@ -53,11 +58,15 @@ order.getOrder = (req, res) => {
 */
 order.updateOrder = (req, res) => {
   new Log({ message: 'ORDER_UPDATE', type: 'INFO' }).create();
-  new Order(req.swagger.params.body.value).updateByOrderkey(query.validateParam(req.swagger.params, 'orderkeypath', ''))
+  const instOrder = new Order(req.swagger.params.body.value);
+  instOrder.updateByOrderkey(query.validateParam(req.swagger.params, 'orderkeypath', ''))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `ORDER_UPDATE ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instOrder.release();
     });
 };
 
@@ -84,11 +93,15 @@ order.generateOrderKey = (req, res) => {
 */
 order.confirmOrder = (req, res) => {
   new Log({ message: 'ORDER_CONFIRM', type: 'INFO' }).create();
-  new Order(req.swagger.params.body.value).processOrder(query.validateParam(req.swagger.params, 'id', 0))
+  const instOrder = new Order(req.swagger.params.body.value);
+  instOrder.processOrder(query.validateParam(req.swagger.params, 'id', 0))
     .then(msg => res.json({ message: `Processed order ${msg}`, transaction: msg }))
     .catch((err) => {
       new Log({ message: `ORDER_CONFIRM ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instOrder.release();
     });
 };
 

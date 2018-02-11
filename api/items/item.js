@@ -1,10 +1,10 @@
 const BluePromise = require('bluebird');
 const lodash = require('lodash');
-const Conn = require('../../service/connection');
-const Query = require('../../service/query');
-// const _ = require('lodash');
+const sql = require('sql');
+const ConnNew = require('../../service/connectionnew');
 const Category = require('../categories/category');
-// const Util = require('../helpers/util');
+
+const log = require('color-logs')(true, true, 'Item');
 
 let that;
 
@@ -14,12 +14,43 @@ let that;
   * @return {object}
 */
 function Item(item) {
+  sql.setDialect('mysql');
+
   this.model = lodash.extend(item, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = 'item';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+  this.sqlTable = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'code',
+      'name',
+      'brandName',
+      'price',
+      'displayPrice',
+      'hasVat',
+      'isSenior',
+      'weighted',
+      'packaging',
+      'packageMeasurement',
+      'sizing',
+      'pacakgeMinimum',
+      'packageIntervals',
+      'availableOn',
+      'slug',
+      'imageKey',
+      'enabled',
+      'category1',
+      'category2',
+      'category3',
+      'sellerAccount_id',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
 
   that = this;
 }
@@ -60,15 +91,69 @@ Item.prototype.getRelatedCategories = results => new BluePromise((resolve, rejec
   * @param {string} offset
   * @return {object}
 */
-Item.prototype.findAll = (skip, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'name', 'category1', 'category2', 'category3'], filters, limit, skip));
+Item.prototype.findAll = (skip, limit, filters) => {
+  let query = null;
+  if (filters.keyword) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.name.like(`%${filters.keyword}%`))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.category2 && filters.category3) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.category2.equals(filters.category2))
+      .or(that.sqlTable.category3.equals(filters.category3))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.category1) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.category1.equals(filters.category1))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.category2) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.category2.equals(filters.category2))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.category3) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.category3.equals(filters.category3))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 /**
-  * findByID
+  * findById
   * @param {string} limit
   * @param {string} offset
   * @return {object}
 */
-Item.prototype.findById = id => that.dbConn.readAsync(id);
+Item.prototype.findById = id => that.getByValue(id, 'id');
 
 /**
   * create
@@ -81,9 +166,8 @@ Item.prototype.create = () => new BluePromise((resolve, reject) => {
         if (that.model.id) {
           delete that.model.id;
         }
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.insert(that.model).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -100,11 +184,25 @@ Item.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * Get sellerAccount by value
+  * Get by value
   * @param {any} value
   * @param {string} field
   * @return {object<Promise>}
 */
-Item.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+Item.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Item.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 module.exports = Item;
