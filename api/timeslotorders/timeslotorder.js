@@ -5,6 +5,8 @@ const ConnNew = require('../../service/connectionnew');
 const Timeslot = require('../timeslots/timeslot');
 const moment = require('moment');
 
+const log = require('color-logs')(true, true, 'Category');
+
 let that;
 
 /**
@@ -172,8 +174,8 @@ TimeslotOrder.prototype.formatTimeslots = tsoResult => new BluePromise((resolve,
   * @param {string} offset
   * @return {object}
 */
-Order.prototype.findById = id => that.getByValue(id, 'id');
-Order.prototype.getById = id => that.getByValue(id, 'id');
+TimeslotOrder.prototype.findById = id => that.getByValue(id, 'id');
+TimeslotOrder.prototype.getById = id => that.getByValue(id, 'id');
 
 /**
   * Get by value
@@ -181,7 +183,7 @@ Order.prototype.getById = id => that.getByValue(id, 'id');
   * @param {string} field
   * @return {object<Promise>}
 */
-Order.prototype.getByValue = (value, field) => {
+TimeslotOrder.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
     .from(that.sqlTable)
@@ -195,7 +197,7 @@ Order.prototype.getByValue = (value, field) => {
   * @param {string} offset
   * @return {object}
 */
-Item.prototype.findAll = (skip, limit, filters) => {
+TimeslotOrder.prototype.findAll = (skip, limit, filters) => {
   let query = null;
   if (filters.orderId && filters.timeslotId) {
     query = that.sqlTable
@@ -225,11 +227,24 @@ Item.prototype.findAll = (skip, limit, filters) => {
   * @return {order_id}
 */
 TimeslotOrder.prototype.confirmOrder = (orderId) => new BluePromise((resolve, reject) => {
-  const query = that.sqlTable.update({})
-    .where(that.sqlTable.order_id.equals(orderId)).toQuery();
-  that.dbConnNew.queryAsync(query.text, query.values)
-    .then((response) => {
-      resolve(orderId);
+  // TODO: get the timeslotorder record
+  that.getByValue(orderId, 'order_id')
+    .then((resultSet) => {
+      if (resultSet.length === 0) {
+        reject('Not found');
+      } else {
+        delete that.model.datetime;
+        // that.model = _.merge(resultSet[0], that.model);
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.order_id.equals(orderId)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
+          .then((response) => {
+            resolve(orderId);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      }
     })
     .catch((err) => {
       reject(err);

@@ -37,11 +37,11 @@ timeslotOrder.getTimeslotOrder = (req, res) => {
   new Log({ message: 'TIMESLOT_ORDER_GET', type: 'INFO' }).create();
   const instTimeslotOrder = new TimeslotOrder({});
   instTimeslotOrder.getByValue(query.validateParam(req.swagger.params, 'orderId', ''), 'order_id')
-    .then((resOrder) => {
-      if (resOrder.length === 0) {
+    .then((resultList) => {
+      if (resultList.length === 0) {
         return res.status(404).json({ message: 'Not found' });
       }
-      return res.json(resOrder[0]);
+      return res.json(resultList[0]);
     })
     .catch((err) => {
       new Log({ message: `TIMESLOT_ORDER_GET ${err}`, type: 'ERROR' }).create();
