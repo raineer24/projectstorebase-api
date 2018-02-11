@@ -1,7 +1,6 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const ConnNew = require('../../service/connectionnew');
-const config = require('../../config/config');
 const Timeslotorder = require('../timeslotorders/timeslotorder');
 const Transaction = require('../transactions/transaction');
 const sql = require('sql');
@@ -23,7 +22,7 @@ function Order(order) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = `${config.db.name}.order`;
+  this.table = 'order';
   this.dbConnNew = ConnNew;
   this.sqlTable = sql.define({
     name: this.table,
@@ -120,11 +119,11 @@ Order.prototype.getById = id => that.getByValue(id, 'id');
 Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
-    .then((results) => {
-      if (!results.id) {
+    .then((resultList) => {
+      if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        that.model = _.merge(results, that.model);
+        that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
         that.dbConnNew.queryAsync(query.text, query.values)
