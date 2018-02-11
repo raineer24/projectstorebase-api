@@ -108,11 +108,11 @@ OrderItem.prototype.create = () => new BluePromise((resolve, reject) => {
 OrderItem.prototype.update = orderItemId => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.getById(orderItemId)
-    .then((results) => {
-      if (!results.id) {
-        reject('Not Found');
+    .then((resultList) => {
+      if (!resultList[0].id) {
+        reject('Not found');
       } else {
-        that.model = _.merge(results, that.model);
+        that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(orderItemId)).toQuery();
         that.dbConnNew.queryAsync(query.text, query.values)
@@ -125,7 +125,7 @@ OrderItem.prototype.update = orderItemId => new BluePromise((resolve, reject) =>
       }
     })
     .catch(() => {
-      reject('Not Found');
+      reject('Not found');
     });
 });
 
@@ -161,8 +161,8 @@ OrderItem.prototype.getById = id => that.getByValue(id, 'id');
 */
 OrderItem.prototype.removeById = id => new BluePromise((resolve, reject) => {
   that.getById(id)
-    .then((results) => {
-      if (!results.id) {
+    .then((resultList) => {
+      if (!resultList[0].id) {
         reject('Not Found');
       } else {
         const query = that.sqlTable.delete(that.model)
