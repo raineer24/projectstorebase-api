@@ -2,7 +2,7 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const Conn = require('../../service/connection');
 const Query = require('../../service/query');
-const random = require('randomstring');
+// const random = require('randomstring');
 
 let that;
 
@@ -13,7 +13,7 @@ let that;
 */
 function Transaction(transaction) {
   this.model = _.extend(transaction, {
-    number: random.generate(30) + new Date().getTime(),
+    number: Math.floor((Math.random() * 1000) + 1000) + new Date().getTime(),
     comments: transaction.comments || '',
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
