@@ -1,11 +1,12 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const ConnNew = require('../../service/connectionnew');
+const Mailer = require('../../service/mail');
 const Timeslotorder = require('../timeslotorders/timeslotorder');
 const Transaction = require('../transactions/transaction');
 const sql = require('sql');
 
-// const log = require('color-logs')(true, true, 'Category');
+const log = require('color-logs')(true, true, 'Category');
 
 let that;
 
@@ -188,7 +189,31 @@ Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
       action: 'CONFIRM_PAYMENT',
     }).create) // Create transaction
     .then((transactionId) => {
-      resolve(transactionId);
+      that.getById(id)
+        .then((resultList) => {
+          if (resultList.length > 0) {
+            const orderEntry = resultList[0];
+            new Mailer({
+              from: 'info@eos.com.ph',
+              to: orderEntry.email,
+              subject: 'OMG - Order confirmation',
+              text: `Successfully paid and confirmed order # ${transactionId}`,
+              html: `<b>Successfully paid and confirmed order # ${transactionId}</b>`,
+            }).send()
+              .then(() => {
+                log.info(`Successfully sent order with transaction # ${transactionId}`);
+              })
+              .catch((err) => {
+                log.error(`Failed to send ${err}`);
+              });
+            resolve(transactionId);
+          } else {
+            reject('Order not found');
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
     })
     .catch((err) => {
       reject(err);
