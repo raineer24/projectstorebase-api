@@ -326,6 +326,8 @@ paths:
       operationId: getOrderItems
       parameters:
         - $ref: "#/parameters/key"
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: Fetch all order items
@@ -372,7 +374,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /orderItem/{orderId}:
+  /orderItem/{id}:
     x-swagger-router-controller: orderItems
     put:
       tags:
@@ -380,7 +382,7 @@ paths:
       summary: Update item count to the order
       operationId: updateOrderItem
       parameters:
-        - $ref: "#/parameters/orderId"
+        - $ref: "#/parameters/id"
         - name: body
           in: body
           description: post contents
@@ -410,7 +412,7 @@ paths:
       summary: Add an item to the order
       operationId: removeOrderItem
       parameters:
-        - $ref: "#/parameters/orderId"
+        - $ref: "#/parameters/id"
       responses:
         200:
           description: Successful deleted

@@ -35,7 +35,7 @@ orderItem.addOrderItem = (req, res) => {
 orderItem.updateOrderItem = (req, res) => {
   new Log({ message: 'ORDER_ITEM_UPDATE', type: 'INFO' }).create();
   const instOrderItem = new OrderItem(req.swagger.params.body.value);
-  instOrderItem.update(query.validateParam(req.swagger.params, 'orderId', 0))
+  instOrderItem.update(query.validateParam(req.swagger.params, 'id', 0))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `ORDER_ITEM_UPDATE ${err}`, type: 'ERROR' }).create();
@@ -71,7 +71,7 @@ orderItem.getOrderItems = (req, res) => {
 orderItem.removeOrderItem = (req, res) => {
   new Log({ message: 'ORDER_ITEM_REMOVE', type: 'INFO' }).create();
   const instOrderItem = new OrderItem({});
-  instOrderItem.removeById(query.validateParam(req.swagger.params, 'orderId', 0))
+  instOrderItem.removeById(query.validateParam(req.swagger.params, 'id', 0))
     .then(message => res.json({ message }))
     .catch((err) => {
       new Log({ message: `ORDER_ITEM_REMOVE ${err}`, type: 'ERROR' }).create();
