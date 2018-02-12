@@ -284,6 +284,7 @@ CREATE TABLE `order` (
   `dateUpdated` bigint(50) NOT NULL,
   `userAccount_id` bigint(50) DEFAULT 0,
   `address_id` bigint(50) DEFAULT 0,
+  `referenceId` char(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -294,7 +295,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO','0','0','241.75',NULL,NULL,NULL,NULL,NULL,NULL,'payment','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'21','NORBERT','PENA','84599327','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409422520,1518409422523,0,0),(2,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf','0','0','196',NULL,NULL,NULL,NULL,NULL,NULL,'address','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'22','NORBERT','PENA','84599327','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409526814,1518409526815,0,0);
+INSERT INTO `order` VALUES (1,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO','0','0','241.75',NULL,NULL,NULL,NULL,NULL,NULL,'payment','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'21','NORBERT','PENA','84599327','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409422520,1518409422523,0,0,NULL),(2,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf','0','0','196',NULL,NULL,NULL,NULL,NULL,NULL,'address','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'22','NORBERT','PENA','84599327','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409526814,1518409526815,0,0,NULL);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -611,4 +612,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-12 13:58:43
+-- Dump completed on 2018-02-12 17:44:03
