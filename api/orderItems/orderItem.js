@@ -202,7 +202,7 @@ OrderItem.prototype.removeById = id => new BluePromise((resolve, reject) => {
       if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        const query = that.sqlTable.delete(that.model)
+        const query = that.sqlTable.delete()
           .where(that.sqlTable.id.equals(id)).toQuery();
         that.dbConnNew.queryAsync(query.text, query.values)
           .then(() => {
