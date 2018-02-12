@@ -128,10 +128,10 @@ function getMax(day) {
 function formatWithRange(tsoResult) {
   const obj = {};
   tsoResult.forEach((row) => {
-    if (!obj[`${row.date}-${row.id}`]) {
-      obj[`${row.date}-${row.id}`] = 0;
+    if (!obj[`${row.date}-${row.timeslot_id}`]) {
+      obj[`${row.date}-${row.timeslot_id}`] = 0;
     }
-    obj[`${row.date}-${row.id}`] = obj[`${row.date}-${row.id}`] + 1;
+    obj[`${row.date}-${row.timeslot_id}`] = obj[`${row.date}-${row.timeslot_id}`] + 1;
   });
   return obj;
 }
@@ -151,6 +151,7 @@ TimeslotOrder.prototype.formatTimeslots = tsoResult => new BluePromise((resolve,
           range: [],
         });
         results.forEach((tsValue) => {
+          // console.log(tsValue);
           // const tmax = tsValue[maxValue];
           formatted[n].range.push({
             range: tsValue.range,
@@ -204,6 +205,14 @@ TimeslotOrder.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable)
       .where(that.sqlTable.order_id.equals(filters.orderId)
         .and(that.sqlTable.timeslot_id.equals(filters.timeslotId)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.current) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      // .where(that.sqlTable.date.equals(filters.current))
       .limit(limit)
       .offset(skip)
       .toQuery();
