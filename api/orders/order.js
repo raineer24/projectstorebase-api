@@ -70,6 +70,7 @@ function Order(order) {
       'dateUpdated',
       'useraccount_id',
       'address_id',
+      'referenceId',
     ],
   });
 
@@ -151,21 +152,17 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
-        console.log(query.text);
         that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
-            console.log('>>', response);
             resolve(response.message);
           })
           .catch((err) => {
-            console.log('>>err', err);
             reject(err);
           });
       }
     })
     .catch((err) => {
-      console.log(err);
-      reject('Not found');
+      reject(err);
     });
 });
 
