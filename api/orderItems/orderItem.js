@@ -36,7 +36,35 @@ function OrderItem(orderItem) {
       'processed',
     ],
   });
-
+  this.sqlTableItem = sql.define({
+    name: 'item',
+    columns: [
+      'id',
+      'code',
+      'name',
+      'brandName',
+      'price',
+      'displayPrice',
+      'hasVat',
+      'isSenior',
+      'weighted',
+      'packaging',
+      'packageMeasurement',
+      'sizing',
+      'pacakgeMinimum',
+      'packageIntervals',
+      'availableOn',
+      'slug',
+      'imageKey',
+      'enabled',
+      'category1',
+      'category2',
+      'category3',
+      'sellerAccount_id',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
   that = this;
 }
 
@@ -54,6 +82,15 @@ OrderItem.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable)
       .where(that.sqlTable.item_id.equals(filters.itemId)
         .and(that.sqlTable.orderkey.equals(filters.orderkey)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.orderkey) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('orderItem_id'), that.sqlTable.star(), that.sqlTableItem.star())
+      .from(that.sqlTable.join(that.sqlTableItem)
+        .on(that.sqlTable.item_id.equals(that.sqlTableItem.id)))
+      .where(that.sqlTable.orderkey.equals(filters.orderkey))
       .limit(limit)
       .offset(skip)
       .toQuery();
