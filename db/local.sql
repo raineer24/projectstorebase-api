@@ -33,7 +33,7 @@ CREATE TABLE `address` (
   `default` bit(1) DEFAULT b'1',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
-  `userAccount_id` varchar(50) NOT NULL,
+  `useraccount_id` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -282,7 +282,7 @@ CREATE TABLE `order` (
   `paymentInstructions` varchar(250) DEFAULT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
-  `userAccount_id` bigint(50) DEFAULT 0,
+  `useraccount_id` bigint(50) DEFAULT 0,
   `address_id` bigint(50) DEFAULT 0,
   `referenceId` char(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -506,39 +506,6 @@ INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524
 UNLOCK TABLES;
 
 --
--- Table structure for table `userAccount`
---
-
-DROP TABLE IF EXISTS `userAccount`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `userAccount` (
-  `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `username` char(60) NOT NULL,
-  `password` varchar(250) NOT NULL,
-  `email` char(100) DEFAULT NULL,
-  `firstName` char(50) NOT NULL,
-  `lastName` char(50) NOT NULL,
-  `uiid` char(150) DEFAULT NULL,
-  `gender` char(10) DEFAULT NULL,
-  `mobileNumber` char(20) DEFAULT NULL,
-  `dateCreated` bigint(50) NOT NULL,
-  `dateUpdated` bigint(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf16;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `userAccount`
---
-
-LOCK TABLES `userAccount` WRITE;
-/*!40000 ALTER TABLE `userAccount` DISABLE KEYS */;
-INSERT INTO `userAccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',1512810359181,1512810359181);
-/*!40000 ALTER TABLE `userAccount` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `userEntitlement`
 --
 
@@ -551,7 +518,7 @@ CREATE TABLE `userEntitlement` (
   `enabled` bit(1) DEFAULT b'1',
   `dateCreated` bigint(20) NOT NULL,
   `dateUpdated` bigint(20) NOT NULL,
-  `userAccount_id` bigint(50) NOT NULL,
+  `useraccount_id` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -589,7 +556,7 @@ CREATE TABLE `userProfile` (
   `phoneHome` char(20) DEFAULT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
-  `userAccount_id` varchar(50) NOT NULL,
+  `useraccount_id` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -602,6 +569,39 @@ LOCK TABLES `userProfile` WRITE;
 /*!40000 ALTER TABLE `userProfile` DISABLE KEYS */;
 /*!40000 ALTER TABLE `userProfile` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `useraccount`
+--
+
+DROP TABLE IF EXISTS `useraccount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `useraccount` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `username` char(60) NOT NULL,
+  `password` varchar(250) NOT NULL,
+  `email` char(100) DEFAULT NULL,
+  `firstName` char(50) NOT NULL,
+  `lastName` char(50) NOT NULL,
+  `uiid` char(150) DEFAULT NULL,
+  `gender` char(10) DEFAULT NULL,
+  `mobileNumber` char(20) DEFAULT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `useraccount`
+--
+
+LOCK TABLES `useraccount` WRITE;
+/*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',1512810359181,1512810359181);
+/*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -612,4 +612,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-12 17:44:03
+-- Dump completed on 2018-02-12 18:03:33
