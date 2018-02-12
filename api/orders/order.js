@@ -68,7 +68,7 @@ function Order(order) {
       'paymentInstructions',
       'dateCreated',
       'dateUpdated',
-      'userAccount_id',
+      'useraccount_id',
       'address_id',
     ],
   });
@@ -148,20 +148,23 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
       if (resultList.length === 0) {
         reject('Not found');
       } else {
-        const results = resultList[0];
-        that.model = _.merge(results, that.model);
+        that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
-          .where(that.sqlTable.id.equals(results.id)).toQuery();
+          .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
+        console.log(query.text);
         that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
+            console.log('>>', response);
             resolve(response.message);
           })
           .catch((err) => {
+            console.log('>>err', err);
             reject(err);
           });
       }
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err);
       reject('Not found');
     });
 });
