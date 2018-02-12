@@ -7,8 +7,7 @@ env:
 deploy:
   provider: elasticbeanstalk
   access_key_id: AKIAJBYDI6PWNVC5VZGA
-  secret_access_key:
-    secure: JE64wgvpgt3w2HMM9whiVslKWTrY5couWqyRSJQUDwDpp5lSSMARsotb3fL9WYB9stR/RAowDjXp0But4jN9pYAGFbJZkcSa7pareThA1H+P86qk39AcpKVKqgdPQQ2NFFQpDyyHERlerpMpKAnfDBViLj9DXAh8dDEhXIBzrXFJwxIkL9eewT0RiU9Gs7klUNva35NlZc2uP/6s+XbnGMCkgvEr5KIaG89X5bWB9ImzbHS7uAC4Ob7+qRNqURr5C/7Nki25ATOVORM/Y0DdJKQUfXnOV/cTLE/AoCfES47xUM8Muvoar+ULdztKPtc/KfSHk50XKIJCfaWcOZ5nw8tGUB5RdoDr9hpW1PMupaA56UBZeJqclHnINRAeMtkiA+y3JJIbFGX2+j5Ap3Kjeo4uW+N0hhSRAmyGSKCw3B9aQlmrwf5QnQf276wCgNGKqgjzSzjkaYX2e+L+JESqNzlSeTzTmoUB91HcaWACfzY2+uUkHtqLw/Jpzeql3d2MB125GIbI+c7DsklWl8yf0Oa8pSzmXbWXQoU+fMCluVhJxPA35Ci5vUWCU9vzX2Z36yEsowrgrj9Xe+++hhie1jF30nDOn7Cqw8gOeBigpRgTxIzM3khhFNQ2NHbEUh6o5LSUX8jtgjYAY0ikFEsyzbUEF/gM+5rohj1/6ODIlM0=
+  secret_access_key: /SDwAFqsSX6lSCIUXxGB23JsbkF5KUzhky1gxAWw
   region: ap-southeast-2
   app: grocer-api
   env: grocer-api-dev
