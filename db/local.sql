@@ -526,6 +526,8 @@ CREATE TABLE `list` (
 --
 -- Dumping data for table `list`
 --
+LOCK TABLES `list` WRITE;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `listitem`
@@ -547,6 +549,10 @@ CREATE TABLE `listitem` (
 --
 -- Dumping data for table `listitem`
 --
+LOCK TABLES `listitem` WRITE;
+UNLOCK TABLES;
+
+
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
