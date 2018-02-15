@@ -790,133 +790,44 @@ paths:
                 type: string
                 example: Unauthorized
   /list/{useraccount_id}:
-    x-swagger-router-controller: list
-    get:
-      tags:
-        - list
-      summary: returns all user's lists
-      operationId: savelist
-      parameters:
-        - $ref: "#/parameters/id"
-        - name: body
-          in: body
-          description: post contents
-          required: true
-          schema:
-            $ref: "#/definitions/list"
-      responses:
-        200:
-          description: Successful get list
-          schema:
-            type: object
-            properties:
-              id:
-                type: number
-                example: 10012
-        403:
-          description: Unauthorized
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-    post:
-      tags:
-        - list
-      summary: create new list
-      operationId: createlist
-      parameters:
-        - name: body
-          in: body
-          description: post contents
-          required: true
-          schema:
-            $ref: "#/definitions/list"
-      responses:
-        200:
-          description: Successful creation
-          schema:
-            type: object
-            properties:
-              id:
-                type: number
-                example: 10012
-        403:
-          description: Unauthorized
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-  /list/{id}:
-  x-swagger-router-controller: users
-  get:
-    tags:
-      - list
-    summary: returns all user's lists
-    operationId: savelist
-    parameters:
-      - $ref: "#/parameters/id"
-      - name: body
-        in: body
-        description: post contents
-        required: true
-        schema:
-          $ref: "#/definitions/list"
-    responses:
-      200:
-        description: Successful get list
-        schema:
-          type: object
-          properties:
-            id:
-              type: number
-              example: 10012
-      403:
-        description: Unauthorized
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: Unauthorized
-  post:
-    tags:
-      - list
-    summary: create new list
-    operationId: createlist
-    parameters:
-      - name: body
-        in: body
-        description: post contents
-        required: true
-        schema:
-          $ref: "#/definitions/list"
-    responses:
-      200:
-        description: Successful creation
-        schema:
-          type: object
-          properties:
-            id:
-              type: number
-              example: 10012
-      403:
-        description: Unauthorized
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: Unauthorized
-   put:
+   x-swagger-router-controller: list
+   get:
      tags:
        - list
-     summary: update list
+     summary: returns all user's lists
      operationId: savelist
      parameters:
+       - $ref: "#/parameters/useraccount_id"
+       - name: body
+         in: body
+         description: post contents
+         required: true
+         schema:
+           $ref: "#/definitions/list"
+     responses:
+       200:
+         description: Successful get list
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 10012
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
+   post:
+     tags:
+       - list
+     summary: create new list
+     operationId: createlist
+     parameters:
+       - $ref: "#/parameters/useraccount_id"
        - name: body
          in: body
          description: post contents
@@ -940,16 +851,140 @@ paths:
              message:
                type: string
                example: Unauthorized
-   delete:
+  # /list/{list_id}:
+  #  x-swagger-router-controller: list
+  #  get:
+  #    tags:
+  #      - list
+  #    summary: returns all user's lists
+  #    operationId: savelist
+  #    parameters:
+  #      - $ref: "#/parameters/list_id"
+  #      - name: body
+  #        in: body
+  #        description: post contents
+  #        required: true
+  #        schema:
+  #          $ref: "#/definitions/list"
+  #    responses:
+  #      200:
+  #        description: Successful get list
+  #        schema:
+  #          type: object
+  #          properties:
+  #            id:
+  #              type: number
+  #              example: 10012
+  #      403:
+  #        description: Unauthorized
+  #        schema:
+  #          type: object
+  #          properties:
+  #            message:
+  #              type: string
+  #              example: Unauthorized
+  #  post:
+  #    tags:
+  #      - list
+  #    summary: create new list
+  #    operationId: createlist
+  #    parameters:
+  #      - $ref: "#/parameters/list_id"
+  #      - name: body
+  #        in: body
+  #        description: post contents
+  #        required: true
+  #        schema:
+  #          $ref: "#/definitions/list"
+  #    responses:
+  #      200:
+  #        description: Successful creation
+  #        schema:
+  #          type: object
+  #          properties:
+  #            id:
+  #              type: number
+  #              example: 10012
+  #      403:
+  #        description: Unauthorized
+  #        schema:
+  #          type: object
+  #          properties:
+  #            message:
+  #              type: string
+  #              example: Unauthorized
+  #  put:
+  #    tags:
+  #      - list
+  #    summary: update list
+  #    operationId: savelist
+  #    parameters:
+  #      - $ref: "#/parameters/list_id"
+  #      - name: body
+  #        in: body
+  #        description: post contents
+  #        required: true
+  #        schema:
+  #          $ref: "#/definitions/list"
+  #    responses:
+  #      200:
+  #        description: Successful creation
+  #        schema:
+  #          type: object
+  #          properties:
+  #            id:
+  #              type: number
+  #              example: 10012
+  #      403:
+  #        description: Unauthorized
+  #        schema:
+  #          type: object
+  #          properties:
+  #            message:
+  #              type: string
+  #              example: Unauthorized
+  #  delete:
+  #    tags:
+  #      - list
+  #    summary: remove list
+  #    operationId: removeList
+  #    parameters:
+  #      - $ref: "#/parameters/list_id"
+  #    responses:
+  #      200:
+  #        description: Successful deleted
+  #        schema:
+  #          type: object
+  #          properties:
+  #            id:
+  #              type: number
+  #              example: 10012
+  #      403:
+  #        description: Unauthorized
+  #        schema:
+  #          type: object
+  #          properties:
+  #            message:
+  #              type: string
+  #              example: Unauthorized
+  /listitem/{listitem_id}:
+   x-swagger-router-controller: listItems
+   get:
      tags:
-       - list
-     summary: remove list
-     operationId: removeList
+       - listitems
+     summary: returns all items in the list
+     operationId: getlist
      parameters:
-       - $ref: "#/parameters/id"
+       - $ref: "#/parameters/listitem_id"
+       - name: body
+         in: body
+         description: post contents
+         required: true
+         schema:
+           $ref: "#/definitions/listitem"
      responses:
        200:
-         description: Successful deleted
+         description: Successful get list
          schema:
            type: object
            properties:
@@ -964,86 +999,55 @@ paths:
              message:
                type: string
                example: Unauthorized
-  /listitem/{listitem_id}:
-  x-swagger-router-controller: listItems
-  get:
-    tags:
-      - listitems
-    summary: returns all items in the list
-    operationId: getlist
-    parameters:
-      - $ref: "#/parameters/id"
-      - name: body
-        in: body
-        description: post contents
-        required: true
-        schema:
-          $ref: "#/definitions/listitem"
-    responses:
-      200:
-        description: Successful get list
-        schema:
+   put:
+     tags:
+       - listitem
+     summary: add item to list
+     operationId: savelist
+     parameters:
+       - $ref: "#/parameters/listitem_id"
+       - name: body
+         in: body
+         description: post contents
+         required: true
+         schema:
+           $ref: "#/definitions/listitem"
+     responses:
+       200:
+         description: Successful creation
+         schema:
           type: object
           properties:
             id:
               type: number
               example: 10012
-      403:
-        description: Unauthorized
-        schema:
+       403:
+         description: Unauthorized
+         schema:
           type: object
           properties:
             message:
               type: string
               example: Unauthorized
-  put:
-    tags:
-      - listitem
-    summary: add item to list
-    operationId: savelist
-    parameters:
-      - name: body
-        in: body
-        description: post contents
-        required: true
-        schema:
-          $ref: "#/definitions/listitem"
-    responses:
-      200:
-        description: Successful creation
-        schema:
+   delete:
+     tags:
+       - listitem
+     summary: delete item from list
+     operationId: removeList
+     parameters:
+       - $ref: "#/parameters/listitem_id"
+     responses:
+       200:
+         description: Successful deleted
+         schema:
           type: object
           properties:
             id:
               type: number
               example: 10012
-      403:
-        description: Unauthorized
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: Unauthorized
-  delete:
-    tags:
-      - listitem
-    summary: delete item from list
-    operationId: removeList
-    parameters:
-      - $ref: "#/parameters/id"
-    responses:
-      200:
-        description: Successful deleted
-        schema:
-          type: object
-          properties:
-            id:
-              type: number
-              example: 10012
-      403:
-        description: Unauthorized
-        schema:
+       403:
+         description: Unauthorized
+         schema:
           type: object
           properties:
             message:
@@ -1053,6 +1057,24 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  list:
+    title: " "
+    type: object
+    properties:
+      useraccount_id:
+        type: string
+      doc:
+        type: object
+        description: "List object"
+  listitem:
+    title: " "
+    type: object
+    properties:
+      listitem_id:
+        type: string
+      doc:
+        type: object
+        description: "ListItem object"
   ItemList:
     title: " "
     type: object
@@ -1237,3 +1259,18 @@ parameters:
     name: type
     type: string
     required: false
+  listitem_id:
+    in: path
+    name: listitem_id
+    type: string
+    required: true
+  list_id:
+    in: path
+    name: list_id
+    type: string
+    required: true
+  useraccount_id:
+    in: path
+    name: useraccount_id
+    type: string
+    required: true
