@@ -506,13 +506,62 @@ INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524
 UNLOCK TABLES;
 
 --
+-- Table structure for table `list`
+--
+
+DROP TABLE IF EXISTS `list`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `list` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `useraccount_id` char(30) DEFAULT '0',
+  `list_name` char(30) DEFAULT '0',
+  `note` char(200) DEFAULT '0',
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `list`
+--
+
+--
+-- Table structure for table `listitem`
+--
+
+DROP TABLE IF EXISTS `listitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `listitem` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `item_id` char(30) DEFAULT '0',
+  `useraccount_id` char(30) DEFAULT '0',
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `listitem`
+--
+
+LOCK TABLES `order` WRITE;
+/*!40000 ALTER TABLE `order` DISABLE KEYS */;
+INSERT INTO `order` VALUES (1,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO','0','0','241.75',NULL,NULL,NULL,NULL,NULL,NULL,'payment','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'21','NORBERT','PENA','84599327','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409422520,1518409422523,0,0,NULL),(2,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf','0','0','196',NULL,NULL,NULL,NULL,NULL,NULL,'address','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'22','NORBERT','PENA','84599327','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409526814,1518409526815,0,0,NULL);
+/*!40000 ALTER TABLE `order` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `userEntitlement`
 --
 
-DROP TABLE IF EXISTS `userEntitlement`;
+DROP TABLE IF EXISTS `userentitlement`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `userEntitlement` (
+CREATE TABLE `userentitlement` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `type` char(50) DEFAULT NULL,
   `enabled` bit(1) DEFAULT b'1',
@@ -527,7 +576,7 @@ CREATE TABLE `userEntitlement` (
 -- Dumping data for table `userEntitlement`
 --
 
-LOCK TABLES `userEntitlement` WRITE;
+LOCK TABLES `userentitlement` WRITE;
 /*!40000 ALTER TABLE `userEntitlement` DISABLE KEYS */;
 /*!40000 ALTER TABLE `userEntitlement` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -536,10 +585,10 @@ UNLOCK TABLES;
 -- Table structure for table `userProfile`
 --
 
-DROP TABLE IF EXISTS `userProfile`;
+DROP TABLE IF EXISTS `userprofile`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `userProfile` (
+CREATE TABLE `userprofile` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `nameFirst` char(50) NOT NULL,
   `nameMiddle` char(50) NOT NULL,
@@ -565,7 +614,7 @@ CREATE TABLE `userProfile` (
 -- Dumping data for table `userProfile`
 --
 
-LOCK TABLES `userProfile` WRITE;
+LOCK TABLES `userprofile` WRITE;
 /*!40000 ALTER TABLE `userProfile` DISABLE KEYS */;
 /*!40000 ALTER TABLE `userProfile` ENABLE KEYS */;
 UNLOCK TABLES;
