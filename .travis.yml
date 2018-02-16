@@ -6,8 +6,8 @@ env:
   - CXX=g++-4.8 TRAVIS=true
 deploy:
   provider: elasticbeanstalk
-  access_key_id: AKIAJBYDI6PWNVC5VZGA
-  secret_access_key: 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
+  access_key_id: AKIAIR6Y6BSS34QUFVVQ
+  secret_access_key: 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
   region: ap-southeast-2
   app: grocer-api
   env: grocer-api-dev
