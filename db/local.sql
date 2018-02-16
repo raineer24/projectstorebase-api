@@ -178,6 +178,61 @@ LOCK TABLES `itemtag` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `list`
+--
+
+DROP TABLE IF EXISTS `list`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `list` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `default` bit(1) DEFAULT b'0',
+  `enabled` bit(1) DEFAULT b'1',
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  `useraccount_id` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `list`
+--
+
+LOCK TABLES `list` WRITE;
+/*!40000 ALTER TABLE `list` DISABLE KEYS */;
+/*!40000 ALTER TABLE `list` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `listitem`
+--
+
+DROP TABLE IF EXISTS `listitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `listitem` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  `item_id` varchar(50) NOT NULL,
+  `list_id` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `listitem`
+--
+
+LOCK TABLES `listitem` WRITE;
+/*!40000 ALTER TABLE `listitem` DISABLE KEYS */;
+/*!40000 ALTER TABLE `listitem` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `log`
 --
 
@@ -612,4 +667,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-12 18:03:33
+-- Dump completed on 2018-02-16 13:07:36
