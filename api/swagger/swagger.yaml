@@ -789,15 +789,15 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /list/{useraccount_id}:
+  /list/{useraccountId}:
    x-swagger-router-controller: list
    get:
      tags:
        - list
      summary: returns all user's lists
-     operationId: savelist
+     operationId: getAllList
      parameters:
-       - $ref: "#/parameters/useraccount_id"
+       - $ref: "#/parameters/useraccountId"
        - name: body
          in: body
          description: post contents
@@ -806,7 +806,7 @@ paths:
            $ref: "#/definitions/list"
      responses:
        200:
-         description: Successful get list
+         description: Successfully retrieved list
          schema:
            type: object
            properties:
@@ -825,9 +825,9 @@ paths:
      tags:
        - list
      summary: create new list
-     operationId: createlist
+     operationId: saveList
      parameters:
-       - $ref: "#/parameters/useraccount_id"
+       - $ref: "#/parameters/useraccountId"
        - name: body
          in: body
          description: post contents
@@ -836,7 +836,7 @@ paths:
            $ref: "#/definitions/list"
      responses:
        200:
-         description: Successful creation
+         description: Successfully created list
          schema:
            type: object
            properties:
@@ -851,6 +851,61 @@ paths:
              message:
                type: string
                example: Unauthorized
+   put:
+     tags:
+       - list
+     summary: upate list record
+     operationId: updateList
+     parameters:
+       - $ref: "#/parameters/id"
+       - name: body
+         in: body
+         description: post contents
+         required: true
+         schema:
+           $ref: "#/definitions/list"
+     responses:
+       200:
+         description: Successfully updated grocery list
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 10012
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
+   delete:
+     tags:
+       - list
+     summary: delete list record
+     operationId: removeList
+     parameters:
+       - $ref: "#/parameters/id"
+     responses:
+       200:
+         description: Successfully deleted grocery list
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 10012
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
+
   # /list/{list_id}:
   #  x-swagger-router-controller: list
   #  get:
@@ -1061,7 +1116,7 @@ definitions:
     title: " "
     type: object
     properties:
-      useraccount_id:
+      useraccountId:
         type: string
       doc:
         type: object
@@ -1269,8 +1324,8 @@ parameters:
     name: list_id
     type: string
     required: true
-  useraccount_id:
+  useraccountId:
     in: path
-    name: useraccount_id
+    name: useraccountId
     type: string
     required: true
