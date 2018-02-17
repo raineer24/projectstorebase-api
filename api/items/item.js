@@ -91,21 +91,24 @@ Item.prototype.getRelatedCategories = results => new BluePromise((resolve, rejec
   * @return {object}
 */
 Item.prototype.searchAll = (skip, limit, filters) => {
+  const keywords = filters.keyword ? filters.keyword.split(' ') : null;
   const keyword = filters.keyword ? filters.keyword : null;
+  const finalFilters = _.merge(filters, { keywords });
+
   return new Category({}).findAll(0, 10, {
     keyword,
+    keywords,
   })
     .then((catResult) => {
       if (catResult.length > 0) {
-        const temp = filters;
+        const temp = finalFilters;
         temp.categories = _.map(catResult, obj => obj.id);
         return that.findAll(skip, limit, temp);
       }
-      return that.findAll(skip, limit, filters);
+      return that.findAll(skip, limit, finalFilters);
     })
-    .catch(() => that.findAll(skip, limit, filters));
+    .catch(() => that.findAll(skip, limit, finalFilters));
 };
-
 
 /**
   * findAll
@@ -115,7 +118,34 @@ Item.prototype.searchAll = (skip, limit, filters) => {
 */
 Item.prototype.findAll = (skip, limit, filters) => {
   let query = null;
-  if (filters.keyword && filters.categories && filters.categories.length > 0) {
+
+  if (filters.keywords && filters.keywords.length > 1 &&
+    filters.categories && filters.categories.length > 0) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
+      .or(that.sqlTable.name.like(filters.keywords[2] ? `%${filters.keywords[2]}%` : filters.keywords[0]))
+      .or(that.sqlTable.name.like(filters.keywords[3] ? `%${filters.keywords[3]}%` : filters.keywords[0]))
+      .or(that.sqlTable.name.like(filters.keywords[4] ? `%${filters.keywords[4]}%` : filters.keywords[0]))
+      .or(that.sqlTable.category1.in(filters.categories))
+      .or(that.sqlTable.category2.in(filters.categories))
+      .or(that.sqlTable.category3.in(filters.categories))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.keywords && filters.keywords.length > 1) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
+      .or(that.sqlTable.name.like(filters.keywords[2] ? `%${filters.keywords[2]}%` : filters.keywords[0]))
+      .or(that.sqlTable.name.like(filters.keywords[3] ? `%${filters.keywords[3]}%` : filters.keywords[0]))
+      .or(that.sqlTable.name.like(filters.keywords[4] ? `%${filters.keywords[4]}%` : filters.keywords[0]))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.keyword && filters.categories && filters.categories.length > 0) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
