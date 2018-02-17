@@ -1,7 +1,7 @@
-const BluePromise = require('bluebird');
 const _ = require('lodash');
-const Conn = require('../../service/connection');
-const Query = require('../../service/query');
+const sql = require('sql');
+const ConnNew = require('../../service/connectionnew');
+const log = require('color-logs')(true, true, 'Category');
 
 let that;
 
@@ -11,21 +11,86 @@ let that;
   * @return {object}
 */
 function Timeslot(timeslot) {
+  sql.setDialect('mysql');
+
   this.model = _.extend(timeslot, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = 'timeslot';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+  this.sqlTable = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'range',
+      'd1max',
+      'd2max',
+      'd3max',
+      'd4max',
+      'd5max',
+      'd6max',
+      'd7max',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
 
   that = this;
 }
+
+/**
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Timeslot.prototype.findById = id => that.getByValue(id, 'id');
+Timeslot.prototype.getById = id => that.getByValue(id, 'id');
+
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Timeslot.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
+
 /**
   * findAll
   * @param {string} limit
   * @param {string} offset
   * @return {object}
 */
-Timeslot.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'range'], filters, limit, offset));
+Timeslot.prototype.findAll = (skip, limit, filters) => {
+  let query = null;
+  if (filters.timeslotId) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.timeslot_id.equals(filters.timeslotId))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
 
 module.exports = Timeslot;
