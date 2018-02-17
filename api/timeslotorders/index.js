@@ -90,11 +90,16 @@ timeslotOrder.getTimeslotOrderAll = (req, res) => {
 timeslotOrder.updateTimeslotOrder = (req, res) => {
   new Log({ message: 'TIMESLOT_ORDER_UPDATE', type: 'INFO' }).create();
   const instTimeslotOrder = new TimeslotOrder(req.swagger.params.body.value);
-  instTimeslotOrder.update(query.validateParam(req.swagger.params, 'orderId', 0))
+  instTimeslotOrder.updateTimeslotOrder(query.validateParam(req.swagger.params, 'orderId', 0))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `TIMESLOT_ORDER_UPDATE ${err}`, type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      if (err === 'Not found') {
+        return res.status(404).json({ message: 'Not found' });
+      } else if (err === 'Full') {
+        return res.status(409).json({ message: 'Slot is full' });
+      }
+      return res.status(500).json({ message: 'Failed' });
     })
     .finally(() => {
       instTimeslotOrder.release();
