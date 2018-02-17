@@ -41,6 +41,33 @@ function TimeslotOrder(timeslotorder) {
   that = this;
 }
 
+function getMax(day) {
+  let max = 'd7max';
+  switch (day) {
+    case 'Mon':
+      max = 'd1max';
+      break;
+    case 'Tue':
+      max = 'd2max';
+      break;
+    case 'Wed':
+      max = 'd3max';
+      break;
+    case 'Thu':
+      max = 'd4max';
+      break;
+    case 'Fri':
+      max = 'd5max';
+      break;
+    case 'Sat':
+      max = 'd6max';
+      break;
+    default:
+      break;
+  }
+  return max;
+}
+
 /**
   * create
   * @return {object/number}
@@ -72,24 +99,48 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
-TimeslotOrder.prototype.update = orderId => new BluePromise((resolve, reject) => {
+TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.findAll(0, 1, {
     orderId,
   })
     .then((resultList) => {
       if (resultList.length === 0) {
-        reject('Not Found');
+        reject('Not found');
       } else {
-        that.model = _.merge(resultList[0], that.model);
-        const query = that.sqlTable.update(that.model)
-          .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
-          .then((response) => {
-            resolve(response.message);
+        const dMax = getMax(moment(that.model.date).format('ddd'));
+        new Timeslot({}).getById(that.model.timeslot_id)
+          .then((timeslotResultList) => {
+            if (timeslotResultList.length === 0) {
+              reject('Not found');
+            } else {
+              that.findAll(0, 100, {
+                timeslotId: that.model.timeslot_id,
+                date: that.model.date,
+              })
+                .then((tsoResultList) => {
+                  if (tsoResultList.length >= timeslotResultList[0][dMax]) {
+                    reject('Full');
+                  } else {
+                    that.model = _.merge(resultList[0], that.model);
+                    const query = that.sqlTable.update(that.model)
+                      .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
+                    that.dbConnNew.queryAsync(query.text, query.values)
+                      .then((response) => {
+                        resolve(response.message);
+                      })
+                      .catch((err) => {
+                        reject(err);
+                      });
+                  }
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            }
           })
-          .catch((err) => {
-            reject(err);
+          .catch(() => {
+            reject('Not found');
           });
       }
     })
@@ -97,33 +148,6 @@ TimeslotOrder.prototype.update = orderId => new BluePromise((resolve, reject) =>
       reject('Not Found');
     });
 });
-
-function getMax(day) {
-  let max = 'd7max';
-  switch (day) {
-    case 'Mon':
-      max = 'd1max';
-      break;
-    case 'Tue':
-      max = 'd2max';
-      break;
-    case 'Wed':
-      max = 'd3max';
-      break;
-    case 'Thu':
-      max = 'd4max';
-      break;
-    case 'Fri':
-      max = 'd5max';
-      break;
-    case 'Sat':
-      max = 'd6max';
-      break;
-    default:
-      break;
-  }
-  return max;
-}
 
 function formatWithRange(tsoResult) {
   const obj = {};
@@ -205,6 +229,16 @@ TimeslotOrder.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable)
       .where(that.sqlTable.order_id.equals(filters.orderId)
         .and(that.sqlTable.timeslot_id.equals(filters.timeslotId)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.timeslot_id && filters.date) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.date.equals(filters.date)
+        .and(that.sqlTable.timeslot_id.equals(filters.timeslotId)))
+        // .and(that.sqlTable.confirmed.equals(1)))
       .limit(limit)
       .offset(skip)
       .toQuery();
