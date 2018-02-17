@@ -11,7 +11,7 @@ const item = {};
 item.listItems = (req, res) => {
   new Log({ message: 'ITEM_LIST', type: 'INFO' }).create();
   const instItem = new Item({});
-  instItem.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+  instItem.searchAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     keyword: query.validateParam(req.swagger.params, 'keyword', ''),
     category1: query.validateParam(req.swagger.params, 'category1', ''),
     category2: query.validateParam(req.swagger.params, 'category2', ''),

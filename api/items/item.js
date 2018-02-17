@@ -1,5 +1,5 @@
 const BluePromise = require('bluebird');
-const lodash = require('lodash');
+const _ = require('lodash');
 const sql = require('sql');
 const ConnNew = require('../../service/connectionnew');
 const Category = require('../categories/category');
@@ -16,7 +16,7 @@ let that;
 function Item(item) {
   sql.setDialect('mysql');
 
-  this.model = lodash.extend(item, {
+  this.model = _.extend(item, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
@@ -84,6 +84,28 @@ Item.prototype.getRelatedCategories = results => new BluePromise((resolve, rejec
     });
 });
 
+/**
+  * searchAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Item.prototype.searchAll = (skip, limit, filters) => {
+  const keyword = filters.keyword ? filters.keyword : null;
+  return new Category({}).findAll(0, 10, {
+    keyword,
+  })
+    .then((catResult) => {
+      if (catResult.length > 0) {
+        const temp = filters;
+        temp.categories = _.map(catResult, obj => obj.id);
+        return that.findAll(skip, limit, temp);
+      }
+      return that.findAll(skip, limit, filters);
+    })
+    .catch(() => that.findAll(skip, limit, filters));
+};
+
 
 /**
   * findAll
@@ -93,7 +115,18 @@ Item.prototype.getRelatedCategories = results => new BluePromise((resolve, rejec
 */
 Item.prototype.findAll = (skip, limit, filters) => {
   let query = null;
-  if (filters.keyword) {
+  if (filters.keyword && filters.categories && filters.categories.length > 0) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.name.like(`%${filters.keyword}%`))
+      .or(that.sqlTable.category1.in(filters.categories))
+      .or(that.sqlTable.category2.in(filters.categories))
+      .or(that.sqlTable.category3.in(filters.categories))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.keyword) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
