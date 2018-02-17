@@ -124,10 +124,10 @@ Item.prototype.findAll = (skip, limit, filters) => {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
-      .where(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
+      .where(that.sqlTable.name.like(filters.keywords[0]))
+      .or(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[2] ? `%${filters.keywords[2]}%` : filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[3] ? `%${filters.keywords[3]}%` : filters.keywords[0]))
-      .or(that.sqlTable.name.like(filters.keywords[4] ? `%${filters.keywords[4]}%` : filters.keywords[0]))
       .or(that.sqlTable.category1.in(filters.categories))
       .or(that.sqlTable.category2.in(filters.categories))
       .or(that.sqlTable.category3.in(filters.categories))
@@ -138,10 +138,10 @@ Item.prototype.findAll = (skip, limit, filters) => {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
-      .where(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
+      .where(that.sqlTable.name.like(filters.keywords[0]))
+      .or(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[2] ? `%${filters.keywords[2]}%` : filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[3] ? `%${filters.keywords[3]}%` : filters.keywords[0]))
-      .or(that.sqlTable.name.like(filters.keywords[4] ? `%${filters.keywords[4]}%` : filters.keywords[0]))
       .limit(limit)
       .offset(skip)
       .toQuery();
