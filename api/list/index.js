@@ -8,7 +8,9 @@ const list = {};
 list.getAllList = (req, res) => {
   new Log({ message: 'LIST_LIST', type: 'INFO' }).create();
   const instList = new List({});
-  instList.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {})
+  instList.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+    useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 0),
+  })
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `LIST_LIST ${err}`, type: 'ERROR' }).create();
