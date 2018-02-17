@@ -54,6 +54,14 @@ Category.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.keyword) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.name.like(`%${filters.keyword}%`))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
