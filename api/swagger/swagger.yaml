@@ -789,10 +789,229 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /list/{useraccountId}:
+    x-swagger-router-controller: list
+    get:
+      tags:
+        - list
+      summary: returns all user's lists
+      operationId: getAllList
+      parameters:
+        - $ref: "#/parameters/useraccountId"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/list"
+      responses:
+        200:
+          description: Successfully retrieved list
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    post:
+      tags:
+        - list
+      summary: create new list
+      operationId: saveList
+      parameters:
+        - $ref: "#/parameters/useraccountId"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/list"
+      responses:
+        200:
+          description: Successfully created list
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    put:
+      tags:
+        - list
+      summary: upate list record
+      operationId: updateList
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/list"
+      responses:
+        200:
+          description: Successfully updated grocery list
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    delete:
+      tags:
+        - list
+      summary: delete list record
+      operationId: removeList
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successfully deleted grocery list
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /listitems/{listId}:
+    x-swagger-router-controller: listitems
+      get:
+        tags:
+          - listitems
+        summary: returns all items in the list
+        operationId: getAllListItems
+        parameters:
+          - $ref: "#/parameters/listId"
+          - name: body
+            in: body
+            description: post contents
+            required: true
+            schema:
+              $ref: "#/definitions/listitem"
+        responses:
+          200:
+            description: Successful get list
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                  example: 10012
+          403:
+            description: Unauthorized
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Unauthorized
+     post:
+       tags:
+         - listitem
+       summary: add item to list
+       operationId: saveListItem
+       parameters:
+         - name: body
+           in: body
+           description: post contents
+           required: true
+           schema:
+             $ref: "#/definitions/listitem"
+       responses:
+         200:
+           description: Successful creation
+           schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+         403:
+           description: Unauthorized
+           schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+     delete:
+       tags:
+         - listitem
+       summary: delete item from list
+       operationId: removeListItem
+       parameters:
+         - $ref: "#/parameters/listitemId"
+       responses:
+         200:
+           description: Successful deleted
+           schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+         403:
+           description: Unauthorized
+           schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  list:
+    title: " "
+    type: object
+    properties:
+      useraccountId:
+        type: string
+      doc:
+        type: object
+        description: "List object"
+  listitem:
+    title: " "
+    type: object
+    properties:
+      listitemId:
+        type: string
+      doc:
+        type: object
+        description: "ListItem object"
   ItemList:
     title: " "
     type: object
@@ -977,3 +1196,18 @@ parameters:
     name: type
     type: string
     required: false
+  listitemId:
+    in: path
+    name: listitemId
+    type: string
+    required: true
+  listId:
+    in: path
+    name: list_id
+    type: string
+    required: true
+  useraccountId:
+    in: path
+    name: useraccountId
+    type: string
+    required: true
