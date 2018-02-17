@@ -8,8 +8,8 @@ module.exports = {
   mail: {
     host: 'email-smtp.us-east-1.amazonaws.com',
     port: 465,
-    username: 'AKIAIJP4TYHH74HRKILA',
-    password: 'AlXKgVqmN/+4C7pthIfJKOvlTPZ6U6QuKP8NLs0qSGtL',
+    username: 'AKIAJZ6UKFL2FPMX57PQ',
+    password: '8+VcMds0KFMO4wQ5Qxz5pI5sH8LwBhha7aZKCXjA',
   },
   db: {
     hostname: process.env.RDS_HOSTNAME,
