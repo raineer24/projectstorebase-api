@@ -789,7 +789,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /list/{useraccountId}:
+  /list/{useraccountId}/user:
     x-swagger-router-controller: list
     get:
       tags:
@@ -851,6 +851,8 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /list/{id}:
+    x-swagger-router-controller: list
     put:
       tags:
         - list
@@ -905,86 +907,90 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /listitems/{listId}:
+  /listitems:
     x-swagger-router-controller: listitems
-      get:
-        tags:
-          - listitems
-        summary: returns all items in the list
-        operationId: getAllListItems
-        parameters:
-          - $ref: "#/parameters/listId"
-          - name: body
-            in: body
-            description: post contents
-            required: true
-            schema:
-              $ref: "#/definitions/listitem"
-        responses:
-          200:
-            description: Successful get list
-            schema:
-              type: object
-              properties:
-                id:
-                  type: number
-                  example: 10012
-          403:
-            description: Unauthorized
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                  example: Unauthorized
-     post:
-       tags:
-         - listitem
-       summary: add item to list
-       operationId: saveListItem
-       parameters:
-         - name: body
-           in: body
-           description: post contents
-           required: true
-           schema:
-             $ref: "#/definitions/listitem"
-       responses:
-         200:
-           description: Successful creation
-           schema:
+    post:
+      tags:
+        - listitem
+      summary: add item to list
+      operationId: saveListItem
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/listitem"
+      responses:
+        200:
+          description: Successful creation
+          schema:
             type: object
             properties:
               id:
                 type: number
                 example: 10012
-         403:
-           description: Unauthorized
-           schema:
+        403:
+          description: Unauthorized
+          schema:
             type: object
             properties:
               message:
                 type: string
                 example: Unauthorized
-     delete:
-       tags:
-         - listitem
-       summary: delete item from list
-       operationId: removeListItem
-       parameters:
-         - $ref: "#/parameters/listitemId"
-       responses:
-         200:
-           description: Successful deleted
-           schema:
+  /listitems/{listId}/list:
+    x-swagger-router-controller: listitems
+    get:
+      tags:
+        - listitems
+      summary: returns all items in the list
+      operationId: getAllListItems
+      parameters:
+        - $ref: "#/parameters/listId"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/listitem"
+      responses:
+        200:
+          description: Successful get list
+          schema:
             type: object
             properties:
               id:
                 type: number
                 example: 10012
-         403:
-           description: Unauthorized
-           schema:
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /listitems/{id}:
+    x-swagger-router-controller: listitems
+    delete:
+      tags:
+        - listitem
+      summary: delete item from list
+      operationId: removeListItem
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful deleted
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
             type: object
             properties:
               message:
@@ -998,7 +1004,7 @@ definitions:
     title: " "
     type: object
     properties:
-      useraccountId:
+      useraccount_id:
         type: string
       doc:
         type: object
@@ -1007,7 +1013,7 @@ definitions:
     title: " "
     type: object
     properties:
-      listitemId:
+      listitem_id:
         type: string
       doc:
         type: object
@@ -1118,11 +1124,6 @@ definitions:
         type: number
         description: category level
 parameters:
-  # username:
-  #   in: path
-  #   name: username
-  #   type: string
-  #   required: true
   id:
     in: path
     name: id
@@ -1196,18 +1197,13 @@ parameters:
     name: type
     type: string
     required: false
-  listitemId:
+  useraccountId:
     in: path
-    name: listitemId
+    name: useraccountId
     type: string
     required: true
   listId:
     in: path
-    name: list_id
-    type: string
-    required: true
-  useraccountId:
-    in: path
-    name: useraccountId
+    name: listId
     type: string
     required: true
