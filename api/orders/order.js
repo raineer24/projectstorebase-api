@@ -5,6 +5,7 @@ const Mailer = require('../../service/mail');
 const Timeslotorder = require('../timeslotorders/timeslotorder');
 const Transaction = require('../transactions/transaction');
 const sql = require('sql');
+const OrderItem = require('../orderItems/orderItem');
 
 const log = require('color-logs')(true, true, 'Category');
 
@@ -193,19 +194,17 @@ Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
         .then((resultList) => {
           if (resultList.length > 0) {
             const orderEntry = resultList[0];
-            new Mailer({
-              from: 'info@eos.com.ph',
-              to: orderEntry.email,
-              subject: 'OMG - Order confirmation',
-              text: `Successfully paid and confirmed order # ${transactionId}`,
-              html: `<b>Successfully paid and confirmed order # ${transactionId}</b>`,
-            }).send()
-              .then(() => {
-                log.info(`Successfully sent order with transaction # ${transactionId}`);
+            that.mailConfirmation(_.merge(orderEntry, { transactionId }))
+              .then((mailOptions) => {
+                new Mailer(mailOptions).send()
+                  .then(() => {
+                    log.info(`Successfully sent order with transaction # ${transactionId}`);
+                  })
+                  .catch((err) => {
+                    log.error(`Failed to send ${err}`);
+                  });
               })
-              .catch((err) => {
-                log.error(`Failed to send ${err}`);
-              });
+              .catch(() => {});
             resolve(transactionId);
           } else {
             reject('Order not found');
@@ -219,6 +218,28 @@ Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
       reject(err);
     });
   // Create notification
+});
+
+Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, reject) => {
+  new OrderItem({}).findAll(0, 1000, {
+    orderkey: orderEntry.orderkey,
+  })
+    .then((resultList) => {
+      let body = `<div><b>Successfully paid and confirmed order # ${orderEntry.transactionId}</b></div><div>&nbsp;</div>`;
+      _.forEach(resultList, (obj) => {
+        body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
+      });
+      resolve({
+        from: 'info@eos.com.ph',
+        to: orderEntry.email,
+        subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
+        text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+        html: body,
+      });
+    })
+    .catch((err) => {
+      reject(err);
+    });
 });
 
 /**
