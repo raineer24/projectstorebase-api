@@ -4,29 +4,12 @@ const config = require('./gulp.config')();
 require('dotenv').config();
 
 const $ = require('gulp-load-plugins')({ lazy: true });
+const log = require('color-logs')(true, true, 'Item');
 
 gulp.task('help', $.taskListing);
 
-function log(msg) {
-  if (typeof (msg) === 'object') {
-    Object.keys(msg).forEach((key) => {
-      if (Object.prototype.hasOwnProperty.call(msg, key)) {
-        $.util.log($.util.colors.blue(msg[key]));
-      }
-    });
-
-    // for (const item in msg) {
-    //   if (Object.prototype.hasOwnProperty.call(msg, item)) {
-    //     $.util.log($.util.colors.blue(msg[item]));
-    //   }
-    // }
-  } else {
-    $.util.log($.util.colors.blue(msg));
-  }
-}
-
 gulp.task('lint', () => {
-  log('eslint - Running lint');
+  log.info('eslint - Running lint');
   return gulp
     .src(config.alljs)
     .pipe($.if(args.verbose, $.print()))
@@ -41,7 +24,7 @@ gulp.task('db-create', $.shell.task([
 ]));
 
 gulp.task('unit-test', ['lint'], (done) => {
-  log('Running unit test');
+  log.info('Running unit test');
   gulp
     .src(config.test.unit.lib)
     .pipe($.istanbul())
@@ -57,7 +40,7 @@ gulp.task('unit-test', ['lint'], (done) => {
     });
 });
 // gulp.task('integration-test', ['unit-test'], function () {
-//   log('Running integration test');
+//   log.info('Running integration test');
 //   gulp
 //     .src(config.test.integration.spec)
 //     .pipe($.istanbul())
@@ -74,7 +57,7 @@ gulp.task('unit-test', ['lint'], (done) => {
 // });
 //
 // gulp.task('configure-dev', ['lint'], function () {
-//   log('Running configuration... ');
+//   log.info('Running configuration... ');
 //   return gulp
 //     .src('./.env.local')
 //     .pipe($.rename('.env'))
@@ -82,7 +65,7 @@ gulp.task('unit-test', ['lint'], (done) => {
 // });
 
 function serve(isDev) {
-  log(`Running in ${isDev ? 'development' : 'production'} mode...`);
+  log.info(`Running in ${isDev ? 'development' : 'production'} mode...`);
   if (isDev) {
     $.nodemon({
       script: 'app.js',
