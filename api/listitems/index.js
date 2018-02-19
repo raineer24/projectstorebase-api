@@ -42,7 +42,7 @@ listitem.removeListItem = (req, res) => {
     .then(message => res.json({ message }))
     .catch((err) => {
       new Log({ message: `LIST_ITEM_REMOVE ${err}`, type: 'ERROR' }).create();
-      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
       instListItem.release();

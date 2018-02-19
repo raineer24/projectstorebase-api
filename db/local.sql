@@ -186,11 +186,13 @@ DROP TABLE IF EXISTS `list`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `list` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `useraccount_id` char(30) DEFAULT '0',
-  `list_name` char(30) DEFAULT '0',
-  `note` char(200) DEFAULT '0',
+  `name` char(30) DEFAULT '0',
+  `description` char(200) DEFAULT '0',
+  `default` char(1) DEFAULT '0',
+  `enabled` char(1) DEFAULT '1',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
+  `useraccount_id` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -213,10 +215,10 @@ DROP TABLE IF EXISTS `listitem`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `listitem` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `item_id` char(30) DEFAULT '0',
-  `useraccount_id` char(30) DEFAULT '0',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
+  `item_id` bigint(50) NOT NULL,
+  `list_id` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
