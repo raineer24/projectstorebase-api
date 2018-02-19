@@ -31,6 +31,35 @@ function ListItems(list) {
       'list_id',
     ],
   });
+  this.sqlTableItem = sql.define({
+    name: 'item',
+    columns: [
+      'id',
+      'code',
+      'name',
+      'brandName',
+      'price',
+      'displayPrice',
+      'hasVat',
+      'isSenior',
+      'weighted',
+      'packaging',
+      'packageMeasurement',
+      'sizing',
+      'pacakgeMinimum',
+      'packageIntervals',
+      'availableOn',
+      'slug',
+      'imageKey',
+      'enabled',
+      'category1',
+      'category2',
+      'category3',
+      'sellerAccount_id',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
 
   that = this;
 }
@@ -86,11 +115,15 @@ ListItems.prototype.findAll = (skip, limit, filters) => {
       .toQuery();
   } else {
     query = that.sqlTable
-      .select(that.sqlTable.star())
-      .from(that.sqlTable)
+      .select(that.sqlTable.id.as('listitem_id'), that.sqlTable.star(), that.sqlTableItem.star())
+      .from(that.sqlTable.join(that.sqlTableItem)
+        .on(that.sqlTable.item_id.equals(that.sqlTableItem.id)))
       .limit(limit)
       .offset(skip)
       .toQuery();
+    // query = that.sqlTable
+    //   .select(that.sqlTable.star())
+    //   .from(that.sqlTable)
   }
   log.info(query.text);
 
