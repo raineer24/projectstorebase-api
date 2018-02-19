@@ -42,7 +42,7 @@ list.updateList = (req, res) => {
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `LIST_UPDATE ${err}`, type: 'ERROR' }).create();
-      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })
     .finally(() => {
       instList.release();
