@@ -671,6 +671,8 @@ CREATE TABLE `giftcertificate` (
   `code` char(50) NOT NULL,
   `amount` char(4) NOT NULL,
   `expiryDate` bigint(50) NOT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
   `status` char(10) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
@@ -681,7 +683,7 @@ CREATE TABLE `giftcertificate` (
 --
 
 LOCK TABLES `giftcertificate` WRITE;
-INSERT INTO `giftcertificate` VALUES (1,'1111','100',1522454400000,'good');
+INSERT INTO `giftcertificate` VALUES (1,'1111','100',1522454400000,1522454400000,1522454400000,'good');
 /*!40000 ALTER TABLE `giftcertificate` ENABLE KEYS */;
 UNLOCK TABLES;
 

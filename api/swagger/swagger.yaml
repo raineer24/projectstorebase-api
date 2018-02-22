@@ -996,10 +996,78 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /gc/{code}:
+    x-swagger-router-controller: gc
+    get:
+      tags:
+        - giftcertificate
+      summary: Get gc record
+      operationId: getGc
+      parameters:
+        - $ref: "#/parameters/code"
+      responses:
+        200:
+          description: Successfully retrieved object
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    put:
+      tags:
+        - giftcertificate
+      summary: Update GC
+      operationId: updateGc
+      parameters:
+        - $ref: "#/parameters/code"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/gc"
+      responses:
+        200:
+          description: Successfully updated GC record
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  gc:
+    title: " "
+    type: object
+    properties:
+      code:
+        type: string
+      value:
+        type: string
+      doc:
+        type: object
+        description: "GC object"
   list:
     title: " "
     type: object
@@ -1127,6 +1195,11 @@ parameters:
   id:
     in: path
     name: id
+    type: string
+    required: true
+  code:
+    in: path
+    name: code
     type: string
     required: true
   key:
