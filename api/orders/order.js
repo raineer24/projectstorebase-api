@@ -53,6 +53,7 @@ function Order(order) {
       'firstname',
       'lastname',
       'phone',
+      'landline',
       'billingAddress01',
       'billingAddress02',
       'billCity',
