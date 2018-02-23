@@ -103,6 +103,7 @@ TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolv
   that.model.dateUpdated = new Date().getTime();
   that.findAll(0, 1, {
     orderId,
+    timeslot_id: that.model.timeslot_id,
   })
     .then((resultList) => {
       if (resultList.length === 0) {
