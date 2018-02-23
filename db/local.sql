@@ -514,7 +514,7 @@ CREATE TABLE `timeslotorder` (
   `dateUpdated` bigint(50) NOT NULL,
   `date` char(50) NOT NULL,
   `datetime` bigint(50) NOT NULL,
-  `confirmed` bit(1) DEFAULT b'0',
+  `confirmed` char(1) DEFAULT '0',
   `timeslot_id` varchar(50) NOT NULL,
   `order_id` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -527,7 +527,7 @@ CREATE TABLE `timeslotorder` (
 
 LOCK TABLES `timeslotorder` WRITE;
 /*!40000 ALTER TABLE `timeslotorder` DISABLE KEYS */;
-INSERT INTO `timeslotorder` VALUES (1,1518409422524,1518409422524,'2018-02-15',1518652800000,'','1','1');
+INSERT INTO `timeslotorder` VALUES (1,1518409422524,1518409422524,'2018-02-15',1518652800000,'0','1','1');
 /*!40000 ALTER TABLE `timeslotorder` ENABLE KEYS */;
 UNLOCK TABLES;
 
