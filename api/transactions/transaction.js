@@ -6,6 +6,16 @@ const Query = require('../../service/query');
 
 let that;
 
+
+/**
+  * generate
+  * @return {string}
+*/
+function generate() {
+  return Math.floor((Math.random() * 1000) + 1000) + new Date().getTime() +
+    Math.floor((Math.random() * 100) + 100);
+}
+
 /**
   * Constructor
   * @param {object} transaction
@@ -13,16 +23,23 @@ let that;
 */
 function Transaction(transaction) {
   this.model = _.extend(transaction, {
-    number: Math.floor((Math.random() * 1000) + 1000) + new Date().getTime(),
     comments: transaction.comments || '',
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = 'transaction';
+  this.transactionId = generate();
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
 
   that = this;
 }
+
+/**
+  * get transaction number
+  * @return {string}
+*/
+Transaction.prototype.getTransaction = () => that.transactionId;
+
 /**
   * findAll
   * @param {string} limit
