@@ -5,6 +5,29 @@ const Util = require('../helpers/util');
 
 const order = {};
 
+
+/**
+* List
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+order.getAllOrders = (req, res) => {
+  new Log({ message: 'ORDER_LIST', type: 'INFO' }).create();
+  const instOrder = new Order({});
+  instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+    useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 0),
+  })
+    .then(result => res.json(result))
+    .catch((err) => {
+      new Log({ message: `ORDER_LIST ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instOrder.release();
+    });
+};
+
 /**
 * Add an order
 * @param {Object} req
