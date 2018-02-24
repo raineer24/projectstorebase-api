@@ -18,7 +18,6 @@ voucher.updatevoucher = (req, res) => {
   instvoucher.update(query.validateParam(req.swagger.params, 'code', ''))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
-      console.log(err);
       new Log({ message: `voucher_UPDATE ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })

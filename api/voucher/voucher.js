@@ -12,10 +12,10 @@ let that;
   * @param {object} item
   * @return {object}
 */
-function voucher(Voucher) {
+function Voucher(voucher) {
   sql.setDialect('mysql');
 
-  this.model = _.extend(Voucher, {
+  this.model = _.extend(voucher, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
@@ -41,7 +41,7 @@ function voucher(Voucher) {
   * create
   * @return {object/number}
 */
-voucher.prototype.create = () => new BluePromise((resolve, reject) => {
+Voucher.prototype.create = () => new BluePromise((resolve, reject) => {
   const query = that.sqlTable.insert(that.model).toQuery();
   that.dbConnNew.queryAsync(query.text, query.values)
     .then((response) => {
@@ -57,7 +57,7 @@ voucher.prototype.create = () => new BluePromise((resolve, reject) => {
   * @param {string} id
   * @return {object/number}
 */
-voucher.prototype.update = code => new BluePromise((resolve, reject) => {
+Voucher.prototype.update = code => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.getByValue(code, 'code')
     .then((resultList) => {
@@ -87,7 +87,7 @@ voucher.prototype.update = code => new BluePromise((resolve, reject) => {
   * @param {string} offset
   * @return {object}
 */
-voucher.prototype.findAll = (skip, limit, filters) => {
+Voucher.prototype.findAll = (skip, limit, filters) => {
   let query = null;
   if (filters.something) {
     query = that.sqlTable
@@ -115,8 +115,8 @@ voucher.prototype.findAll = (skip, limit, filters) => {
   * @param {string} offset
   * @return {object}
 */
-voucher.prototype.findById = id => that.getByValue(id, 'id');
-voucher.prototype.getById = id => that.getByValue(id, 'id');
+Voucher.prototype.findById = id => that.getByValue(id, 'id');
+Voucher.prototype.getById = id => that.getByValue(id, 'id');
 
 /**
   * Get by value
@@ -124,7 +124,7 @@ voucher.prototype.getById = id => that.getByValue(id, 'id');
   * @param {string} field
   * @return {object<Promise>}
 */
-voucher.prototype.getByValue = (value, field) => {
+Voucher.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
     .from(that.sqlTable)
@@ -138,6 +138,6 @@ voucher.prototype.getByValue = (value, field) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-voucher.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Voucher.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
-module.exports = voucher;
+module.exports = Voucher;
