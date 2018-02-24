@@ -14,7 +14,7 @@ const voucher = {};
 */
 voucher.updatevoucher = (req, res) => {
   new Log({ message: 'voucher_UPDATE', type: 'INFO' }).create();
-  const instvoucher = new voucher(req.swagger.params.body.value);
+  const instvoucher = new Voucher(req.swagger.params.body.value);
   instvoucher.update(query.validateParam(req.swagger.params, 'code', ''))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {

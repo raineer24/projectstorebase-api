@@ -12,10 +12,10 @@ let that;
   * @param {object} item
   * @return {object}
 */
-function voucher(voucher) {
+function voucher(Voucher) {
   sql.setDialect('mysql');
 
-  this.model = _.extend(voucher, {
+  this.model = _.extend(Voucher, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
