@@ -1106,6 +1106,35 @@ paths:
               id:
                 type: number
                 example: 10012
+              status:
+                type: string
+                example: used
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /voucher/{code}:
+    x-swagger-router-controller: voucher
+    get:
+      tags:
+        - voucher
+      summary: Get voucher record
+      operationId: getvoucher
+      parameters:
+        - $ref: "#/parameters/code"
+      responses:
+        200:
+          description: Successfully retrieved object
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
         403:
           description: Unauthorized
           schema:

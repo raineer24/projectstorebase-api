@@ -691,6 +691,61 @@ LOCK TABLES `userprofile` WRITE;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+--
+-- Table structure for table `giftcertificate`
+--
+
+DROP TABLE IF EXISTS `giftcertificate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `giftcertificate` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `code` char(50) NOT NULL,
+  `amount` char(4) NOT NULL,
+  `expiryDate` bigint(50) NOT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  `status` char(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `giftcertificate`
+--
+
+LOCK TABLES `giftcertificate` WRITE;
+INSERT INTO `giftcertificate` VALUES (1,'1111','100',1522454400000,1522454400000,1522454400000,'unused'),(2,'1112','100',1522454400000,1519257600000,1519257600000,'unused'),(3,'1113','100',1522454400000,1519257600000,1519257600000,'unused'),(4,'1114','100',1522454400000,1519257600000,1519257600000,'unused'),
+(5,'1115','100',1522454400000,1519257600000,1519257600000,'unused'),(6,'1116','100',1522454400000,1519257600000,1519257600000,'unused'),(7,'1117','100',1522454400000,1519257600000,1519257600000,'unused');
+/*!40000 ALTER TABLE `giftcertificate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+DROP TABLE IF EXISTS `voucher`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `voucher` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `code` char(50) NOT NULL,
+  `discount` char(4) NOT NULL,
+  `expiryDate` bigint(50) NOT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  `status` char(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `voucher`
+--
+
+LOCK TABLES `voucher` WRITE;
+INSERT INTO `voucher` VALUES (1,'10000','100',1522454400000,1522454400000,1522454400000,'good'),(2,'1001','20',1522454400000,1519257600000,1519257600000,'good'),(3,'1003','50',1522454400000,1519257600000,1519257600000,'good'),(4,'1004','100',1522454400000,1519257600000,1519257600000,'expired'),
+(5,'1005','100',1522454400000,1519257600000,1519257600000,'good'),(6,'1006','100',1522454400000,1519257600000,1519257600000,'good'),(7,'1007','100',1522454400000,1519257600000,1519257600000,'good');
+/*!40000 ALTER TABLE `voucher` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
