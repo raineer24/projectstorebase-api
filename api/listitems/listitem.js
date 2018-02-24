@@ -60,6 +60,19 @@ function ListItems(list) {
       'dateUpdated',
     ],
   });
+  this.sqlTableList = sql.define({
+    name: 'list',
+    columns: [
+      'id',
+      'name',
+      'description',
+      'default',
+      'enabled',
+      'dateCreated',
+      'dateUpdated',
+      'useraccount_id',
+    ],
+  });
 
   that = this;
 }
@@ -110,6 +123,24 @@ ListItems.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable)
       .where(that.sqlTable.list_id.equals(filters.listId)
         .and(that.sqlTable.item_id.equals(filters.itemId)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.listId) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('listitem_id'), that.sqlTable.star(), that.sqlTableItem.star())
+      .from(that.sqlTable.join(that.sqlTableItem)
+        .on(that.sqlTable.item_id.equals(that.sqlTableItem.id)))
+      .where(that.sqlTable.list_id.equals(filters.listId))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.itemId) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('listitem_id'), that.sqlTable.star(), that.sqlTableList.star())
+      .from(that.sqlTable.join(that.sqlTableList)
+        .on(that.sqlTable.list_id.equals(that.sqlTableList.id)))
+      .where(that.sqlTable.item_id.equals(filters.itemId))
       .limit(limit)
       .offset(skip)
       .toQuery();

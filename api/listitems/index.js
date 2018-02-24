@@ -21,6 +21,22 @@ listitem.getAllListItems = (req, res) => {
     });
 };
 
+listitem.getAllListItemsByItem = (req, res) => {
+  new Log({ message: 'LIST_ITEM_LIST_BY_ITEM', type: 'INFO' }).create();
+  const instListItem = new ListItem({});
+  instListItem.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+    itemId: query.validateParam(req.swagger.params, 'itemId', 0),
+  })
+    .then(result => res.json(result))
+    .catch((err) => {
+      new Log({ message: `LIST_ITEM_LIST_BY_ITEM ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instListItem.release();
+    });
+};
+
 listitem.saveListItem = (req, res) => {
   new Log({ message: 'LIST_ITEM_ADD', type: 'INFO' }).create();
   const instListItem = new ListItem(req.swagger.params.body.value);

@@ -103,6 +103,7 @@ TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolv
   that.model.dateUpdated = new Date().getTime();
   that.findAll(0, 1, {
     orderId,
+    timeslot_id: that.model.timeslot_id,
   })
     .then((resultList) => {
       if (resultList.length === 0) {
@@ -117,6 +118,7 @@ TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolv
               that.findAll(0, 100, {
                 timeslotId: that.model.timeslot_id,
                 date: that.model.date,
+                confirmed: 1,
               })
                 .then((tsoResultList) => {
                   if (tsoResultList.length >= timeslotResultList[0][dMax]) {
@@ -232,13 +234,13 @@ TimeslotOrder.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.timeslot_id && filters.date) {
+  } else if (filters.timeslotId && filters.date) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
       .where(that.sqlTable.date.equals(filters.date)
-        .and(that.sqlTable.timeslot_id.equals(filters.timeslotId)))
-        // .and(that.sqlTable.confirmed.equals(1)))
+        .and(that.sqlTable.timeslot_id.equals(filters.timeslotId))
+        .and(that.sqlTable.confirmed.equals('1')))
       .limit(limit)
       .offset(skip)
       .toQuery();

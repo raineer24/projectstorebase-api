@@ -947,6 +947,42 @@ paths:
       operationId: getAllListItems
       parameters:
         - $ref: "#/parameters/listId"
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/listitem"
+      responses:
+        200:
+          description: Successful get list
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /listitems/{itemId}/item:
+    x-swagger-router-controller: listitems
+    get:
+      tags:
+        - listitems
+      summary: returns all listitems with list id
+      operationId: getAllListItemsByItem
+      parameters:
+        - $ref: "#/parameters/itemId"
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
         - name: body
           in: body
           description: post contents
@@ -1307,5 +1343,10 @@ parameters:
   listId:
     in: path
     name: listId
+    type: string
+    required: true
+  itemId:
+    in: path
+    name: itemId
     type: string
     required: true

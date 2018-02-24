@@ -53,6 +53,7 @@ function Order(order) {
       'firstname',
       'lastname',
       'phone',
+      'landline',
       'billingAddress01',
       'billingAddress02',
       'billCity',
@@ -77,6 +78,12 @@ function Order(order) {
 
   that = this;
 }
+
+Order.prototype.setTransactionNumber = (number) => {
+  that.model = _.merge(that.model, {
+    number,
+  });
+};
 
 /**
   * create
@@ -121,6 +128,7 @@ Order.prototype.getById = id => that.getByValue(id, 'id');
 */
 Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
+  console.log(that.model);
   that.getById(id)
     .then((resultList) => {
       if (!resultList[0].id) {
@@ -183,13 +191,17 @@ Order.prototype.getByValue = (value, field) => {
 
 
 Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
+  const instTrans = new Transaction({});
+  const transactionId = instTrans.getTransaction();
+  that.setTransactionNumber(transactionId);
   that.update(id, true) // update(order_id, confirmOrder)
     .then(new Timeslotorder({ confirmed: 1 }).confirmOrder) // Update timeslotorder
     .then(new Transaction({
       order_id: id,
+      number: transactionId,
       action: 'CONFIRM_PAYMENT',
     }).create) // Create transaction
-    .then((transactionId) => {
+    .then(() => {
       that.getById(id)
         .then((resultList) => {
           if (resultList.length > 0) {
