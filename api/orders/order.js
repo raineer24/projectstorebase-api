@@ -128,7 +128,6 @@ Order.prototype.getById = id => that.getByValue(id, 'id');
 */
 Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
-  console.log(that.model);
   that.getById(id)
     .then((resultList) => {
       if (!resultList[0].id) {
