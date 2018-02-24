@@ -34,6 +34,7 @@ function Order(order) {
       'number',
       'itemTotal',
       'total',
+      'discount',
       'shipmentTotal',
       'adjustmentTotal',
       'paymentTotal',
@@ -174,8 +175,8 @@ Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject)
           });
       }
     })
-    .catch(() => {
-      reject('Not found');
+    .catch((err) => {
+      reject(err);
     });
 });
 
