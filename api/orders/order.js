@@ -114,6 +114,35 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
+  * findAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Order.prototype.findAll = (skip, limit, filters) => {
+  let query = null;
+  if (filters.useraccountId) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.useraccount_id.equals(filters.useraccountId))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
+/**
   * findById
   * @param {string} limit
   * @param {string} offset
@@ -128,7 +157,6 @@ Order.prototype.getById = id => that.getByValue(id, 'id');
 */
 Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
-  console.log(that.model);
   that.getById(id)
     .then((resultList) => {
       if (!resultList[0].id) {
