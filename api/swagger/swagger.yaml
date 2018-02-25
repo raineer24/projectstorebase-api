@@ -998,7 +998,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /listitems/{itemId}/item:
+  /listitems/{useraccountId}/item/{itemId}:
     x-swagger-router-controller: listitems
     get:
       tags:
@@ -1006,6 +1006,7 @@ paths:
       summary: returns all listitems with list id
       operationId: getAllListItemsByItem
       parameters:
+        - $ref: "#/parameters/useraccountId"
         - $ref: "#/parameters/itemId"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"

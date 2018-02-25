@@ -26,6 +26,7 @@ listitem.getAllListItemsByItem = (req, res) => {
   const instListItem = new ListItem({});
   instListItem.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     itemId: query.validateParam(req.swagger.params, 'itemId', 0),
+    useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 0),
   })
     .then(result => res.json(result))
     .catch((err) => {
