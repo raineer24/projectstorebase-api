@@ -126,6 +126,16 @@ ListItems.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.useraccountId && filters.itemId) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('listitem_id'), that.sqlTable.star(), that.sqlTableList.star())
+      .from(that.sqlTable.join(that.sqlTableList)
+        .on(that.sqlTable.list_id.equals(that.sqlTableList.id)))
+      .where(that.sqlTableList.useraccount_id.equals(filters.useraccountId)
+        .and(that.sqlTable.item_id.equals(filters.itemId)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else if (filters.listId) {
     query = that.sqlTable
       .select(that.sqlTable.id.as('listitem_id'), that.sqlTable.star(), that.sqlTableItem.star())
