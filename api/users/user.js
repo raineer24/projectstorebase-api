@@ -1,25 +1,47 @@
 const BluePromise = require('bluebird');
-const Conn = require('../../service/connection');
+// const Conn = require('../../service/connection');
+const ConnNew = require('../../service/connectionnew');
 const Util = require('../helpers/util');
-// const log = require('color-logs')(true, true, __filename);
-const lodash = require('lodash');
+const _ = require('lodash');
+const sql = require('sql');
+
+const log = require('color-logs')(true, true, __filename);
 
 let that;
 
 function User(user) {
-  this.model = lodash.extend(user, {
+  sql.setDialect('mysql');
+
+  this.model = _.extend(user, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = 'useraccount';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  // this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+  this.sqlTable = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'username',
+      'password',
+      'email',
+      'firstName',
+      'lastName',
+      'uiid',
+      'gender',
+      'mobileNumber',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
 
   that = this;
 }
 
 User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
-  if (that.dbConn) {
-    resolve(that.dbConn);
+  if (that.dbConnNew) {
+    resolve(that.dbConnNew);
     return;
   }
   reject('Not found');
@@ -32,14 +54,25 @@ User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
   * @return {object}
 */
 User.prototype.authenticate = () => new BluePromise((resolve, reject) => {
-  that.getByUser(that.model.username, that.model.password, that.model.uiid)
+  const filter = {
+    username: that.model.username,
+  };
+
+  if (that.model.password) {
+    filter.password = that.model.password;
+  } else if (that.model.uiid) {
+    filter.uiid = that.model.uiid;
+  }
+
+  that.findAll(0, 1, filter)
     .then((results) => {
+      console.log(results);
       if (results.length === 0) {
         reject('Not found');
         return;
       }
 
-      resolve(lodash.merge({
+      resolve(_.merge({
         authenticated: true,
         token: Util.signToken(results[0].username),
         dateTime: new Date().getTime(),
@@ -60,7 +93,7 @@ User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
     reject(null);
     return;
   }
-  resolve(lodash.merge({
+  resolve(_.merge({
     authorize: true,
     roles: [
       'customer',
@@ -88,11 +121,9 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
       if (that.model.uiid === undefined) {
         that.model.uiid = '';
       }
-      // TODO: Add validation
       if (results.length === 0) {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
+        const query = that.sqlTable.insert(that.model).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -117,20 +148,19 @@ User.prototype.update = id => new BluePromise((resolve, reject) => {
   }
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
-    .then((results) => {
-      if (!results.id) {
+    .then((resultList) => {
+      if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.model = lodash.merge(results, that.model);
-        that.dbConn.setAsync('id', id);
-        that.dbConn.saveAsync()
+        that.model = _.merge(resultList[0], that.model);
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(id)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
           .catch((err) => {
-            resolve(err);
+            reject(err);
           });
       }
     })
@@ -140,27 +170,68 @@ User.prototype.update = id => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * Get userAccount by value
+  * Get by value
   * @param {any} value
   * @param {string} field
   * @return {object<Promise>}
 */
-User.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+User.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
-/**
-  * Get userAccount by username and password
-  * @param {string} username
-  * @param {string} password
-  * @return {object<Promise>}
-*/
-User.prototype.getByUser = (username, password, uiid) => that.dbConn.findAsync('all', { where: `username = '${username}' AND ${!uiid ? `password = '${password}'` : `uiid = '${uiid}'`}` });
 
 /**
   * Get userAccount by id
   * @param {integer} id
   * @return {object<Promise>}
 */
-User.prototype.getById = id => that.dbConn.readAsync(id);
+// User.prototype.getById = id => that.dbConn.readAsync(id);
+User.prototype.findById = id => that.getByValue(id, 'id');
+User.prototype.getById = id => that.getByValue(id, 'id');
+
+
+/**
+  * findAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+User.prototype.findAll = (skip, limit, filters) => {
+  let query = null;
+  if (filters.username && filters.password) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.username.equals(filters.username)
+        .and(that.sqlTable.password.equals(filters.password)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.username && filters.uiid) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.username.equals(filters.username)
+        .and(that.sqlTable.uiid.equals(filters.uiid)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 /**
   * Format response object and/or append additional object properties
@@ -171,10 +242,17 @@ User.prototype.getById = id => that.dbConn.readAsync(id);
 User.prototype.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
-  lodash.merge(object, properties);
+  _.merge(object, properties);
 
   return object;
 };
 
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+User.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 module.exports = User;
