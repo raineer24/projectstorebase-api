@@ -127,6 +127,7 @@ Order.prototype.findAll = (skip, limit, filters) => {
       .select(that.sqlTable.star())
       .from(that.sqlTable)
       .where(that.sqlTable.useraccount_id.equals(filters.useraccountId))
+      .order(that.sqlTable.dateUpdated.desc)
       .limit(limit)
       .offset(skip)
       .toQuery();
