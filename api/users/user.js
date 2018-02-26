@@ -66,7 +66,6 @@ User.prototype.authenticate = () => new BluePromise((resolve, reject) => {
 
   that.findAll(0, 1, filter)
     .then((results) => {
-      console.log(results);
       if (results.length === 0) {
         reject('Not found');
         return;
@@ -125,7 +124,17 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
         const query = that.sqlTable.insert(that.model).toQuery();
         that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
-            resolve(response.insertId);
+            that.getById(response.insertId)
+              .then((resultList) => {
+                if (!resultList[0].id) {
+                  reject('Not found');
+                } else {
+                  resolve(resultList[0]);
+                }
+              })
+              .catch((err) => {
+                reject(err);
+              });
           })
           .catch((err) => {
             reject(err);
