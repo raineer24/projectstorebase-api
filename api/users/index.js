@@ -42,7 +42,7 @@ user.loginAccount = (req, res) => {
 user.registerAccount = (req, res) => {
   const instUser = new User(req.swagger.params.body.value);
   instUser.create()
-    .then(id => res.json({ id, message: 'Saved' }))
+    .then(userData => res.json(instUser.cleanResponse(userData, { message: 'Saved' })))
     .catch(err => res.status(err === 'Found' ? 201 : 500).json({
       message: err === 'Found' ? 'Existing' : err,
     }))
@@ -79,7 +79,12 @@ user.updateAccount = (req, res) => {
 user.viewAccount = (req, res) => {
   const instUser = new User();
   instUser.getById(query.validateParam(req.swagger.params, 'id', 0))
-    .then(result => res.json(instUser.cleanResponse(result, { message: 'Found' })))
+    .then((resultList) => {
+      if (!resultList[0].id) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
+    })
     .catch(() => res.status(404).json({
       message: 'Not found',
     }))
