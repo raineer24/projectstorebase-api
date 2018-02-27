@@ -122,7 +122,7 @@ Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   if (filters.keywords && filters.keywords.length > 1 &&
     filters.categories && filters.categories.length > 0) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
       .where(that.sqlTable.name.like(filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
@@ -131,85 +131,85 @@ Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .or(that.sqlTable.category1.in(filters.categories))
       .or(that.sqlTable.category2.in(filters.categories))
       .or(that.sqlTable.category3.in(filters.categories))
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else if (filters.keywords && filters.keywords.length > 1) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
       .where(that.sqlTable.name.like(filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[2] ? `%${filters.keywords[2]}%` : filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[3] ? `%${filters.keywords[3]}%` : filters.keywords[0]))
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else if (filters.keyword && filters.categories && filters.categories.length > 0) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
       .where(that.sqlTable.name.like(`%${filters.keyword}%`))
       .or(that.sqlTable.category1.in(filters.categories))
       .or(that.sqlTable.category2.in(filters.categories))
       .or(that.sqlTable.category3.in(filters.categories))
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else if (filters.keyword) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
       .where(that.sqlTable.name.like(`%${filters.keyword}%`))
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else if (filters.category2 && filters.category3) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
       .where(that.sqlTable.category2.equals(filters.category2))
       .or(that.sqlTable.category3.equals(filters.category3))
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else if (filters.category1) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
       .where(that.sqlTable.category1.equals(filters.category1))
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else if (filters.category2) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
       .where(that.sqlTable.category2.equals(filters.category2))
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else if (filters.category3) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
       .where(that.sqlTable.category3.equals(filters.category3))
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
-      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
+      .order(`sortPrice ${sort}`)
       .limit(limit)
       .offset(skip)
       .toQuery();
