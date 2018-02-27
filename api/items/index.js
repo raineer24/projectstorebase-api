@@ -16,7 +16,7 @@ item.listItems = (req, res) => {
     category1: query.validateParam(req.swagger.params, 'category1', ''),
     category2: query.validateParam(req.swagger.params, 'category2', ''),
     category3: query.validateParam(req.swagger.params, 'category3', ''),
-  })
+  }, query.validateParam(req.swagger.params, 'sortBy', ''), query.validateParam(req.swagger.params, 'sort', ''))
     .then(result => result)
     .then(instItem.getRelatedCategories)
     .then(result => res.json({
