@@ -579,6 +579,8 @@ paths:
         - $ref: "#/parameters/category1"
         - $ref: "#/parameters/category2"
         - $ref: "#/parameters/category3"
+        - $ref: "#/parameters/sort"
+        - $ref: "#/parameters/sortBy"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/order"
@@ -1333,6 +1335,16 @@ parameters:
     in: query
     name: category3
     type: number
+    required: false
+  sort:
+    in: query
+    name: sort
+    type: string
+    required: false
+  sortBy:
+    in: query
+    name: sortBy
+    type: string
     required: false
   limit:
     in: query

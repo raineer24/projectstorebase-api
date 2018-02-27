@@ -90,7 +90,7 @@ Item.prototype.getRelatedCategories = results => new BluePromise((resolve, rejec
   * @param {string} offset
   * @return {object}
 */
-Item.prototype.searchAll = (skip, limit, filters) => {
+Item.prototype.searchAll = (skip, limit, filters, sortBy, sort) => {
   const keywords = filters.keyword ? filters.keyword.split(' ') : null;
   const keyword = filters.keyword ? filters.keyword : null;
   const finalFilters = _.merge(filters, { keywords });
@@ -98,16 +98,16 @@ Item.prototype.searchAll = (skip, limit, filters) => {
   return new Category({}).findAll(0, 10, {
     keyword,
     keywords,
-  })
+  }, sortBy, sort)
     .then((catResult) => {
       if (catResult.length > 0) {
         const temp = finalFilters;
         temp.categories = _.map(catResult, obj => obj.id);
-        return that.findAll(skip, limit, temp);
+        return that.findAll(skip, limit, temp, sortBy, sort);
       }
-      return that.findAll(skip, limit, finalFilters);
+      return that.findAll(skip, limit, finalFilters, sortBy, sort);
     })
-    .catch(() => that.findAll(skip, limit, finalFilters));
+    .catch(() => that.findAll(skip, limit, finalFilters, sortBy, sort));
 };
 
 /**
@@ -116,7 +116,7 @@ Item.prototype.searchAll = (skip, limit, filters) => {
   * @param {string} offset
   * @return {object}
 */
-Item.prototype.findAll = (skip, limit, filters) => {
+Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   let query = null;
 
   if (filters.keywords && filters.keywords.length > 1 &&
@@ -131,6 +131,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
       .or(that.sqlTable.category1.in(filters.categories))
       .or(that.sqlTable.category2.in(filters.categories))
       .or(that.sqlTable.category3.in(filters.categories))
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -142,6 +143,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
       .or(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[2] ? `%${filters.keywords[2]}%` : filters.keywords[0]))
       .or(that.sqlTable.name.like(filters.keywords[3] ? `%${filters.keywords[3]}%` : filters.keywords[0]))
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -153,6 +155,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
       .or(that.sqlTable.category1.in(filters.categories))
       .or(that.sqlTable.category2.in(filters.categories))
       .or(that.sqlTable.category3.in(filters.categories))
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -161,6 +164,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
       .select(that.sqlTable.star())
       .from(that.sqlTable)
       .where(that.sqlTable.name.like(`%${filters.keyword}%`))
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -170,6 +174,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable)
       .where(that.sqlTable.category2.equals(filters.category2))
       .or(that.sqlTable.category3.equals(filters.category3))
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -178,6 +183,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
       .select(that.sqlTable.star())
       .from(that.sqlTable)
       .where(that.sqlTable.category1.equals(filters.category1))
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -186,6 +192,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
       .select(that.sqlTable.star())
       .from(that.sqlTable)
       .where(that.sqlTable.category2.equals(filters.category2))
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -194,6 +201,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
       .select(that.sqlTable.star())
       .from(that.sqlTable)
       .where(that.sqlTable.category3.equals(filters.category3))
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -201,6 +209,7 @@ Item.prototype.findAll = (skip, limit, filters) => {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
+      .order(that.sqlTable[(sortBy === 'price' ? 'displayPrice' : 'id')][(sort === 'desc' ? 'desc' : 'asc')])
       .limit(limit)
       .offset(skip)
       .toQuery();
