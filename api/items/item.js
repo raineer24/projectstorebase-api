@@ -20,6 +20,7 @@ function Item(item) {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
+  this.db = 'grocerystore';
   this.table = 'item';
   this.dbConnNew = ConnNew;
   this.sqlTable = sql.define({
@@ -110,47 +111,45 @@ Item.prototype.searchAll = (skip, limit, filters, sortBy, sort) => {
     .catch(() => that.findAll(skip, limit, finalFilters, sortBy, sort));
 };
 
-/**
-  * findAll
-  * @param {string} limit
-  * @param {string} offset
-  * @return {object}
-*/
-Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
+
+function executeQuery(skip, limit, filters, sortBy, sort) {
   let query = null;
   let sortString = '1';
   if (sortBy) {
     sortString = `${sortBy === 'price' ? 'sortPrice' : 'dateCreated'} ${sort}`;
   }
+  let strSql = '';
 
   if (filters.keywords && filters.keywords.length > 1 &&
     filters.categories && filters.categories.length > 0) {
-    query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
-      .from(that.sqlTable)
-      .where(that.sqlTable.name.like(filters.keywords[0]))
-      .or(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
-      .or(that.sqlTable.name.like(filters.keywords[2] ? `%${filters.keywords[2]}%` : filters.keywords[0]))
-      .or(that.sqlTable.name.like(filters.keywords[3] ? `%${filters.keywords[3]}%` : filters.keywords[0]))
-      .or(that.sqlTable.category1.in(filters.categories))
-      .or(that.sqlTable.category2.in(filters.categories))
-      .or(that.sqlTable.category3.in(filters.categories))
-      .order(sortString)
-      .limit(limit)
-      .offset(skip)
-      .toQuery();
+    strSql = `
+      (SELECT ${that.table}.*, CAST(${that.table}.displayPrice AS int) AS sortPrice
+      FROM ${that.db}.${that.table} WHERE ${that.table}.name LIKE '%${filters.keyword}%'
+      )
+      UNION
+      (SELECT ${that.table}.*, CAST(${that.table}.displayPrice AS int) AS sortPrice
+      FROM ${that.db}.${that.table} WHERE
+        ${that.table}.name LIKE '%${filters.keywords[0]}%'
+        ${filters.keywords[1] && filters.keywords[1].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[1]}%'` : ''}
+        ${filters.keywords[2] && filters.keywords[2].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[2]}%'` : ''}
+        ${filters.keywords[3] && filters.keywords[3].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[3]}%'` : ''}
+        OR ${that.table}.category1 IN ${filters.categories}
+        OR ${that.table}.category2 IN ${filters.categories}
+        OR ${that.table}.category3 IN ${filters.categories}
+      ) ORDER BY ${sortString} ${sort} LIMIT ${skip}, ${limit}`;
   } else if (filters.keywords && filters.keywords.length > 1) {
-    query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
-      .from(that.sqlTable)
-      .where(that.sqlTable.name.like(filters.keywords[0]))
-      .or(that.sqlTable.name.like(filters.keywords[1] ? `%${filters.keywords[1]}%` : filters.keywords[0]))
-      .or(that.sqlTable.name.like(filters.keywords[2] ? `%${filters.keywords[2]}%` : filters.keywords[0]))
-      .or(that.sqlTable.name.like(filters.keywords[3] ? `%${filters.keywords[3]}%` : filters.keywords[0]))
-      .order(sortString)
-      .limit(limit)
-      .offset(skip)
-      .toQuery();
+    strSql = `
+      (SELECT ${that.table}.*, CAST(${that.table}.displayPrice AS int) AS sortPrice
+      FROM ${that.db}.${that.table} WHERE ${that.table}.name LIKE '%${filters.keyword}%'
+      )
+      UNION
+      (SELECT ${that.table}.*, CAST(${that.table}.displayPrice AS int) AS sortPrice
+      FROM ${that.db}.${that.table} WHERE
+        ${that.table}.name LIKE '%${filters.keywords[0]}%'
+        ${filters.keywords[1] && filters.keywords[1].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[1]}%'` : ''}
+        ${filters.keywords[2] && filters.keywords[2].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[2]}%'` : ''}
+        ${filters.keywords[3] && filters.keywords[3].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[3]}%'` : ''}
+      ) ORDER BY ${sortString} ${sort} LIMIT ${skip}, ${limit}`;
   } else if (filters.keyword && filters.categories && filters.categories.length > 0) {
     query = that.sqlTable
       .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
@@ -218,10 +217,64 @@ Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .offset(skip)
       .toQuery();
   }
+  if (strSql) {
+    log.info(strSql);
+    return that.dbConnNew.queryAsync(strSql);
+  }
   log.info(query.text);
-
   return that.dbConnNew.queryAsync(query.text, query.values);
-};
+}
+
+/**
+  * findAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => new Promise((resolve, reject) => {
+  let query = null;
+  let sortString = '1';
+  if (sortBy) {
+    sortString = `${sortBy === 'price' ? 'sortPrice' : 'dateCreated'} ${sort}`;
+  }
+
+  if (filters.keyword) {
+    query = that.sqlTable
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
+      .from(that.sqlTable)
+      .where(that.sqlTable.name.like(`%${filters.keyword}%`))
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+
+    that.dbConnNew.queryAsync(query.text, query.values)
+      .then((results) => {
+        if (results.length === 0) {
+          executeQuery(skip, limit, filters, sortBy, sort)
+            .then((newResults) => {
+              resolve(newResults);
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          resolve(results);
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  } else {
+    executeQuery(skip, limit, filters, sortBy, sort)
+      .then((newResults) => {
+        resolve(newResults);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  }
+});
 
 /**
   * findById
