@@ -192,3 +192,19 @@ dateUpdated BIGINT(50) NOT NULL,
 user_id BIGINT(50) NOT NULL,
 item_id BIGINT(50) NOT NULL,
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
+
+/* orderseller */
+CREATE TABLE grocerystore.orderseller
+(id BIGINT(50) NOT NULL AUTO_INCREMENT,
+orderNumber CHAR(60) NOT NULL,
+orderBarCode VARCHAR(100) NOT NULL,
+dateCreated BIGINT(50) NOT NULL,
+dateCompleted BIGINT(50) NOT NULL,
+orderslip_printedby VARCHAR(50) NOT NULL,
+assembly_personnel VARCHAR(250) NOT NULL,
+checkedBy VARCHAR(50) NOT NULL,
+item_List VARCHAR(500),
+total_Items VARCHAR(50) NOT NULL,
+dateUpdated BIGINT(50) NOT NULL,
+merchantAccount_id BIGINT(50) NOT NULL,
+PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
