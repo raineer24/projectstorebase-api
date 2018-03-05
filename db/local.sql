@@ -391,13 +391,13 @@ INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8
 UNLOCK TABLES;
 
 --
--- Table structure for table `sellerAccount`
+-- Table structure for table `selleraccount`
 --
 
-DROP TABLE IF EXISTS `sellerAccount`;
+DROP TABLE IF EXISTS `selleraccount`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sellerAccount` (
+CREATE TABLE `selleraccount` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `username` char(60) NOT NULL,
   `password` varchar(250) NOT NULL,
@@ -410,13 +410,13 @@ CREATE TABLE `sellerAccount` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `sellerAccount`
+-- Dumping data for table `selleraccount`
 --
 
-LOCK TABLES `sellerAccount` WRITE;
-/*!40000 ALTER TABLE `sellerAccount` DISABLE KEYS */;
-INSERT INTO `sellerAccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1512763935519,1512763935531);
-/*!40000 ALTER TABLE `sellerAccount` ENABLE KEYS */;
+LOCK TABLES `selleraccount` WRITE;
+/*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
+INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1512763935519,1512763935531);
+/*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -432,7 +432,7 @@ CREATE TABLE `sellerEntitlement` (
   `enabled` bit(1) DEFAULT b'1',
   `dateCreated` bigint(20) NOT NULL,
   `dateUpdated` bigint(20) NOT NULL,
-  `sellerAccount_id` bigint(50) NOT NULL,
+  `selleraccount_id` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -733,7 +733,7 @@ CREATE TABLE `orderseller` (
   `item_List` VARCHAR(500),
   `total_Items` VARCHAR(50) NOT NULL,
   `dateUpdated` BIGINT(50) NOT NULL,
-  `merchantAccount_id` BIGINT(50) NOT NULL,
+  `selleraccount_id` BIGINT(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -742,6 +742,26 @@ LOCK TABLES `orderseller` WRITE;
 /*!40000 ALTER TABLE `orderseller` DISABLE KEYS */;
 /*!40000 ALTER TABLE `orderseller` ENABLE KEYS */;
 UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `seller`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `seller` (
+  `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(250) NOT NULL,
+  `seller_id` BIGINT(50) NOT NULL,
+  `seller_code` VARCHAR(50) NOT NULL,
+  `dateCreated` BIGINT(50) NOT NULL,
+  `dateUpdated` BIGINT(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `seller` WRITE;
+/*!40000 ALTER TABLE `seller` DISABLE KEYS */;
+/*!40000 ALTER TABLE `seller` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
