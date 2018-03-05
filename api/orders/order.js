@@ -74,6 +74,7 @@ function Order(order) {
       'useraccount_id',
       'address_id',
       'referenceId',
+      'seller_id',
     ],
   });
   this.sqlTableOrderSeller = sql.define({
@@ -90,7 +91,8 @@ function Order(order) {
       'item_List',
       'total_Items',
       'dateUpdated',
-      'merchantAccount_id',
+      'seller_id',
+      'order_id',
     ],
   });
   this.sqlTableUser = sql.define({
@@ -158,6 +160,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   if (sortBy) {
     sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
   }
+  console.log(filters);
 
   if (filters.useraccountId) {
     query = that.sqlTable
@@ -168,14 +171,15 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.selleraccountId) {
+  } else if (filters.sellerId) {
     query = that.sqlTable
-      .select(that.sqlTable.id.as('item_id'), that.sqlTable.star(), that.sqlTableOrderSeller.star())
-      .from(that.sqlTable.join(that.sqlTableItem)
-        .on(that.sqlTableOrderSeller.order_id.equals(that.sqlTable.id))
-        .on(that.sqlTableUser.useraccount_id.equals(that.sqlTable.useraccount_id)))
-      .where(that.sqlTable.orderkey.equals(filters.orderkey))
-      .where(that.sqlTable.selleraccount_id.equals(filters.selleraccountId))
+      .select(that.sqlTable.id.as('order_id'), that.sqlTable.star(), that.sqlTableUser.star(), that.sqlTableOrderSeller.star())
+      .from(that.sqlTable
+        .leftJoin(that.sqlTableUser)
+        .on(that.sqlTableUser.id.equals(that.sqlTable.useraccount_id))
+        .leftJoin(that.sqlTableOrderSeller)
+        .on(that.sqlTableOrderSeller.order_id.equals(that.sqlTable.id)))
+      .where(that.sqlTable.seller_id.equals(filters.sellerId))
       .order(sortString)
       .limit(limit)
       .offset(skip)
