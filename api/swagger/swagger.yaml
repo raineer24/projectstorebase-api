@@ -224,7 +224,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /order:
+    /order:
     x-swagger-router-controller: orders
     get:
       tags:
@@ -329,6 +329,36 @@ paths:
       responses:
         200:
           description: Successful updated order
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /order/{selleraccountId}/seller:
+    x-swagger-router-controller: orders
+    get:
+      tags:
+        - order
+      summary: Get all orders that are confirmed
+      operationId: getAllSellerOrders
+      parameters:
+        - $ref: "#/parameters/selleraccountId"
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/sort"
+        - $ref: "#/parameters/sortBy"
+      responses:
+        200:
+          description: Fetch all orders
           schema:
             type: object
             properties:
@@ -1377,6 +1407,11 @@ parameters:
   useraccountId:
     in: path
     name: useraccountId
+    type: string
+    required: true
+  selleraccountId:
+    in: path
+    name: selleraccountId
     type: string
     required: true
   listId:
