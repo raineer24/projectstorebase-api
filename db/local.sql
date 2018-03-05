@@ -105,7 +105,7 @@ CREATE TABLE `item` (
   `category1` bigint(50) NOT NULL,
   `category2` bigint(50) NOT NULL,
   `category3` bigint(50) NOT NULL,
-  `sellerAccount_id` bigint(50) NOT NULL,
+  `seller_id` bigint(50) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -344,6 +344,7 @@ CREATE TABLE `order` (
   `useraccount_id` bigint(50) DEFAULT 0,
   `address_id` bigint(50) DEFAULT 0,
   `referenceId` char(20) DEFAULT NULL,
+  `seller_id` bigint(50) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -354,7 +355,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO','0','0','241.75','0',NULL,NULL,NULL,NULL,NULL,NULL,'payment','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'21','NORBERT','PENA','84599327','1234567','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409422520,1518409422523,0,0,NULL),(2,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf','0','0','196','0',NULL,NULL,NULL,NULL,NULL,NULL,'address','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'22','NORBERT','PENA','84599327','1234567','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409526814,1518409526815,0,0,NULL);
+INSERT INTO `order` VALUES (1,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO','0','0','241.75','0',NULL,NULL,NULL,NULL,NULL,NULL,'payment','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'21','NORBERT','PENA','84599327','1234567','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409422520,1518409422523,0,0,NULL,1),(2,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf','0','0','196','0',NULL,NULL,NULL,NULL,NULL,NULL,'address','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'22','NORBERT','PENA','84599327','1234567','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409526814,1518409526815,0,0,NULL,1);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -403,6 +404,7 @@ CREATE TABLE `selleraccount` (
   `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
+  `seller_id` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -415,7 +417,7 @@ CREATE TABLE `selleraccount` (
 
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
-INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1512763935519,1512763935531);
+INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1512763935519,1512763935531);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -733,7 +735,7 @@ CREATE TABLE `orderseller` (
   `item_List` VARCHAR(500),
   `total_Items` VARCHAR(50) NOT NULL,
   `dateUpdated` BIGINT(50) NOT NULL,
-  `selleraccount_id` BIGINT(50) NOT NULL,
+  `seller_id` BIGINT(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -749,7 +751,6 @@ DROP TABLE IF EXISTS `seller`;
 CREATE TABLE `seller` (
   `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(250) NOT NULL,
-  `seller_id` BIGINT(50) NOT NULL,
   `seller_code` VARCHAR(50) NOT NULL,
   `dateCreated` BIGINT(50) NOT NULL,
   `dateUpdated` BIGINT(50) NOT NULL,
