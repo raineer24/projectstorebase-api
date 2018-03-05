@@ -74,9 +74,43 @@ function Order(order) {
       'useraccount_id',
       'address_id',
       'referenceId',
+      'seller_id',
     ],
   });
-
+  this.sqlTableOrderSeller = sql.define({
+    name: 'orderseller',
+    columns: [
+      'id',
+      'orderNumber',
+      'orderBarCode',
+      'dateCreated',
+      'dateCompleted',
+      'orderslip_printedby',
+      'assembly_personnel',
+      'checkedBy',
+      'item_List',
+      'total_Items',
+      'dateUpdated',
+      'seller_id',
+      'order_id',
+    ],
+  });
+  this.sqlTableUser = sql.define({
+    name: 'useraccount',
+    columns: [
+      'id',
+      'username',
+      'password',
+      'email',
+      'firstName',
+      'lastName',
+      'uiid',
+      'gender',
+      'mobileNumber',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
   that = this;
 }
 
@@ -120,14 +154,33 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
   * @param {string} offset
   * @return {object}
 */
-Order.prototype.findAll = (skip, limit, filters) => {
+Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   let query = null;
+  let sortString = `${that.table}.dateUpdated DESC`;
+  if (sortBy) {
+    sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
+  }
+  console.log(filters);
+
   if (filters.useraccountId) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
       .where(that.sqlTable.useraccount_id.equals(filters.useraccountId))
-      .order(that.sqlTable.dateUpdated.desc)
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.sellerId) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('order_id'), that.sqlTable.star(), that.sqlTableUser.star(), that.sqlTableOrderSeller.star())
+      .from(that.sqlTable
+        .leftJoin(that.sqlTableUser)
+        .on(that.sqlTableUser.id.equals(that.sqlTable.useraccount_id))
+        .leftJoin(that.sqlTableOrderSeller)
+        .on(that.sqlTableOrderSeller.order_id.equals(that.sqlTable.id)))
+      .where(that.sqlTable.seller_id.equals(filters.sellerId))
+      .order(sortString)
       .limit(limit)
       .offset(skip)
       .toQuery();
