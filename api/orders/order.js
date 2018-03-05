@@ -76,7 +76,39 @@ function Order(order) {
       'referenceId',
     ],
   });
-
+  this.sqlTableOrderSeller = sql.define({
+    name: 'orderseller',
+    columns: [
+      'id',
+      'orderNumber',
+      'orderBarCode',
+      'dateCreated',
+      'dateCompleted',
+      'orderslip_printedby',
+      'assembly_personnel',
+      'checkedBy',
+      'item_List',
+      'total_Items',
+      'dateUpdated',
+      'merchantAccount_id',
+    ],
+  });
+  this.sqlTableUser = sql.define({
+    name: 'useraccount',
+    columns: [
+      'id',
+      'username',
+      'password',
+      'email',
+      'firstName',
+      'lastName',
+      'uiid',
+      'gender',
+      'mobileNumber',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
   that = this;
 }
 
@@ -120,14 +152,31 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
   * @param {string} offset
   * @return {object}
 */
-Order.prototype.findAll = (skip, limit, filters) => {
+Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   let query = null;
+  let sortString = `${that.table}.dateUpdated DESC`;
+  if (sortBy) {
+    sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
+  }
+
   if (filters.useraccountId) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
       .where(that.sqlTable.useraccount_id.equals(filters.useraccountId))
-      .order(that.sqlTable.dateUpdated.desc)
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.selleraccountId) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('item_id'), that.sqlTable.star(), that.sqlTableOrderSeller.star())
+      .from(that.sqlTable.join(that.sqlTableItem)
+        .on(that.sqlTableOrderSeller.order_id.equals(that.sqlTable.id))
+        .on(that.sqlTableUser.useraccount_id.equals(that.sqlTable.useraccount_id)))
+      .where(that.sqlTable.orderkey.equals(filters.orderkey))
+      .where(that.sqlTable.selleraccount_id.equals(filters.selleraccountId))
+      .order(sortString)
       .limit(limit)
       .offset(skip)
       .toQuery();
