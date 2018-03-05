@@ -138,7 +138,7 @@ order.getAllSellerOrders = (req, res) => {
   new Log({ message: 'SELLER_ORDER_LIST', type: 'INFO' }).create();
   const instOrder = new Order({});
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    selleraccountId: query.validateParam(req.swagger.params, 'selleraccountId', 0),
+    sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
   })
     .then(result => res.json(result))
     .catch((err) => {
