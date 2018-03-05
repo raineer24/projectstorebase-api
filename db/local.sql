@@ -373,6 +373,7 @@ CREATE TABLE `order` (
   `useraccount_id` bigint(50) DEFAULT 0,
   `address_id` bigint(50) DEFAULT 0,
   `referenceId` char(20) DEFAULT NULL,
+  `seller_id` bigint(50) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -383,7 +384,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO','0','0','241.75','0',NULL,NULL,NULL,NULL,NULL,NULL,'payment','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'21','NORBERT','PENA','84599327','1234567','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409422520,1518409422523,0,0,NULL),(2,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf','0','0','196','0',NULL,NULL,NULL,NULL,NULL,NULL,'address','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'22','NORBERT','PENA','84599327','1234567','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409526814,1518409526815,0,0,NULL);
+INSERT INTO `order` VALUES (1,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO','0','0','241.75','0',NULL,NULL,NULL,NULL,NULL,NULL,'payment','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'21','NORBERT','PENA','84599327','1234567','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409422520,1518409422523,0,0,NULL,0),(2,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf','0','0','196','0',NULL,NULL,NULL,NULL,NULL,NULL,'address','hutcake@gmail.com','',NULL,NULL,NULL,NULL,NULL,NULL,'22','NORBERT','PENA','84599327','1234567','','','','','',0,'67 Flora Drive, The Inflora, #07-47','','Singapore','506850','Philippines',0,NULL,NULL,1518409526814,1518409526815,0,0,NULL,0);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
