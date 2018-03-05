@@ -77,35 +77,6 @@ INSERT INTO `category` VALUES (1,'grocery','1',0,'',1518414844628,1518414844628
 UNLOCK TABLES;
 
 --
--- Table structure for table `giftcertificate`
---
-
-DROP TABLE IF EXISTS `giftcertificate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `giftcertificate` (
-  `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `code` char(50) NOT NULL,
-  `amount` char(4) NOT NULL,
-  `expiryDate` bigint(50) NOT NULL,
-  `dateCreated` bigint(50) NOT NULL,
-  `dateUpdated` bigint(50) NOT NULL,
-  `status` char(10) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `giftcertificate`
---
-
-LOCK TABLES `giftcertificate` WRITE;
-/*!40000 ALTER TABLE `giftcertificate` DISABLE KEYS */;
-INSERT INTO `giftcertificate` VALUES (1,'1111','100',1522454400000,1522454400000,1522454400000,'good');
-/*!40000 ALTER TABLE `giftcertificate` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `item`
 --
 
@@ -746,6 +717,32 @@ INSERT INTO `voucher` VALUES (1,'10000','100',1522454400000,1522454400000,152245
 (5,'1005','100',1522454400000,1519257600000,1519257600000,'good'),(6,'1006','100',1522454400000,1519257600000,1519257600000,'good'),(7,'1007','100',1522454400000,1519257600000,1519257600000,'good');
 /*!40000 ALTER TABLE `voucher` ENABLE KEYS */;
 UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `orderseller`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `orderseller` (
+  `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+  `orderNumber` CHAR(60) NOT NULL,
+  `orderBarCode` VARCHAR(100) NOT NULL,
+  `dateCreated` BIGINT(50) NOT NULL,
+  `dateCompleted` BIGINT(50) NOT NULL,
+  `orderslip_printedby` VARCHAR(50) NOT NULL,
+  `assembly_personnel` VARCHAR(250) NOT NULL,
+  `checkedBy` VARCHAR(50) NOT NULL,
+  `item_List` VARCHAR(500),
+  `total_Items` VARCHAR(50) NOT NULL,
+  `dateUpdated` BIGINT(50) NOT NULL,
+  `merchantAccount_id` BIGINT(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `orderseller` WRITE;
+/*!40000 ALTER TABLE `orderseller` DISABLE KEYS */;
+/*!40000 ALTER TABLE `orderseller` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
