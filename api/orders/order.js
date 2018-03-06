@@ -38,6 +38,7 @@ function Order(order) {
       'shipmentTotal',
       'adjustmentTotal',
       'paymentTotal',
+      'discountTotal',
       'dateCompleted',
       'shipmentStatus',
       'paymentStatus',
@@ -160,7 +161,6 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   if (sortBy) {
     sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
   }
-  console.log(filters);
 
   if (filters.useraccountId) {
     query = that.sqlTable
