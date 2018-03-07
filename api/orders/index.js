@@ -121,7 +121,7 @@ order.confirmOrder = (req, res) => {
     .then(msg => res.json({ message: `Processed order ${msg}`, transaction: msg }))
     .catch((err) => {
       new Log({ message: `ORDER_CONFIRM ${err}`, type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
     })
     .finally(() => {
       instOrder.release();
