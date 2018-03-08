@@ -689,6 +689,29 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /item/{id}/suggestions:
+    x-swagger-router-controller: items
+    get:
+      tags:
+        - item
+      summary: Get item details
+      operationId: getItemSuggestions
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 123445
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /category/list:
     x-swagger-router-controller: categories
     get:
