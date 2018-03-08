@@ -64,7 +64,7 @@ item.addItem = (req, res) => {
 item.getItemSuggestions = (req, res) => {
   new Log({ message: 'ITEM_GET_SUGGESTIONS', type: 'INFO' }).create();
   const instItem = new Item();
-  instItem.getItemSuggestions(query.validateParam(req.swagger.params, 'id', 0))
+  instItem.getItemSuggestions(query.validateParam(req.swagger.params, 'id', 0), 0, 5)
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `ITEM_GET_SUGGESTIONS ${err}`, type: 'ERROR' }).create();

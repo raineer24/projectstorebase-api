@@ -296,7 +296,7 @@ Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => new Promise((re
 Item.prototype.findById = id => that.getByValue(id, 'id');
 
 
-Item.prototype.getItemSuggestions = id => new BluePromise((resolve, reject) => {
+Item.prototype.getItemSuggestions = (id, skip, limit) => new BluePromise((resolve, reject) => {
   that.findById(id)
     .then((results) => {
       if (results.length > 0) {
@@ -304,7 +304,7 @@ Item.prototype.getItemSuggestions = id => new BluePromise((resolve, reject) => {
           list: [results[0].category1, results[0].category2, results[0].category3],
         })
           .then((catResult) => {
-            that.findAll(0, 5, {
+            that.findAll(skip, limit, {
               categories: _.map(catResult, obj => obj.id),
             })
               .then((itemList) => {
