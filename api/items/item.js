@@ -208,6 +208,17 @@ function executeQuery(skip, limit, filters, sortBy, sort) {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.categories.length > 0) {
+    query = that.sqlTable
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
+      .from(that.sqlTable)
+      .or(that.sqlTable.category1.in(filters.categories))
+      .or(that.sqlTable.category2.in(filters.categories))
+      .or(that.sqlTable.category3.in(filters.categories))
+      .order('RAND()')
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
@@ -283,6 +294,37 @@ Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => new Promise((re
   * @return {object}
 */
 Item.prototype.findById = id => that.getByValue(id, 'id');
+
+
+Item.prototype.getItemSuggestions = id => new BluePromise((resolve, reject) => {
+  that.findById(id)
+    .then((results) => {
+      if (results.length > 0) {
+        new Category({}).findAll(0, 10, {
+          list: [results[0].category1, results[0].category2, results[0].category3],
+        })
+          .then((catResult) => {
+            that.findAll(0, 5, {
+              categories: _.map(catResult, obj => obj.id),
+            })
+              .then((itemList) => {
+                resolve(itemList);
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      } else {
+        reject('Not found');
+      }
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
 
 /**
   * create
