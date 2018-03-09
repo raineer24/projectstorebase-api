@@ -61,6 +61,8 @@ Item.prototype.getRelatedCategories = results => new BluePromise((resolve, rejec
 
   results.forEach((obj) => {
     list.push(obj.category1);
+    list.push(obj.category2);
+    list.push(obj.category3);
   });
 
   if (list.length === 0) {
@@ -71,8 +73,8 @@ Item.prototype.getRelatedCategories = results => new BluePromise((resolve, rejec
     return;
   }
 
-  new Category({}).findAll(0, 10, {
-    categoryList: list,
+  new Category({}).findAll(0, 50, {
+    list,
   })
     .then((catResult) => {
       resolve({
