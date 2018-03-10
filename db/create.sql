@@ -219,3 +219,13 @@ total_Items VARCHAR(50) NOT NULL,
 dateUpdated BIGINT(50) NOT NULL,
 selleraccount_id BIGINT(50) NOT NULL,
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
+
+/* ordergc */
+CREATE TABLE grocerystore.ordergc
+(id BIGINT(50) NOT NULL AUTO_INCREMENT,
+orderkey CHAR(60) NOT NULL,
+giftcertificate_id BIGINT(50) NOT NULL,
+order_id BIGINT(50) NOT NULL,
+dateCreated BIGINT(50) NOT NULL,
+dateUpdated BIGINT(50) NOT NULL,
+PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16

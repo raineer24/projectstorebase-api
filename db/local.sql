@@ -764,7 +764,26 @@ LOCK TABLES `seller` WRITE;
 /*!40000 ALTER TABLE `seller` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `ordergc`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+
+CREATE TABLE `ordergc` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`orderkey` CHAR(60) NOT NULL,
+`giftcertificate_id` BIGINT(50) NOT NULL,
+`order_id` BIGINT(50) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`dateUpdated` BIGINT(50) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+LOCK TABLES `ordergc` WRITE;
+/*!40000 ALTER TABLE `ordergc` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ordergc` ENABLE KEYS */;
+UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
