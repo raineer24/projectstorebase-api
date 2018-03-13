@@ -12,7 +12,7 @@ const voucher = {};
 * @param {Object} res
 * @return {Object}
 */
-voucher.updatevoucher = (req, res) => {
+voucher.updateVoucherStatus = (req, res) => {
   new Log({ message: 'voucher_UPDATE', type: 'INFO' }).create();
   const instvoucher = new Voucher(req.swagger.params.body.value);
   instvoucher.update(query.validateParam(req.swagger.params, 'code', ''))
