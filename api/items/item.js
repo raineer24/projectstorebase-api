@@ -217,7 +217,7 @@ function executeQuery(skip, limit, filters, sortBy, sort) {
       .or(that.sqlTable.category1.in(filters.categories))
       .or(that.sqlTable.category2.in(filters.categories))
       .or(that.sqlTable.category3.in(filters.categories))
-      .order('RAND()')
+      .order(sortString)
       .limit(limit)
       .offset(skip)
       .toQuery();
