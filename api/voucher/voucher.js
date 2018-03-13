@@ -26,7 +26,7 @@ function Voucher(voucher) {
     columns: [
       'id',
       'code',
-      'amount',
+      'discount',
       'expiryDate',
       'dateCreated',
       'dateUpdated',
@@ -42,7 +42,7 @@ function Voucher(voucher) {
   * @return {object/number}
 */
 Voucher.prototype.create = () => new BluePromise((resolve, reject) => {
-  const query = that.sqlTable.insert(that.model).toQuery();
+  const query = that.sqlTable.insert(that.modiscountdel).toQuery();
   that.dbConnNew.queryAsync(query.text, query.values)
     .then((response) => {
       resolve(response.insertId);
