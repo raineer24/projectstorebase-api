@@ -26,7 +26,7 @@ function Voucher(voucher) {
     columns: [
       'id',
       'code',
-      'amount',
+      'discount',
       'expiryDate',
       'dateCreated',
       'dateUpdated',
