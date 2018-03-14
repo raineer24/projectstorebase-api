@@ -1296,6 +1296,17 @@ definitions:
       doc:
         type: object
         description: "GC object"
+  voucher:
+    title: " "
+    type: object
+    properties:
+      code:
+        type: string
+      value:
+        type: string
+      doc:
+        type: object
+        description: "voucher object"
   list:
     title: " "
     type: object
