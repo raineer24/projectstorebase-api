@@ -92,5 +92,12 @@ Timeslot.prototype.findAll = (skip, limit, filters) => {
   return that.dbConnNew.queryAsync(query.text, query.values);
 };
 
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Timeslot.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 module.exports = Timeslot;

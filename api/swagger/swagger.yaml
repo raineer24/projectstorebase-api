@@ -1233,7 +1233,7 @@ paths:
                 type: string
                 example: Unauthorized
   /timeslot/{id}:
-    x-swagger-router-controller: timeslot
+    x-swagger-router-controller: timeslots
     get:
       tags:
         - timeslot
