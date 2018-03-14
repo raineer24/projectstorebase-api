@@ -1238,7 +1238,7 @@ paths:
       tags:
         - timeslot
       summary: Get timeslot record
-      operationId: gettimeslot
+      operationId: getTimeslot
       parameters:
         - $ref: "#/parameters/id"
       responses:
@@ -1274,17 +1274,17 @@ definitions:
       doc:
         type: object
         description: "Timeslot object"
-  gc:
+  voucher:
     title: " "
     type: object
     properties:
-      id:
+      code:
         type: string
       value:
         type: string
       doc:
         type: object
-        description: "Timeslot object"
+        description: "voucher object"
   gc:
     title: " "
     type: object
