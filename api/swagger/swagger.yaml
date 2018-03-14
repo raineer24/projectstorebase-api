@@ -1199,11 +1199,84 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+<<<<<<< Updated upstream
+=======
+    put:
+      tags:
+        - voucher
+      summary: Update voucher status
+      operationId: updateVoucherStatus
+      parameters:
+        - $ref: "#/parameters/code"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/voucher"
+      responses:
+        200:
+          description: Successfully updated voucher record
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+              status:
+                type: string
+                example: consumed
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /timeslot/{id}:
+    x-swagger-router-controller: timeslot
+    get:
+      tags:
+        - timeslot
+      summary: Get timeslot record
+      operationId: gettimeslot
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successfully retrieved object
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+>>>>>>> Stashed changes
 
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  timeslot:
+    title: " "
+    type: object
+    properties:
+      id:
+        type: string
+      value:
+        type: string
+      doc:
+        type: object
+        description: "Timeslot object"
   gc:
     title: " "
     type: object
