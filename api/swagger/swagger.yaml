@@ -1199,8 +1199,6 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-<<<<<<< Updated upstream
-=======
     put:
       tags:
         - voucher
@@ -1260,13 +1258,23 @@ paths:
               message:
                 type: string
                 example: Unauthorized
->>>>>>> Stashed changes
 
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
   timeslot:
+    title: " "
+    type: object
+    properties:
+      id:
+        type: string
+      value:
+        type: string
+      doc:
+        type: object
+        description: "Timeslot object"
+  gc:
     title: " "
     type: object
     properties:

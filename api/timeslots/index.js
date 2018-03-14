@@ -36,7 +36,7 @@ timeSlot.addTimeslot = (req, res) => {
 timeSlot.getTimeslot = (req, res) => {
   new Log({ message: 'TIMESLOT_GET', type: 'INFO' }).create();
   const instTimeslot = new Timeslot({});
-  instTimeslot.getByValue(query.validateParam(req.swagger.params, 'Id', ''), '_id')
+  instTimeslot.getById(query.validateParam(req.swagger.params, 'id', ''))
     .then((resultList) => {
       if (resultList.length === 0) {
         return res.status(404).json({ message: 'Not found' });
