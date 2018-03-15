@@ -1274,17 +1274,6 @@ definitions:
       doc:
         type: object
         description: "Timeslot object"
-  voucher:
-    title: " "
-    type: object
-    properties:
-      code:
-        type: string
-      value:
-        type: string
-      doc:
-        type: object
-        description: "voucher object"
   gc:
     title: " "
     type: object
