@@ -401,6 +401,7 @@ DROP TABLE IF EXISTS `selleraccount`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `selleraccount` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `role_id` bigint(10) NOT NULL,
   `username` char(60) NOT NULL,
   `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
@@ -418,7 +419,7 @@ CREATE TABLE `selleraccount` (
 
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
-INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1512763935519,1512763935531);
+INSERT INTO `selleraccount` VALUES (1,1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1512763935519,1512763935531);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -782,6 +783,25 @@ PRIMARY KEY (`id`)
 LOCK TABLES `ordergc` WRITE;
 /*!40000 ALTER TABLE `ordergc` DISABLE KEYS */;
 /*!40000 ALTER TABLE `ordergc` ENABLE KEYS */;
+UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+
+CREATE TABLE `role` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`name` CHAR(60) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`dateUpdated` BIGINT(50) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES(1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000);
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
