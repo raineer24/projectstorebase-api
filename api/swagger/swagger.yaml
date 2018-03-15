@@ -1199,11 +1199,92 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+    put:
+      tags:
+        - voucher
+      summary: Update voucher status
+      operationId: updateVoucherStatus
+      parameters:
+        - $ref: "#/parameters/code"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/voucher"
+      responses:
+        200:
+          description: Successfully updated voucher record
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+              status:
+                type: string
+                example: consumed
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /timeslot/{id}:
+    x-swagger-router-controller: timeslots
+    get:
+      tags:
+        - timeslot
+      summary: Get timeslot record
+      operationId: getTimeslot
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successfully retrieved object
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
 
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  timeslot:
+    title: " "
+    type: object
+    properties:
+      id:
+        type: string
+      value:
+        type: string
+      doc:
+        type: object
+        description: "Timeslot object"
+  voucher:
+    title: " "
+    type: object
+    properties:
+      code:
+        type: string
+      value:
+        type: string
+      doc:
+        type: object
+        description: "voucher object"
   gc:
     title: " "
     type: object
@@ -1215,6 +1296,17 @@ definitions:
       doc:
         type: object
         description: "GC object"
+  voucher:
+    title: " "
+    type: object
+    properties:
+      code:
+        type: string
+      value:
+        type: string
+      doc:
+        type: object
+        description: "voucher object"
   list:
     title: " "
     type: object
