@@ -728,15 +728,15 @@ CREATE TABLE `orderseller` (
   `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
   `orderNumber` CHAR(60) NOT NULL,
   `orderBarCode` VARCHAR(100) NOT NULL,
-  `dateCreated` BIGINT(50) NOT NULL,
-  `dateCompleted` BIGINT(50) NOT NULL,
-  `orderslip_printedby` VARCHAR(50) NOT NULL,
-  `assembly_personnel` VARCHAR(250) NOT NULL,
+  `printedBy` VARCHAR(50) NOT NULL,
   `checkedBy` VARCHAR(50) NOT NULL,
-  `item_List` VARCHAR(500),
-  `total_Items` VARCHAR(50) NOT NULL,
-  `dateUpdated` BIGINT(50) NOT NULL,
+  `itemList` VARCHAR(500),
+  `totalItems` VARCHAR(50) NOT NULL,
+  `selleraccount_id` BIGINT(50) NOT NULL,
   `seller_id` BIGINT(50) NOT NULL,
+  `dateCompleted` BIGINT(50) NOT NULL,
+  `dateCreated` BIGINT(50) NOT NULL,
+  `dateUpdated` BIGINT(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
