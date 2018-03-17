@@ -577,6 +577,7 @@ DROP TABLE IF EXISTS `useraccount`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `useraccount` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `role_id` bigint(10) NOT NULL,
   `username` char(60) NOT NULL,
   `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
@@ -587,6 +588,7 @@ CREATE TABLE `useraccount` (
   `mobileNumber` char(20) DEFAULT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
+  `status` char(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -597,7 +599,7 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',1512810359181,1512810359181);
+INSERT INTO `useraccount` VALUES (1,1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123',1512763400407,1512763400407,'a'),(2,2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',1512761717733,1512761717733,'a'),(3,1,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',1512810101593,1512810101593,'a'),(4,3,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',1512810359181,1512810359181,'a');
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 

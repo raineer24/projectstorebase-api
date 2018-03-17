@@ -6,6 +6,7 @@ CREATE DATABASE grocerystore CHARACTER SET = 'utf16' COLLATE = 'utf16_bin';
 /* userAccount */
 CREATE TABLE grocerystore.userAccount
 (id BIGINT(50) NOT NULL AUTO_INCREMENT,
+role_id BIGINT(10) NOT NULL,
 username CHAR(60) NOT NULL,
 password VARCHAR(250) NOT NULL,
 email CHAR(100),
@@ -16,6 +17,7 @@ gender CHAR(10),
 mobileNumber CHAR(20),
 dateCreated BIGINT(50) NOT NULL,
 dateUpdated BIGINT(50) NOT NULL,
+status CHAR(20),
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
 
 /* userProfile */
@@ -62,6 +64,7 @@ PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
 /* selleraccount */
 CREATE TABLE grocerystore.selleraccount
 (id BIGINT(50) NOT NULL AUTO_INCREMENT,
+role_id BIGINT(10) NOT NULL,
 username CHAR(60) NOT NULL,
 password VARCHAR(250) NOT NULL,
 email CHAR(100),
