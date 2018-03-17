@@ -1285,6 +1285,60 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /ordersellers:
+    x-swagger-router-controller: ordersellers
+    post:
+      tags:
+        - orderseller
+      summary: create an orderseller entry
+      operationId: createOrderSeller
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderSellerCreate"
+      responses:
+        200:
+          description: Successful created orderseller entry
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /ordersellers/{id}:
+    x-swagger-router-controller: ordersellers
+    get:
+      tags:
+        - orderseller
+      summary: Get orderseller
+      operationId: getOrderseller
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 123445
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -1386,6 +1440,15 @@ definitions:
       code:
         type: number
         description: item specific code
+  OrderSellerCreate:
+    title: OrderSellerCreate
+    type: object
+    required:
+      - order_id
+    properties:
+      order_id:
+        type: number
+        description: order id
   TimeslotOrderEntry:
     title: TimeslotOrderEntry
     type: object
