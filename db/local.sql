@@ -727,11 +727,12 @@ DROP TABLE IF EXISTS `orderseller`;
 CREATE TABLE `orderseller` (
   `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
   `orderNumber` CHAR(60) NOT NULL,
-  `orderBarCode` VARCHAR(100) NOT NULL,
+  `orderBarcode` VARCHAR(100) NOT NULL,
   `printedBy` VARCHAR(50) NOT NULL,
   `checkedBy` VARCHAR(50) NOT NULL,
   `itemList` VARCHAR(500),
   `totalItems` VARCHAR(50) NOT NULL,
+  `order_id` BIGINT(50) NOT NULL,
   `selleraccount_id` BIGINT(50) NOT NULL,
   `seller_id` BIGINT(50) NOT NULL,
   `dateCompleted` BIGINT(50) NOT NULL,
