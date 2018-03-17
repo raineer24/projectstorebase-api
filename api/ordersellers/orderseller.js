@@ -26,7 +26,7 @@ function OrderSeller(orderSeller) {
     name: this.table,
     columns: [
       'id',
-      'orderNumber',
+      'orderNumber', // Generate
       'orderBarcode',
       'printedBy',
       'checkedBy',
@@ -71,7 +71,7 @@ OrderSeller.prototype.create = () => new BluePromise((resolve, reject) => {
             reject(err);
           });
       } else {
-        resolve(results[0].id);
+        resolve('Existing');
       }
     })
     .catch((err) => {
@@ -124,6 +124,20 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
 */
 OrderSeller.prototype.findById = id => that.getByValue(id, 'id');
 OrderSeller.prototype.getById = id => that.getByValue(id, 'id');
+
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+OrderSeller.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 /**
   * Release connection
