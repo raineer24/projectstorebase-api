@@ -1,11 +1,13 @@
 const BluePromise = require('bluebird');
+const sql = require('sql');
 const _ = require('lodash');
+
 const ConnNew = require('../../service/connectionnew');
 const Mailer = require('../../service/mail');
 const Timeslotorder = require('../timeslotorders/timeslotorder');
 const Transaction = require('../transactions/transaction');
-const sql = require('sql');
 const OrderItem = require('../orderItems/orderItem');
+const Orderseller = require('../ordersellers/orderseller');
 
 const log = require('color-logs')(true, true, 'Category');
 
@@ -300,6 +302,11 @@ Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
                   });
               })
               .catch(() => {});
+            new Orderseller({
+              order_id: orderEntry.id,
+              seller_id: orderEntry.seller_id,
+              orderNumber: orderEntry.number,
+            }).create();
             resolve(transactionId);
           } else {
             reject('Order not found');

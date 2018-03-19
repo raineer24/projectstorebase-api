@@ -77,6 +77,35 @@ INSERT INTO `category` VALUES (1,'grocery','1',0,'',1518414844628,1518414844628
 UNLOCK TABLES;
 
 --
+-- Table structure for table `giftcertificate`
+--
+
+DROP TABLE IF EXISTS `giftcertificate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `giftcertificate` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `code` char(50) NOT NULL,
+  `amount` char(4) NOT NULL,
+  `expiryDate` bigint(50) NOT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  `status` char(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `giftcertificate`
+--
+
+LOCK TABLES `giftcertificate` WRITE;
+/*!40000 ALTER TABLE `giftcertificate` DISABLE KEYS */;
+INSERT INTO `giftcertificate` VALUES (1,'1111','100',1522454400000,1522454400000,1522454400000,'unused'),(2,'1112','100',1522454400000,1519257600000,1519257600000,'unused'),(3,'1113','100',1522454400000,1519257600000,1519257600000,'unused'),(4,'1114','100',1522454400000,1519257600000,1519257600000,'unused'),(5,'1115','100',1522454400000,1519257600000,1519257600000,'unused'),(6,'1116','100',1522454400000,1519257600000,1519257600000,'unused'),(7,'1117','100',1522454400000,1519257600000,1519257600000,'unused');
+/*!40000 ALTER TABLE `giftcertificate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `item`
 --
 
@@ -246,9 +275,14 @@ CREATE TABLE `log` (
   `message` text DEFAULT NULL,
   `url` text DEFAULT NULL,
   `type` char(60) DEFAULT NULL,
+  `action` varchar(250) DEFAULT NULL,
+  `orderkey` char(150) DEFAULT NULL,
+  `user_id` bigint(50) DEFAULT 0,
+  `selleraccount_id` bigint(50) DEFAULT 0,
+  `seller_id` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf16;
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +291,6 @@ CREATE TABLE `log` (
 
 LOCK TABLES `log` WRITE;
 /*!40000 ALTER TABLE `log` DISABLE KEYS */;
-INSERT INTO `log` VALUES (1,'ORDERKEY_GENERATE',NULL,'INFO',1518409390161),(2,'ITEM_LIST',NULL,'INFO',1518409390182),(3,'CATEGORY_LIST_STRUCTURED',NULL,'INFO',1518409390188),(4,'ORDER_CREATE',NULL,'INFO',1518409390219),(5,'ORDER_ITEM_CREATE',NULL,'INFO',1518409393852),(6,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409395108),(7,'ORDER_ITEM_CREATE',NULL,'INFO',1518409395533),(8,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409396634),(9,'ORDER_ITEM_CREATE',NULL,'INFO',1518409397115),(10,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409398453),(11,'ORDER_UPDATE',NULL,'INFO',1518409401903),(12,'ITEM_LIST',NULL,'INFO',1518409404350),(13,'CATEGORY_LIST_STRUCTURED',NULL,'INFO',1518409404354),(14,'ITEM_LIST',NULL,'INFO',1518409406995),(15,'ORDER_ITEM_CREATE',NULL,'INFO',1518409407001),(16,'ORDER_ITEM_CREATE',NULL,'INFO',1518409407625),(17,'ORDER_ITEM_CREATE Found',NULL,'ERROR',1518409407629),(18,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409408608),(19,'ORDER_UPDATE',NULL,'INFO',1518409412191),(20,'ORDER_UPDATE',NULL,'INFO',1518409416487),(21,'TIMESLOT_ORDER_GET_ALL',NULL,'INFO',1518409416497),(22,'TIMESLOT_ORDER_GET',NULL,'INFO',1518409418919),(23,'TIMESLOT_ORDER_CREATE',NULL,'INFO',1518409418930),(24,'ORDER_UPDATE',NULL,'INFO',1518409418945),(25,'ORDER_UPDATE Not found',NULL,'ERROR',1518409418951),(26,'ORDER_CONFIRM',NULL,'INFO',1518409422520),(27,'ORDERKEY_GENERATE',NULL,'INFO',1518409422562),(28,'ORDER_CREATE',NULL,'INFO',1518409422571),(29,'ITEM_LIST',NULL,'INFO',1518409424000),(30,'CATEGORY_LIST_STRUCTURED',NULL,'INFO',1518409424003),(31,'ITEM_LIST',NULL,'INFO',1518409450832),(32,'CATEGORY_LIST_STRUCTURED',NULL,'INFO',1518409450835),(33,'ORDER_ITEM_CREATE',NULL,'INFO',1518409452452),(34,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409453724),(35,'ORDER_ITEM_CREATE',NULL,'INFO',1518409454340),(36,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409454960),(37,'ORDER_ITEM_CREATE',NULL,'INFO',1518409455513),(38,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409456281),(39,'ORDER_ITEM_CREATE',NULL,'INFO',1518409456766),(40,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409457495),(41,'ITEM_LIST',NULL,'INFO',1518409460386),(42,'ITEM_LIST',NULL,'INFO',1518409465362),(43,'ITEM_LIST',NULL,'INFO',1518409467799),(44,'ITEM_LIST',NULL,'INFO',1518409469233),(45,'ITEM_LIST',NULL,'INFO',1518409472770),(46,'ITEM_LIST',NULL,'INFO',1518409475469),(47,'ORDER_UPDATE',NULL,'INFO',1518409505239),(48,'ITEM_LIST',NULL,'INFO',1518409509469),(49,'CATEGORY_LIST_STRUCTURED',NULL,'INFO',1518409509472),(50,'ORDER_ITEM_CREATE',NULL,'INFO',1518409512129),(51,'ORDER_ITEM_UPDATE',NULL,'INFO',1518409513274),(52,'ORDER_UPDATE',NULL,'INFO',1518409520628),(53,'ORDER_UPDATE',NULL,'INFO',1518409526814),(54,'TIMESLOT_ORDER_GET_ALL',NULL,'INFO',1518409526817),(55,'ITEM_LIST',NULL,'INFO',1518409837029),(56,'CATEGORY_LIST_STRUCTURED',NULL,'INFO',1518409837030),(57,'ORDERKEY_GENERATE',NULL,'INFO',1518935756150),(58,'ITEM_LIST',NULL,'INFO',1518935756167),(59,'CATEGORY_LIST_STRUCTURED',NULL,'INFO',1518935756172),(60,'ORDER_CREATE',NULL,'INFO',1518935756189),(61,'LIST_ADD',NULL,'INFO',1519385361768),(62,'LIST_ADD',NULL,'INFO',1519385375506),(63,'LIST_ITEM_LIST',NULL,'INFO',1519385397869),(64,'LIST_ITEM_ADD',NULL,'INFO',1519385411836),(65,'LIST_ITEM_ADD',NULL,'INFO',1519385437787),(66,'LIST_ITEM_ADD',NULL,'INFO',1519385440314),(67,'LIST_ITEM_ADD',NULL,'INFO',1519385442712),(68,'LIST_ITEM_ADD',NULL,'INFO',1519385446466),(69,'LIST_ITEM_ADD',NULL,'INFO',1519385452301),(70,'LIST_ITEM_ADD',NULL,'INFO',1519385455258),(71,'LIST_ITEM_ADD',NULL,'INFO',1519385458273),(72,'LIST_ITEM_ADD',NULL,'INFO',1519385461673);
 /*!40000 ALTER TABLE `log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -361,6 +394,33 @@ INSERT INTO `order` VALUES (1,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdry
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ordergc`
+--
+
+DROP TABLE IF EXISTS `ordergc`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ordergc` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `orderkey` char(60) NOT NULL,
+  `giftcertificate_id` bigint(50) NOT NULL,
+  `order_id` bigint(50) NOT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ordergc`
+--
+
+LOCK TABLES `ordergc` WRITE;
+/*!40000 ALTER TABLE `ordergc` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ordergc` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `orderitem`
 --
 
@@ -393,33 +453,63 @@ INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8
 UNLOCK TABLES;
 
 --
--- Table structure for table `selleraccount`
+-- Table structure for table `orderseller`
 --
 
-DROP TABLE IF EXISTS `selleraccount`;
+DROP TABLE IF EXISTS `orderseller`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `selleraccount` (
+CREATE TABLE `orderseller` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `username` char(60) NOT NULL,
-  `password` varchar(250) NOT NULL,
-  `email` char(100) DEFAULT NULL,
-  `name` varchar(250) NOT NULL,
+  `orderNumber` char(60) DEFAULT '',
+  `orderBarcode` varchar(100) DEFAULT '',
+  `printedBy` varchar(50) DEFAULT '',
+  `checkedBy` varchar(50) DEFAULT '',
+  `itemList` varchar(500) DEFAULT NULL,
+  `totalItems` varchar(50) DEFAULT '',
+  `order_id` bigint(50) NOT NULL,
+  `selleraccount_id` bigint(50) DEFAULT 0,
   `seller_id` bigint(50) DEFAULT 0,
+  `dateCompleted` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `selleraccount`
+-- Dumping data for table `orderseller`
 --
 
-LOCK TABLES `selleraccount` WRITE;
-/*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
-INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1512763935519,1512763935531);
-/*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
+LOCK TABLES `orderseller` WRITE;
+/*!40000 ALTER TABLE `orderseller` DISABLE KEYS */;
+/*!40000 ALTER TABLE `orderseller` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `seller`
+--
+
+DROP TABLE IF EXISTS `seller`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `seller` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) NOT NULL,
+  `seller_code` varchar(50) NOT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `seller`
+--
+
+LOCK TABLES `seller` WRITE;
+/*!40000 ALTER TABLE `seller` DISABLE KEYS */;
+/*!40000 ALTER TABLE `seller` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -476,6 +566,36 @@ LOCK TABLES `sellerTag` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `selleraccount`
+--
+
+DROP TABLE IF EXISTS `selleraccount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `selleraccount` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `username` char(60) NOT NULL,
+  `password` varchar(250) NOT NULL,
+  `email` char(100) DEFAULT NULL,
+  `name` varchar(250) NOT NULL,
+  `seller_id` bigint(50) DEFAULT 0,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `selleraccount`
+--
+
+LOCK TABLES `selleraccount` WRITE;
+/*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
+INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1512763935519,1512763935531);
+/*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `timeslot`
 --
 
@@ -495,7 +615,7 @@ CREATE TABLE `timeslot` (
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf16;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -664,37 +784,10 @@ LOCK TABLES `userprofile` WRITE;
 /*!40000 ALTER TABLE `userprofile` DISABLE KEYS */;
 /*!40000 ALTER TABLE `userprofile` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 --
--- Table structure for table `giftcertificate`
+-- Table structure for table `voucher`
 --
-
-DROP TABLE IF EXISTS `giftcertificate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `giftcertificate` (
-  `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `code` char(50) NOT NULL,
-  `amount` char(4) NOT NULL,
-  `expiryDate` bigint(50) NOT NULL,
-  `dateCreated` bigint(50) NOT NULL,
-  `dateUpdated` bigint(50) NOT NULL,
-  `status` char(10) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `giftcertificate`
---
-
-LOCK TABLES `giftcertificate` WRITE;
-INSERT INTO `giftcertificate` VALUES (1,'1111','100',1522454400000,1522454400000,1522454400000,'unused'),(2,'1112','100',1522454400000,1519257600000,1519257600000,'unused'),(3,'1113','100',1522454400000,1519257600000,1519257600000,'unused'),(4,'1114','100',1522454400000,1519257600000,1519257600000,'unused'),
-(5,'1115','100',1522454400000,1519257600000,1519257600000,'unused'),(6,'1116','100',1522454400000,1519257600000,1519257600000,'unused'),(7,'1117','100',1522454400000,1519257600000,1519257600000,'unused');
-/*!40000 ALTER TABLE `giftcertificate` ENABLE KEYS */;
-UNLOCK TABLES;
-
 
 DROP TABLE IF EXISTS `voucher`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -708,7 +801,7 @@ CREATE TABLE `voucher` (
   `dateUpdated` bigint(50) NOT NULL,
   `status` char(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -716,73 +809,11 @@ CREATE TABLE `voucher` (
 --
 
 LOCK TABLES `voucher` WRITE;
-INSERT INTO `voucher` VALUES (1,'10000','100',1522454400000,1522454400000,1522454400000,'good'),(2,'1001','20',1522454400000,1519257600000,1519257600000,'good'),(3,'1003','50',1522454400000,1519257600000,1519257600000,'good'),(4,'1004','100',1522454400000,1519257600000,1519257600000,'expired'),
-(5,'1005','100',1522454400000,1519257600000,1519257600000,'good'),(6,'1006','100',1522454400000,1519257600000,1519257600000,'good'),(7,'1007','100',1522454400000,1519257600000,1519257600000,'good');
+/*!40000 ALTER TABLE `voucher` DISABLE KEYS */;
+INSERT INTO `voucher` VALUES (1,'10000','100',1522454400000,1522454400000,1522454400000,'good'),(2,'1001','20',1522454400000,1519257600000,1519257600000,'good'),(3,'1003','50',1522454400000,1519257600000,1519257600000,'good'),(4,'1004','100',1522454400000,1519257600000,1519257600000,'expired'),(5,'1005','100',1522454400000,1519257600000,1519257600000,'good'),(6,'1006','100',1522454400000,1519257600000,1519257600000,'good'),(7,'1007','100',1522454400000,1519257600000,1519257600000,'good');
 /*!40000 ALTER TABLE `voucher` ENABLE KEYS */;
 UNLOCK TABLES;
-
-DROP TABLE IF EXISTS `orderseller`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `orderseller` (
-  `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
-  `orderNumber` CHAR(60) NOT NULL,
-  `orderBarCode` VARCHAR(100) NOT NULL,
-  `printedBy` VARCHAR(50) NOT NULL,
-  `checkedBy` VARCHAR(50) NOT NULL,
-  `itemList` VARCHAR(500),
-  `totalItems` VARCHAR(50) NOT NULL,
-  `selleraccount_id` BIGINT(50) NOT NULL,
-  `seller_id` BIGINT(50) NOT NULL,
-  `dateCompleted` BIGINT(50) NOT NULL,
-  `dateCreated` BIGINT(50) NOT NULL,
-  `dateUpdated` BIGINT(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `orderseller` WRITE;
-/*!40000 ALTER TABLE `orderseller` DISABLE KEYS */;
-/*!40000 ALTER TABLE `orderseller` ENABLE KEYS */;
-UNLOCK TABLES;
-
-DROP TABLE IF EXISTS `seller`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `seller` (
-  `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(250) NOT NULL,
-  `seller_code` VARCHAR(50) NOT NULL,
-  `dateCreated` BIGINT(50) NOT NULL,
-  `dateUpdated` BIGINT(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `seller` WRITE;
-/*!40000 ALTER TABLE `seller` DISABLE KEYS */;
-/*!40000 ALTER TABLE `seller` ENABLE KEYS */;
-UNLOCK TABLES;
-
-DROP TABLE IF EXISTS `ordergc`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-
-CREATE TABLE `ordergc` (
-`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
-`orderkey` CHAR(60) NOT NULL,
-`giftcertificate_id` BIGINT(50) NOT NULL,
-`order_id` BIGINT(50) NOT NULL,
-`dateCreated` BIGINT(50) NOT NULL,
-`dateUpdated` BIGINT(50) NOT NULL,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-LOCK TABLES `ordergc` WRITE;
-/*!40000 ALTER TABLE `ordergc` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ordergc` ENABLE KEYS */;
-UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
@@ -792,4 +823,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-23 19:31:39
+-- Dump completed on 2018-03-17 17:21:28
