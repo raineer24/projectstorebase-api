@@ -497,7 +497,7 @@ CREATE TABLE `rating` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `starCount` char(1) NOT NULL,
   `orderkey` char(150) DEFAULT NULL,
-  `useraccount_id` bigint(50) NOT NULL,
+  `useraccount_id` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
