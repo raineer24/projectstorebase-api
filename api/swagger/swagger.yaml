@@ -1458,9 +1458,9 @@ definitions:
     title: RatingCreate
     type: object
     required:
-      - startCount
+      - starCount
     properties:
-      startCount:
+      starCount:
         type: number
         description: number of stars
   TimeslotOrderEntry:
