@@ -1311,6 +1311,38 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /ratings:
+    x-swagger-router-controller: ratings
+    post:
+      tags:
+        - ratings
+      summary: create a rating entry
+      operationId: createRating
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/RatingCreate"
+      responses:
+        200:
+          description: Successful rated
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+
 
   /swagger:
     x-swagger-pipe: swagger_raw
@@ -1422,6 +1454,15 @@ definitions:
       order_id:
         type: number
         description: order id
+  RatingCreate:
+    title: RatingCreate
+    type: object
+    required:
+      - startCount
+    properties:
+      startCount:
+        type: number
+        description: number of stars
   TimeslotOrderEntry:
     title: TimeslotOrderEntry
     type: object
