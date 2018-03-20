@@ -94,6 +94,15 @@ OrderItem.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.orderId) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('orderItem_id'), that.sqlTable.star(), that.sqlTableItem.star())
+      .from(that.sqlTable.join(that.sqlTableItem)
+        .on(that.sqlTable.item_id.equals(that.sqlTableItem.id)))
+      .where(that.sqlTable.order_id.equals(filters.orderId))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())

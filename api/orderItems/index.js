@@ -57,6 +57,7 @@ orderItem.getOrderItems = (req, res) => {
   const instOrderItem = new OrderItem({});
   instOrderItem.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     orderkey: query.validateParam(req.swagger.params, 'key', ''),
+    orderId: query.validateParam(req.swagger.params, 'orderId', ''),
   })
     .then(result => res.json(result))
     .catch((err) => {
