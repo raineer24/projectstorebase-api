@@ -26,7 +26,7 @@ function Log(log) {
       'url',
       'type',
       'orderkey',
-      'user_id',
+      'useraccount_id',
       'selleraccount_id',
       'seller_id',
       'dateCreated',
