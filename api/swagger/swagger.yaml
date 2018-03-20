@@ -409,6 +409,7 @@ paths:
       operationId: getOrderItems
       parameters:
         - $ref: "#/parameters/key"
+        - $ref: "#/parameters/orderIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
       responses:
@@ -1603,6 +1604,11 @@ parameters:
     required: true
   orderId:
     in: path
+    name: orderId
+    type: string
+    required: true
+  orderIdQ:
+    in: query
     name: orderId
     type: string
     required: true
