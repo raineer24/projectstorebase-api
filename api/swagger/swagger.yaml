@@ -1500,7 +1500,7 @@ definitions:
       orderkey:
         type: string
         description: user session id
-      user_id:
+      useraccount_id:
         type: number
         description: user id
       item_id:
