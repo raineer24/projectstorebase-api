@@ -19,7 +19,18 @@ function Log(log) {
   this.dbConnNew = ConnNew;
   this.sqlTable = sql.define({
     name: this.table,
-    columns: ['id', 'message', 'url', 'type', 'dateCreated'],
+    columns: [
+      'id',
+      'message',
+      'action',
+      'url',
+      'type',
+      'orderkey',
+      'useraccount_id',
+      'selleraccount_id',
+      'seller_id',
+      'dateCreated',
+    ],
   });
 
   that = this;

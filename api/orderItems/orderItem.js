@@ -29,7 +29,7 @@ function OrderItem(orderItem) {
       'dateCreated',
       'dateUpdated',
       'orderkey',
-      'user_id',
+      'useraccount_id',
       'item_id',
       'order_id',
       'quantity',

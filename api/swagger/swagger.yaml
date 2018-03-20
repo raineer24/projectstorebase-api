@@ -1287,6 +1287,32 @@ paths:
                 example: Unauthorized
   /ordersellers:
     x-swagger-router-controller: ordersellers
+    get:
+      tags:
+        - orderSeller
+      summary: Get all order seller records
+      operationId: getAllOrderSellers
+      parameters:
+        - $ref: "#/parameters/sellerIdQ"
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
+      responses:
+        200:
+          description: Fetch all order items
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
     post:
       tags:
         - orderseller
@@ -1338,6 +1364,38 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /ratings:
+    x-swagger-router-controller: ratings
+    post:
+      tags:
+        - ratings
+      summary: create a rating entry
+      operationId: createRating
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/RatingCreate"
+      responses:
+        200:
+          description: Successful rated
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+
 
   /swagger:
     x-swagger-pipe: swagger_raw
@@ -1449,6 +1507,15 @@ definitions:
       order_id:
         type: number
         description: order id
+  RatingCreate:
+    title: RatingCreate
+    type: object
+    required:
+      - starCount
+    properties:
+      starCount:
+        type: number
+        description: number of stars
   TimeslotOrderEntry:
     title: TimeslotOrderEntry
     type: object
@@ -1486,7 +1553,7 @@ definitions:
       orderkey:
         type: string
         description: user session id
-      user_id:
+      useraccount_id:
         type: number
         description: user id
       item_id:
@@ -1604,6 +1671,11 @@ parameters:
     required: true
   sellerId:
     in: path
+    name: sellerId
+    type: string
+    required: true
+  sellerIdQ:
+    in: query
     name: sellerId
     type: string
     required: true
