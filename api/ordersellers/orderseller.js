@@ -103,6 +103,17 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.sellerId) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable
+        .join(that.sqlTableOrder)
+        .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id)))
+      .where(that.sqlTable.seller_id.equals(filters.sellerId))
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
