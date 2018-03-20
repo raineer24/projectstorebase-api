@@ -1,6 +1,7 @@
 // const BluePromise = require('bluebird');
 const User = require('./user');
 const query = require('../../service/query');
+const Log = require('../logs/log');
 
 const user = {};
 
@@ -11,6 +12,29 @@ user.connectDb = (req, res) => {
     .catch(() => res.status(404).json({
       message: 'Not found',
     }));
+};
+
+
+/**
+* List
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.getAllUsers = (req, res) => {
+  new Log({ message: 'ORDER_LIST', type: 'INFO' }).create();
+  const instUser = new User({});
+  instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+    // useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 0),
+  })
+    .then(result => res.json(result))
+    .catch((err) => {
+      new Log({ message: `ORDER_LIST ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instUser.release();
+    });
 };
 
 /**
