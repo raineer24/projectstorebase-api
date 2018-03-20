@@ -1260,6 +1260,32 @@ paths:
                 example: Unauthorized
   /ordersellers:
     x-swagger-router-controller: ordersellers
+    get:
+      tags:
+        - orderSeller
+      summary: Get all order seller records
+      operationId: getAllOrderSellers
+      parameters:
+        - $ref: "#/parameters/sellerIdQ"
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
+      responses:
+        200:
+          description: Fetch all order items
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
     post:
       tags:
         - orderseller
@@ -1618,6 +1644,11 @@ parameters:
     required: true
   sellerId:
     in: path
+    name: sellerId
+    type: string
+    required: true
+  sellerIdQ:
+    in: query
     name: sellerId
     type: string
     required: true
