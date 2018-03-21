@@ -408,7 +408,7 @@ paths:
       summary: Get items from the current order
       operationId: getOrderItems
       parameters:
-        - $ref: "#/parameters/key"
+        - $ref: "#/parameters/keyQ"
         - $ref: "#/parameters/orderIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
@@ -1592,6 +1592,11 @@ parameters:
     name: key
     type: string
     required: true
+  keyQ:
+    in: query
+    name: key
+    type: string
+    required: false
   orderkey:
     in: query
     name: orderkey
@@ -1611,7 +1616,7 @@ parameters:
     in: query
     name: orderId
     type: string
-    required: true
+    required: false
   keyword:
     in: query
     name: keyword
