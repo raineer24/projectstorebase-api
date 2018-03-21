@@ -1554,7 +1554,7 @@ definitions:
       orderkey:
         type: string
         description: user session id
-      useraccount_id:
+      user_id:
         type: number
         description: user id
       item_id:
