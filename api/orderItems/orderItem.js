@@ -29,7 +29,7 @@ function OrderItem(orderItem) {
       'dateCreated',
       'dateUpdated',
       'orderkey',
-      'user_id',
+      'useraccount_id',
       'item_id',
       'order_id',
       'quantity',
@@ -91,6 +91,15 @@ OrderItem.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable.join(that.sqlTableItem)
         .on(that.sqlTable.item_id.equals(that.sqlTableItem.id)))
       .where(that.sqlTable.orderkey.equals(filters.orderkey))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.orderId) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('orderItem_id'), that.sqlTable.star(), that.sqlTableItem.star())
+      .from(that.sqlTable.join(that.sqlTableItem)
+        .on(that.sqlTable.item_id.equals(that.sqlTableItem.id)))
+      .where(that.sqlTable.order_id.equals(filters.orderId))
       .limit(limit)
       .offset(skip)
       .toQuery();

@@ -632,6 +632,7 @@ CREATE TABLE `selleraccount` (
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
   `seller_id` bigint(50) DEFAULT 0,
+  `role_id` bigint(10) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -644,7 +645,7 @@ CREATE TABLE `selleraccount` (
 
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
-INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1512763935519,1512763935531);
+INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
