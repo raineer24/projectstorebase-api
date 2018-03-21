@@ -408,7 +408,8 @@ paths:
       summary: Get items from the current order
       operationId: getOrderItems
       parameters:
-        - $ref: "#/parameters/key"
+        - $ref: "#/parameters/keyQ"
+        - $ref: "#/parameters/orderIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
       responses:
@@ -725,6 +726,7 @@ paths:
       operationId: getItemSuggestions
       parameters:
         - $ref: "#/parameters/id"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: Success
@@ -1553,7 +1555,7 @@ definitions:
       orderkey:
         type: string
         description: user session id
-      useraccount_id:
+      user_id:
         type: number
         description: user id
       item_id:
@@ -1591,6 +1593,11 @@ parameters:
     name: key
     type: string
     required: true
+  keyQ:
+    in: query
+    name: key
+    type: string
+    required: false
   orderkey:
     in: query
     name: orderkey
@@ -1606,6 +1613,11 @@ parameters:
     name: orderId
     type: string
     required: true
+  orderIdQ:
+    in: query
+    name: orderId
+    type: string
+    required: false
   keyword:
     in: query
     name: keyword
