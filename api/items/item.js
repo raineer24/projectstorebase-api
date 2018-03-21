@@ -210,7 +210,7 @@ function executeQuery(skip, limit, filters, sortBy, sort) {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.categories.length > 0) {
+  } else if (filters.categories && filters.categories.length > 0) {
     query = that.sqlTable
       .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
       .from(that.sqlTable)
@@ -218,6 +218,17 @@ function executeQuery(skip, limit, filters, sortBy, sort) {
       .or(that.sqlTable.category2.in(filters.categories))
       .or(that.sqlTable.category3.in(filters.categories))
       .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.suggestions && filters.suggestions.length > 0) {
+    query = that.sqlTable
+      .select(that.sqlTable.star(), that.sqlTable.displayPrice.cast('int').as('sortPrice'))
+      .from(that.sqlTable)
+      .or(that.sqlTable.category1.in(filters.suggestions))
+      .or(that.sqlTable.category2.in(filters.suggestions))
+      .or(that.sqlTable.category3.in(filters.suggestions))
+      .order('RAND()')
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -307,7 +318,7 @@ Item.prototype.getItemSuggestions = (id, skip, limit) => new BluePromise((resolv
         })
           .then((catResult) => {
             that.findAll(skip, limit, {
-              categories: _.map(catResult, obj => obj.id),
+              suggestions: _.map(catResult, obj => obj.id),
             })
               .then((itemList) => {
                 resolve(itemList);

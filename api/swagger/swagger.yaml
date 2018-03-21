@@ -726,6 +726,7 @@ paths:
       operationId: getItemSuggestions
       parameters:
         - $ref: "#/parameters/id"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: Success
