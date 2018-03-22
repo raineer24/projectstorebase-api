@@ -277,7 +277,7 @@ CREATE TABLE `log` (
   `type` char(60) DEFAULT NULL,
   `action` varchar(250) DEFAULT NULL,
   `orderkey` char(150) DEFAULT NULL,
-  `useraccount_id` bigint(50) DEFAULT 0,
+  `user_id` bigint(50) DEFAULT 0,
   `selleraccount_id` bigint(50) DEFAULT 0,
   `seller_id` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
