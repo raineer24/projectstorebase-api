@@ -433,7 +433,7 @@ CREATE TABLE `orderitem` (
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   `orderkey` char(60) NOT NULL,
-  `useraccount_id` bigint(50) NOT NULL,
+  `user_id` bigint(50) NOT NULL,
   `item_id` bigint(50) NOT NULL,
   `order_id` bigint(50) DEFAULT 0,
   `quantity` char(5) DEFAULT NULL,
