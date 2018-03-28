@@ -1,8 +1,11 @@
 const BluePromise = require('bluebird');
+const sql = require('sql');
 const _ = require('lodash');
 const Conn = require('../../service/connection');
-const Query = require('../../service/query');
+const ConnNew = require('../../service/connectionnew');
 // const random = require('randomstring');
+
+const log = require('color-logs')(true, true, 'Category');
 
 let that;
 
@@ -22,6 +25,8 @@ function generate() {
   * @return {object}
 */
 function Transaction(transaction) {
+  sql.setDialect('mysql');
+
   this.model = _.extend(transaction, {
     comments: transaction.comments || '',
     dateCreated: new Date().getTime(),
@@ -29,7 +34,22 @@ function Transaction(transaction) {
   });
   this.table = 'transaction';
   this.transactionId = generate();
+  this.dbConnNew = ConnNew;
   this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+
+  this.sqlTable = sql.define({
+    name: 'transaction',
+    columns: [
+      'id',
+      'number',
+      'comments',
+      'action',
+      'type',
+      'order_id',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
 
   that = this;
 }
@@ -46,7 +66,34 @@ Transaction.prototype.getTransaction = () => that.transactionId;
   * @param {string} offset
   * @return {object}
 */
-Transaction.prototype.findAll = (offset, limit, filters) => that.dbConn.queryAsync(Query.composeQuery(that.table, ['id', 'range'], filters, limit, offset));
+Transaction.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
+  let query = null;
+  let sortString = `${that.table}.dateUpdated DESC`;
+  if (sortBy) {
+    sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
+  }
+
+  if (filters.useraccountId) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 /**
   * create
@@ -56,11 +103,10 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
   if (that.model.id) {
     delete that.model.id;
   }
-  const DbModel = Conn.extend({ tableName: that.table });
-  that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-  that.dbConn.saveAsync()
-    .then(() => {
-      resolve(that.model.number);
+  const query = that.sqlTable.insert(that.model).toQuery();
+  that.dbConnNew.queryAsync(query.text, query.values)
+    .then((response) => {
+      resolve(that.model.number ? that.model.number : response.insertId);
     })
     .catch((err) => {
       reject(err);
