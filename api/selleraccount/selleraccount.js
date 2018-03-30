@@ -6,12 +6,12 @@ const lodash = require('lodash');
 let that;
 
 /**
-  * Selleracct constructor
+  * Selleraccount constructor
   * @param {object} selleraccount
   * @return {object}
 */
 
-function Selleracct(selleraccount) {
+function Selleraccount(selleraccount) {
   this.model = lodash.extend(selleraccount, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
@@ -26,7 +26,7 @@ function Selleracct(selleraccount) {
   * Save Seller account
   * @return {object}
 */
-Selleracct.prototype.create = () => new BluePromise((resolve, reject) => {
+Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (results.length === 0) {
@@ -52,7 +52,7 @@ Selleracct.prototype.create = () => new BluePromise((resolve, reject) => {
   * Update Seller account
   * @return {object}
 */
-Selleracct.prototype.update = id => new BluePromise((resolve, reject) => {
+Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
     delete that.model.password;
@@ -88,7 +88,7 @@ Selleracct.prototype.update = id => new BluePromise((resolve, reject) => {
   * @param {integer} id
   * @return {object<Promise>}
 */
-Selleracct.prototype.getById = id => that.dbConn.readAsync(id);
+Selleraccount.prototype.getById = id => that.dbConn.readAsync(id);
 
 
 /**
@@ -97,9 +97,9 @@ Selleracct.prototype.getById = id => that.dbConn.readAsync(id);
   * @param {string} field
   * @return {object<Promise>}
 */
-Selleracct.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+Selleraccount.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
 
-Selleracct.cleanResponse = (object, properties) => {
+Selleraccount.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
   lodash.merge(object, properties);
@@ -108,4 +108,4 @@ Selleracct.cleanResponse = (object, properties) => {
 };
 
 
-module.exports = Selleracct;
+module.exports = Selleraccount;
