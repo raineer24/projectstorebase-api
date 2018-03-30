@@ -1,7 +1,10 @@
 const BluePromise = require('bluebird');
-const Conn = require('../../service/connection');
-// const Util = require('../helpers/util');
-const lodash = require('lodash');
+const sql = require('sql');
+const _ = require('lodash');
+const log = require('color-logs')(true, true, 'Seller');
+
+const ConnNew = require('../../service/connectionnew');
+
 
 let that;
 
@@ -12,13 +15,26 @@ let that;
 */
 
 function Seller(seller) {
-  this.model = lodash.extend(seller, {
+  sql.setDialect('mysql');
+
+  this.model = _.extend(seller, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'selleraccount';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.table = 'seller';
+  this.dbConnNew = ConnNew;
 
+  this.sqlTable = sql.define({
+    name: 'useraccount',
+    columns: [
+      'id',
+      'name',
+      'code',
+      'mobileNumber',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
   that = this;
 }
 
@@ -27,12 +43,14 @@ function Seller(seller) {
   * @return {object}
 */
 Seller.prototype.create = () => new BluePromise((resolve, reject) => {
-  that.getByValue(that.model.username, 'username')
+  that.getByValue(that.model.code, 'code')
     .then((results) => {
       if (results.length === 0) {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
+        if (that.model.id) {
+          delete that.model.id;
+        }
+        const query = that.sqlTable.insert(that.model).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -40,7 +58,7 @@ Seller.prototype.create = () => new BluePromise((resolve, reject) => {
             reject(err);
           });
       } else {
-        reject('Found');
+        resolve(results[0].id);
       }
     })
     .catch((err) => {
@@ -61,15 +79,14 @@ Seller.prototype.update = id => new BluePromise((resolve, reject) => {
   }
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
-    .then((results) => {
-      if (!results.id) {
+    .then((resultList) => {
+      if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.model = lodash.merge(results, that.model);
-        that.dbConn.setAsync('id', id);
-        that.dbConn.saveAsync()
+        that.model = _.merge(resultList[0], that.model);
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(id)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
@@ -84,25 +101,60 @@ Seller.prototype.update = id => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * Get sellerAccount by id
-  * @param {integer} id
-  * @return {object<Promise>}
+  * findAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
 */
-Seller.prototype.getById = id => that.dbConn.readAsync(id);
+Seller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
+  let query = null;
+  let sortString = `${that.table}.dateUpdated DESC`;
+  if (sortBy) {
+    sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
+  }
+
+  query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .order(sortString)
+    .limit(limit)
+    .offset(skip)
+    .toQuery();
+
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 
 /**
-  * Get sellerAccount by value
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Seller.prototype.findById = id => that.getByValue(id, 'id');
+Seller.prototype.getById = id => that.getByValue(id, 'id');
+
+
+/**
+  * Get by value
   * @param {any} value
   * @param {string} field
   * @return {object<Promise>}
 */
-Seller.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+Seller.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
 
 Seller.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
-  lodash.merge(object, properties);
+  _.merge(object, properties);
 
   return object;
 };
