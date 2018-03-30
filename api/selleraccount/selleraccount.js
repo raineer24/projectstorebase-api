@@ -1,7 +1,9 @@
 const BluePromise = require('bluebird');
-const Conn = require('../../service/connection');
-// const Util = require('../helpers/util');
-const lodash = require('lodash');
+const sql = require('sql');
+const _ = require('lodash');
+const log = require('color-logs')(true, true, 'Seller');
+
+const ConnNew = require('../../service/connectionnew');
 
 let that;
 
@@ -12,12 +14,29 @@ let that;
 */
 
 function Selleraccount(selleraccount) {
-  this.model = lodash.extend(selleraccount, {
+  sql.setDialect('mysql');
+
+  this.model = _.extend(selleraccount, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
   this.table = 'selleraccount';
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConnNew = ConnNew;
+
+  this.sqlTable = sql.define({
+    name: 'selleraccount',
+    columns: [
+      'id',
+      'username',
+      'password',
+      'email',
+      'name',
+      'seller_id',
+      'role_id',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
 
   that = this;
 }
@@ -30,9 +49,11 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (results.length === 0) {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.dbConn.saveAsync()
+        if (that.model.id) {
+          delete that.model.id;
+        }
+        const query = that.sqlTable.insert(that.model).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -61,15 +82,14 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
   }
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
-    .then((results) => {
-      if (!results.id) {
+    .then((resultList) => {
+      if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        const DbModel = Conn.extend({ tableName: that.table });
-        that.dbConn = BluePromise.promisifyAll(new DbModel(that.model));
-        that.model = lodash.merge(results, that.model);
-        that.dbConn.setAsync('id', id);
-        that.dbConn.saveAsync()
+        that.model = _.merge(resultList[0], that.model);
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(id)).toQuery();
+        that.dbConnNew.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
@@ -84,25 +104,71 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * Get sellerAccount by id
-  * @param {integer} id
-  * @return {object<Promise>}
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
 */
-Selleraccount.prototype.getById = id => that.dbConn.readAsync(id);
+Selleraccount.prototype.findById = id => that.getByValue(id, 'id');
+Selleraccount.prototype.getById = id => that.getByValue(id, 'id');
 
 
 /**
-  * Get sellerAccount by value
+  * Get by value
   * @param {any} value
   * @param {string} field
   * @return {object<Promise>}
 */
-Selleraccount.prototype.getByValue = (value, field) => that.dbConn.findAsync('all', { where: `${field} = '${value}'` });
+Selleraccount.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
+/**
+  * findAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
+  let query = null;
+  let sortString = `${that.table}.dateUpdated DESC`;
+  if (sortBy) {
+    sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
+  }
+
+  if (filters.sellerId) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.seller_id.equals(filters.sellerId))
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
 
 Selleraccount.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
-  lodash.merge(object, properties);
+  _.merge(object, properties);
 
   return object;
 };
