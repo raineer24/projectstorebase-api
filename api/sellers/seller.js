@@ -159,5 +159,13 @@ Seller.cleanResponse = (object, properties) => {
   return object;
 };
 
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Seller.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+
 
 module.exports = Seller;

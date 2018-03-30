@@ -164,7 +164,6 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   return that.dbConnNew.queryAsync(query.text, query.values);
 };
 
-
 Selleraccount.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
@@ -172,6 +171,14 @@ Selleraccount.cleanResponse = (object, properties) => {
 
   return object;
 };
+
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Selleraccount.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 
 module.exports = Selleraccount;
