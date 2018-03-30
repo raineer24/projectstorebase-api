@@ -5,36 +5,39 @@ const log = require('color-logs')(true, true, 'Seller');
 
 const ConnNew = require('../../service/connectionnew');
 
-
 let that;
 
 /**
-  * Seller constructor
-  * @param {object} seller
+  * Selleraccount constructor
+  * @param {object} selleraccount
   * @return {object}
 */
 
-function Seller(seller) {
+function Selleraccount(selleraccount) {
   sql.setDialect('mysql');
 
-  this.model = _.extend(seller, {
+  this.model = _.extend(selleraccount, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'seller';
+  this.table = 'selleraccount';
   this.dbConnNew = ConnNew;
 
   this.sqlTable = sql.define({
-    name: 'useraccount',
+    name: 'selleraccount',
     columns: [
       'id',
+      'username',
+      'password',
+      'email',
       'name',
-      'code',
-      'mobileNumber',
+      'seller_id',
+      'role_id',
       'dateCreated',
       'dateUpdated',
     ],
   });
+
   that = this;
 }
 
@@ -42,8 +45,8 @@ function Seller(seller) {
   * Save Seller account
   * @return {object}
 */
-Seller.prototype.create = () => new BluePromise((resolve, reject) => {
-  that.getByValue(that.model.code, 'code')
+Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
+  that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (results.length === 0) {
         if (that.model.id) {
@@ -58,7 +61,7 @@ Seller.prototype.create = () => new BluePromise((resolve, reject) => {
             reject(err);
           });
       } else {
-        resolve(results[0].id);
+        reject('Found');
       }
     })
     .catch((err) => {
@@ -70,7 +73,7 @@ Seller.prototype.create = () => new BluePromise((resolve, reject) => {
   * Update Seller account
   * @return {object}
 */
-Seller.prototype.update = id => new BluePromise((resolve, reject) => {
+Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
     delete that.model.password;
@@ -101,40 +104,13 @@ Seller.prototype.update = id => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * findAll
-  * @param {string} limit
-  * @param {string} offset
-  * @return {object}
-*/
-Seller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
-  let query = null;
-  let sortString = `${that.table}.dateUpdated DESC`;
-  if (sortBy) {
-    sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
-  }
-
-  query = that.sqlTable
-    .select(that.sqlTable.star())
-    .from(that.sqlTable)
-    .order(sortString)
-    .limit(limit)
-    .offset(skip)
-    .toQuery();
-
-  log.info(query.text);
-
-  return that.dbConnNew.queryAsync(query.text, query.values);
-};
-
-
-/**
   * findById
   * @param {string} limit
   * @param {string} offset
   * @return {object}
 */
-Seller.prototype.findById = id => that.getByValue(id, 'id');
-Seller.prototype.getById = id => that.getByValue(id, 'id');
+Selleraccount.prototype.findById = id => that.getByValue(id, 'id');
+Selleraccount.prototype.getById = id => that.getByValue(id, 'id');
 
 
 /**
@@ -143,7 +119,7 @@ Seller.prototype.getById = id => that.getByValue(id, 'id');
   * @param {string} field
   * @return {object<Promise>}
 */
-Seller.prototype.getByValue = (value, field) => {
+Selleraccount.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
     .from(that.sqlTable)
@@ -151,7 +127,44 @@ Seller.prototype.getByValue = (value, field) => {
   return that.dbConnNew.queryAsync(query.text, query.values);
 };
 
-Seller.cleanResponse = (object, properties) => {
+/**
+  * findAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
+  let query = null;
+  let sortString = `${that.table}.dateUpdated DESC`;
+  if (sortBy) {
+    sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
+  }
+
+  if (filters.sellerId) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.seller_id.equals(filters.sellerId))
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+
+  log.info(query.text);
+
+  return that.dbConnNew.queryAsync(query.text, query.values);
+};
+
+Selleraccount.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
   _.merge(object, properties);
@@ -165,7 +178,7 @@ Seller.cleanResponse = (object, properties) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Seller.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Selleraccount.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
 
 
-module.exports = Seller;
+module.exports = Selleraccount;

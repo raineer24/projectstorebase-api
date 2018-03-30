@@ -549,7 +549,7 @@ DROP TABLE IF EXISTS `seller`;
 CREATE TABLE `seller` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `name` varchar(250) NOT NULL,
-  `seller_code` varchar(50) NOT NULL,
+  `code` varchar(50) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)

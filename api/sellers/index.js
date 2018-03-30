@@ -14,11 +14,15 @@ const seller = {};
 */
 seller.registerAccount = (req, res) => {
   new Log({ message: 'SELLER_ACCT_CREATE', type: 'INFO' }).create();
-  new Seller(req.swagger.params.body.value).create()
+  const instSeller = new Seller(req.swagger.params.body.value);
+  instSeller.create()
     .then(id => res.json({ id, message: 'Saved' }))
     .catch((err) => {
       new Log({ message: `SELLER_ACCT_CREATE ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
+    })
+    .finally(() => {
+      instSeller.release();
     });
 };
 
@@ -30,11 +34,15 @@ seller.registerAccount = (req, res) => {
 */
 seller.updateAccount = (req, res) => {
   new Log({ message: 'SELLER_ACCT_UPDATE', type: 'INFO' }).create();
-  new Seller(req.swagger.params.body.value).update(query.validateParam(req.swagger.params, 'id', 0))
+  const instSeller = new Seller(req.swagger.params.body.value);
+  instSeller.update(query.validateParam(req.swagger.params, 'id', 0))
     .then(status => res.json({ status, message: 'Updated' }))
     .catch((err) => {
       new Log({ message: `SELLER_ACCT_UPDATE ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instSeller.release();
     });
 };
 
@@ -47,11 +55,15 @@ seller.updateAccount = (req, res) => {
 */
 seller.viewAccount = (req, res) => {
   new Log({ message: 'SELLER_ACCT_GET', type: 'INFO' }).create();
-  new Seller().getById(query.validateParam(req.swagger.params, 'id', 0))
+  const instSeller = new Seller();
+  instSeller.getById(query.validateParam(req.swagger.params, 'id', 0))
     .then(result => res.json(Seller.cleanResponse(result, { message: 'Found' })))
     .catch((err) => {
       new Log({ message: `SELLER_ACCT_GET ${err}`, type: 'ERROR' }).create();
       return res.status(404).json({ message: 'Not found' });
+    })
+    .finally(() => {
+      instSeller.release();
     });
 };
 
