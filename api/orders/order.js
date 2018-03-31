@@ -1,15 +1,14 @@
 const BluePromise = require('bluebird');
 const sql = require('sql');
 const _ = require('lodash');
+const log = require('color-logs')(true, true, 'Order');
 
-const ConnNew = require('../../service/connectionnew');
+const Conn = require('../../service/connection');
 const Mailer = require('../../service/mail');
 const Timeslotorder = require('../timeslotorders/timeslotorder');
 const Transaction = require('../transactions/transaction');
 const OrderItem = require('../orderItems/orderItem');
 const Orderseller = require('../ordersellers/orderseller');
-
-const log = require('color-logs')(true, true, 'Category');
 
 let that;
 
@@ -27,7 +26,7 @@ function Order(order) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'order';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -135,7 +134,7 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
           delete that.model.id;
         }
         const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -196,7 +195,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   }
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -222,7 +221,7 @@ Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject)
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(confirmOrder ? id : response.message);
           })
@@ -246,7 +245,7 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
@@ -271,7 +270,7 @@ Order.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 
@@ -356,6 +355,6 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
   * @param {string} field
   * @return {object<Promise>}
 */
-Order.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Order.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Order;
