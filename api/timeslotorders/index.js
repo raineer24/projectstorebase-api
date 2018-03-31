@@ -1,8 +1,8 @@
-const query = require('../../service/query');
-// const Order = require('../orders/order');
-const TimeslotOrder = require('./timeslotorder');
-const Log = require('../logs/log');
 const moment = require('moment');
+const query = require('../../service/query');
+const Log = require('../logs/log');
+
+const TimeslotOrder = require('./timeslotorder');
 
 const timeslotOrder = {};
 
