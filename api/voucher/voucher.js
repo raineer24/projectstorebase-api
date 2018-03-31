@@ -1,9 +1,9 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
-const ConnNew = require('../../service/connectionnew');
+const log = require('color-logs')(true, true, 'Voucher');
 
-const log = require('color-logs')(true, true, 'Item');
+const Conn = require('../../service/connection');
 
 let that;
 
@@ -20,7 +20,7 @@ function Voucher(voucher) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'voucher';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -43,7 +43,7 @@ function Voucher(voucher) {
 */
 Voucher.prototype.create = () => new BluePromise((resolve, reject) => {
   const query = that.sqlTable.insert(that.model).toQuery();
-  that.dbConnNew.queryAsync(query.text, query.values)
+  that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
       resolve(response.insertId);
     })
@@ -67,7 +67,7 @@ Voucher.prototype.update = code => new BluePromise((resolve, reject) => {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
@@ -106,7 +106,7 @@ Voucher.prototype.findAll = (skip, limit, filters) => {
   }
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -129,7 +129,7 @@ Voucher.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -138,6 +138,6 @@ Voucher.prototype.getByValue = (value, field) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Voucher.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Voucher.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Voucher;

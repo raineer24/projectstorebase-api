@@ -1,9 +1,9 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
-const ConnNew = require('../../service/connectionnew');
-
 const log = require('color-logs')(true, true, 'Category');
+
+const Conn = require('../../service/connection');
 
 let that;
 
@@ -20,7 +20,7 @@ function Category(category) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'category';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -92,7 +92,7 @@ Category.prototype.findAll = (skip, limit, filters) => {
   }
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) => {
@@ -143,7 +143,7 @@ Category.prototype.create = () => new BluePromise((resolve, reject) => {
           delete that.model.id;
         }
         const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -170,7 +170,7 @@ Category.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -179,6 +179,6 @@ Category.prototype.getByValue = (value, field) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Category.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Category.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Category;

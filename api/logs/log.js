@@ -1,5 +1,5 @@
-const lodash = require('lodash');
-const ConnNew = require('../../service/connectionnew');
+const _ = require('lodash');
+const Conn = require('../../service/connection');
 const sql = require('sql');
 
 let that;
@@ -12,11 +12,11 @@ let that;
 function Log(log) {
   sql.setDialect('mysql');
 
-  this.model = lodash.extend(log, {
+  this.model = _.extend(log, {
     dateCreated: new Date().getTime(),
   });
   this.table = 'log';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -38,7 +38,7 @@ function Log(log) {
 
 Log.prototype.create = () => {
   const query = that.sqlTable.insert(that.model).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -47,6 +47,6 @@ Log.prototype.create = () => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Log.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Log.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Log;

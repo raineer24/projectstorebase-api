@@ -1,8 +1,7 @@
-// const BluePromise = require('bluebird');
-// const Conn = require('../../service/connection');
-const Seller = require('./seller');
 const query = require('../../service/query');
 const Log = require('../logs/log');
+
+const Seller = require('./seller');
 
 const seller = {};
 

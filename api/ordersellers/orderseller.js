@@ -1,10 +1,9 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
-const ConnNew = require('../../service/connectionnew');
-
 const sql = require('sql');
+const log = require('color-logs')(true, true, 'Order Seller');
 
-const log = require('color-logs')(true, true, 'Orderseller');
+const Conn = require('../../service/connection');
 
 let that;
 
@@ -21,7 +20,7 @@ function OrderSeller(orderSeller) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'orderseller';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -63,7 +62,7 @@ OrderSeller.prototype.create = () => new BluePromise((resolve, reject) => {
           delete that.model.id;
         }
         const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -124,7 +123,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   }
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -147,7 +146,7 @@ OrderSeller.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -156,6 +155,6 @@ OrderSeller.prototype.getByValue = (value, field) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-OrderSeller.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+OrderSeller.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = OrderSeller;

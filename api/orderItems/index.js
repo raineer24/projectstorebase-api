@@ -1,8 +1,6 @@
 const query = require('../../service/query');
-// const Order = require('../orders/order');
-const OrderItem = require('./orderItem');
 const Log = require('../logs/log');
-// const Util = require('../helpers/util');
+const OrderItem = require('./orderItem');
 
 const orderItem = {};
 

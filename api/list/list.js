@@ -1,9 +1,9 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
-const ConnNew = require('../../service/connectionnew');
+const log = require('color-logs')(true, true, 'List');
 
-const log = require('color-logs')(true, true, 'Item');
+const Conn = require('../../service/connection');
 
 let that;
 
@@ -20,7 +20,7 @@ function List(list) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'list';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -44,7 +44,7 @@ function List(list) {
 */
 List.prototype.create = () => new BluePromise((resolve, reject) => {
   const query = that.sqlTable.insert(that.model).toQuery();
-  that.dbConnNew.queryAsync(query.text, query.values)
+  that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
       resolve(response.insertId);
     })
@@ -68,7 +68,7 @@ List.prototype.update = id => new BluePromise((resolve, reject) => {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
@@ -96,7 +96,7 @@ List.prototype.removeById = id => new BluePromise((resolve, reject) => {
       } else {
         const query = that.sqlTable.delete()
           .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then(() => {
             resolve('Deleted');
           })
@@ -136,7 +136,7 @@ List.prototype.findAll = (skip, limit, filters) => {
   }
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 
@@ -160,7 +160,7 @@ List.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -169,6 +169,6 @@ List.prototype.getByValue = (value, field) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-List.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+List.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = List;

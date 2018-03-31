@@ -1,9 +1,9 @@
 const BluePromise = require('bluebird');
 const sql = require('sql');
 const _ = require('lodash');
-const log = require('color-logs')(true, true, 'Seller');
+const log = require('color-logs')(true, true, 'Seller Account');
 
-const ConnNew = require('../../service/connectionnew');
+const Conn = require('../../service/connection');
 
 let that;
 
@@ -21,7 +21,7 @@ function Selleraccount(selleraccount) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'selleraccount';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
 
   this.sqlTable = sql.define({
     name: 'selleraccount',
@@ -53,7 +53,7 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
           delete that.model.id;
         }
         const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -89,7 +89,7 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
@@ -124,7 +124,7 @@ Selleraccount.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -161,7 +161,7 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
 
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 Selleraccount.cleanResponse = (object, properties) => {
@@ -178,7 +178,7 @@ Selleraccount.cleanResponse = (object, properties) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Selleraccount.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Selleraccount.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 
 module.exports = Selleraccount;
