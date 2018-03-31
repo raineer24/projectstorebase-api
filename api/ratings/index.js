@@ -1,10 +1,8 @@
 // const query = require('../../service/query');
 const Rating = require('./rating');
 const Log = require('../logs/log');
-// const Util = require('../helpers/util');
 
 const rating = {};
-
 
 /**
 * List

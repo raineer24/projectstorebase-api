@@ -1,8 +1,8 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
-const ConnNew = require('../../service/connectionnew');
-
 const sql = require('sql');
+
+const Conn = require('../../service/connection');
 
 let that;
 
@@ -19,7 +19,7 @@ function Rating(orderSeller) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'rating';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -40,7 +40,7 @@ function Rating(orderSeller) {
 */
 Rating.prototype.create = () => new BluePromise((resolve, reject) => {
   const query = that.sqlTable.insert(that.model).toQuery();
-  that.dbConnNew.queryAsync(query.text, query.values)
+  that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
       resolve(response.insertId);
     })
@@ -69,7 +69,7 @@ Rating.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -78,6 +78,6 @@ Rating.prototype.getByValue = (value, field) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Rating.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Rating.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Rating;
