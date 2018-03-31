@@ -775,7 +775,7 @@ paths:
         - category
       summary: Returns structured categories
       # used as the method name of the controller
-      operationId: listAllCategories
+      operationId: listAll
       responses:
         200:
           description: Success
