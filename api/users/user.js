@@ -1,12 +1,12 @@
 const BluePromise = require('bluebird');
-// const Conn = require('../../service/connection');
-const ConnNew = require('../../service/connectionnew');
-const Util = require('../helpers/util');
-const Mailer = require('../../service/mail');
 const _ = require('lodash');
 const sql = require('sql');
 
-const log = require('color-logs')(true, true, __filename);
+const Conn = require('../../service/connection');
+const Util = require('../helpers/util');
+const Mailer = require('../../service/mail');
+
+const log = require('color-logs')(true, true, 'User Account');
 
 let that;
 
@@ -18,8 +18,7 @@ function User(user) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'useraccount';
-  // this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -41,8 +40,8 @@ function User(user) {
 }
 
 User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
-  if (that.dbConnNew) {
-    resolve(that.dbConnNew);
+  if (that.dbConn) {
+    resolve(that.dbConn);
     return;
   }
   reject('Not found');
@@ -123,7 +122,7 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
       }
       if (results.length === 0) {
         const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             that.getById(response.insertId)
               .then((resultList) => {
@@ -190,7 +189,7 @@ User.prototype.update = id => new BluePromise((resolve, reject) => {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
@@ -215,7 +214,7 @@ User.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 
@@ -265,7 +264,7 @@ User.prototype.findAll = (skip, limit, filters) => {
   }
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -288,6 +287,6 @@ User.prototype.cleanResponse = (object, properties) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-User.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+User.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = User;
