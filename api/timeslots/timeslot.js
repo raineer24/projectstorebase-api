@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const sql = require('sql');
-const ConnNew = require('../../service/connectionnew');
-const log = require('color-logs')(true, true, 'Category');
+const log = require('color-logs')(true, true, 'Timeslot');
+
+const Conn = require('../../service/connection');
 
 let that;
 
@@ -18,7 +19,7 @@ function Timeslot(timeslot) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'timeslot';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -59,7 +60,7 @@ Timeslot.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 
@@ -89,7 +90,7 @@ Timeslot.prototype.findAll = (skip, limit, filters) => {
   }
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -98,6 +99,6 @@ Timeslot.prototype.findAll = (skip, limit, filters) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Timeslot.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Timeslot.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Timeslot;
