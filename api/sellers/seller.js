@@ -3,7 +3,7 @@ const sql = require('sql');
 const _ = require('lodash');
 const log = require('color-logs')(true, true, 'Seller');
 
-const ConnNew = require('../../service/connectionnew');
+const Conn = require('../../service/connection');
 
 
 let that;
@@ -22,10 +22,10 @@ function Seller(seller) {
     dateUpdated: new Date().getTime(),
   });
   this.table = 'seller';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
 
   this.sqlTable = sql.define({
-    name: 'useraccount',
+    name: 'seller',
     columns: [
       'id',
       'name',
@@ -50,7 +50,7 @@ Seller.prototype.create = () => new BluePromise((resolve, reject) => {
           delete that.model.id;
         }
         const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -86,7 +86,7 @@ Seller.prototype.update = id => new BluePromise((resolve, reject) => {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
           })
@@ -123,7 +123,7 @@ Seller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
 
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 
@@ -148,7 +148,7 @@ Seller.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 Seller.cleanResponse = (object, properties) => {
@@ -165,7 +165,7 @@ Seller.cleanResponse = (object, properties) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Seller.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Seller.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 
 module.exports = Seller;
