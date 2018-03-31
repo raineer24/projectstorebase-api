@@ -1,6 +1,5 @@
 const query = require('../../service/query');
 const ListItem = require('./listitem');
-// const log = require('color-logs')(true, true, '');
 const Log = require('../logs/log');
 
 const listitem = {};
