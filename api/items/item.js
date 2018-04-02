@@ -1,10 +1,10 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
-const ConnNew = require('../../service/connectionnew');
-const Category = require('../categories/category');
-
 const log = require('color-logs')(true, true, 'Item');
+
+const Conn = require('../../service/connection');
+const Category = require('../categories/category');
 
 let that;
 
@@ -22,7 +22,7 @@ function Item(item) {
   });
   this.db = 'grocerystore';
   this.table = 'item';
-  this.dbConnNew = ConnNew;
+  this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
     columns: [
@@ -243,10 +243,10 @@ function executeQuery(skip, limit, filters, sortBy, sort) {
   }
   if (strSql) {
     log.info(strSql);
-    return that.dbConnNew.queryAsync(strSql);
+    return that.dbConn.queryAsync(strSql);
   }
   log.info(query.text);
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 }
 
 /**
@@ -272,7 +272,7 @@ Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => new Promise((re
       .offset(skip)
       .toQuery();
 
-    that.dbConnNew.queryAsync(query.text, query.values)
+    that.dbConn.queryAsync(query.text, query.values)
       .then((results) => {
         if (results.length === 0) {
           executeQuery(skip, limit, filters, sortBy, sort)
@@ -351,7 +351,7 @@ Item.prototype.create = () => new BluePromise((resolve, reject) => {
           delete that.model.id;
         }
         const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConnNew.queryAsync(query.text, query.values)
+        that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.insertId);
           })
@@ -378,7 +378,7 @@ Item.prototype.getByValue = (value, field) => {
     .select(that.sqlTable.star())
     .from(that.sqlTable)
     .where(that.sqlTable[field].equals(value)).toQuery();
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -387,6 +387,6 @@ Item.prototype.getByValue = (value, field) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Item.prototype.release = () => that.dbConnNew.releaseConnectionAsync();
+Item.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Item;

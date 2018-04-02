@@ -1,10 +1,10 @@
 const query = require('../../service/query');
-const Order = require('./order');
 const Log = require('../logs/log');
 const Util = require('../helpers/util');
 
-const order = {};
+const Order = require('./order');
 
+const order = {};
 
 /**
 * List

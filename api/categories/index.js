@@ -3,7 +3,7 @@ const Log = require('../logs/log');
 
 const category = {};
 
-category.listAllCategories = (req, res) => {
+category.listAll = (req, res) => {
   new Log({ message: 'CATEGORY_LIST_STRUCTURED', type: 'INFO' }).create();
   const instCategory = new Category({});
   instCategory.findStructuredAll()

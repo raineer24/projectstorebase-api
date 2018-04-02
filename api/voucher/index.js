@@ -1,7 +1,7 @@
 const query = require('../../service/query');
-const Voucher = require('./voucher');
-// const log = require('color-logs')(true, true, '');
 const Log = require('../logs/log');
+
+const Voucher = require('./voucher');
 
 const voucher = {};
 

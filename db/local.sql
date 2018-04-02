@@ -549,7 +549,7 @@ DROP TABLE IF EXISTS `seller`;
 CREATE TABLE `seller` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `name` varchar(250) NOT NULL,
-  `seller_code` varchar(50) NOT NULL,
+  `code` varchar(50) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -724,6 +724,7 @@ CREATE TABLE `transaction` (
   `number` varchar(300) NOT NULL,
   `comments` varchar(500) NOT NULL,
   `action` char(50) NOT NULL,
+  `type` char(20) NOT NULL DEFAULT '',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   `order_id` varchar(50) NOT NULL,
@@ -737,7 +738,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','CONFIRM_PAYMENT',1518409422524,1518409422524,'1');
+INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','CONFIRM_PAYMENT', '',1518409422524,1518409422524,'1');
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
