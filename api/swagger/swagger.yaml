@@ -111,13 +111,13 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /user/account/partnerbuyer:
+  /user/account/partnerbuyer/{id}:
     x-swagger-router-controller: users
     get:
       tags:
         - user
       summary: check if user is in partnerbuyeruser table
-      operationId: loginAccount
+      operationId: getUser
       parameters:
         - name: body
           in: body
@@ -127,7 +127,7 @@ paths:
             $ref: "#/definitions/getPartnerbuyeruser"
       responses:
         200:
-          description: Successful login
+          description: User is under a Partner Buyer
           schema:
             type: object
             properties:
@@ -135,7 +135,7 @@ paths:
                 type: string
                 example: norbert@hutcake.com
         403:
-          description: Unauthorized
+          description: Not Found
           schema:
             type: object
             properties:

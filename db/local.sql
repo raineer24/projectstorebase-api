@@ -528,6 +528,7 @@ CREATE TABLE `partnerbuyeruser` (
 `name` VARCHAR(250) NOT NULL,
 `dateCreated` BIGINT(50) NOT NULL,
 `dateUpdated` BIGINT(50) NOT NULL,
+`userAccount_id` BIGINT(10) NOT NULL,
 `partnerBuyer_id` BIGINT(10) NOT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
@@ -539,7 +540,7 @@ PRIMARY KEY (`id`)
 
 LOCK TABLES `partnerbuyeruser` WRITE;
 /*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
-INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor Queja',1522637372669,1522637372669,1);
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor Queja',1522637372669,1522637372669,5,1);
 /*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
 UNLOCK TABLES;
 
