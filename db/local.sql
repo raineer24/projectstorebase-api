@@ -709,6 +709,31 @@ INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `setting` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`name` CHAR(60) NOT NULL,
+`value` VARCHAR(250) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`reference` VARCHAR(50) NOT NULL,
+`reference_id` BIGINT(10) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Dumping data for table `setting`
+--
+
+LOCK TABLES `setting` WRITE;
+/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
+INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
+/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `timeslot`
 --
