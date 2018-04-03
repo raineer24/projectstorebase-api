@@ -1618,7 +1618,6 @@ definitions:
     title: ItemOrder
     type: object
     required:
-      - orderkey
       - item_id
       - quantity
     properties:
