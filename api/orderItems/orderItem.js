@@ -33,6 +33,7 @@ function OrderItem(orderItem) {
       'item_id',
       'order_id',
       'quantity',
+      'status',
       'processed',
     ],
   });
@@ -170,8 +171,8 @@ OrderItem.prototype.update = orderItemId => new BluePromise((resolve, reject) =>
           });
       }
     })
-    .catch(() => {
-      reject('Not found');
+    .catch((err) => {
+      reject(err);
     });
 });
 
