@@ -338,6 +338,38 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /order/{id}/seller:
+    x-swagger-router-controller: orders
+    put:
+      tags:
+        - order
+      summary: Update order record
+      operationId: updateOrderById
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderEntry"
+      responses:
+        200:
+          description: Successful updated order
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /order/{id}/payment:
     x-swagger-router-controller: orders
     put:
