@@ -38,26 +38,6 @@ user.getAllUsers = (req, res) => {
 };
 
 /**
-* Search user in partnerbuyeruser table
-* @param {Object} req
-* @param {Object} res
-* @return {Object}
-*/
-user.getUser = (req, res) => {
-  new Log({ message: 'PARTNER BUYER USER', type: 'INFO' }).create();
-  const instUser = new User();
-  instUser.getById(query.validateParam(query.validateParam(req.swagger.params, 'id', 0))
-    .then(result => res.json(instUser.cleanResponse(result, { message: 'Found' })))
-    .catch((err) => {
-      new Log({ message: `PARTNER BUYER USER ${err}`, type: 'ERROR' }).create();
-      return res.status(404).json({ message: 'Not found' });
-    }))
-    .finally(() => {
-      instUser.release();
-    });
-};
-
-/**
 * User authentication and authorization
 * @param {Object} req
 * @param {Object} res
