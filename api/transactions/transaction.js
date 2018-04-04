@@ -1,11 +1,9 @@
 const BluePromise = require('bluebird');
 const sql = require('sql');
 const _ = require('lodash');
-const Conn = require('../../service/connection');
-const ConnNew = require('../../service/connectionnew');
-// const random = require('randomstring');
+const log = require('color-logs')(true, true, 'Transaction');
 
-const log = require('color-logs')(true, true, 'Category');
+const Conn = require('../../service/connection');
 
 let that;
 
@@ -34,8 +32,7 @@ function Transaction(transaction) {
   });
   this.table = 'transaction';
   this.transactionId = generate();
-  this.dbConnNew = ConnNew;
-  this.dbConn = BluePromise.promisifyAll(new Conn({ tableName: this.table }));
+  this.dbConn = Conn;
 
   this.sqlTable = sql.define({
     name: 'transaction',
@@ -92,7 +89,7 @@ Transaction.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   }
   log.info(query.text);
 
-  return that.dbConnNew.queryAsync(query.text, query.values);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
@@ -104,7 +101,7 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
     delete that.model.id;
   }
   const query = that.sqlTable.insert(that.model).toQuery();
-  that.dbConnNew.queryAsync(query.text, query.values)
+  that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
       resolve(that.model.number ? that.model.number : response.insertId);
     })

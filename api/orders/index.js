@@ -1,10 +1,10 @@
 const query = require('../../service/query');
-const Order = require('./order');
 const Log = require('../logs/log');
 const Util = require('../helpers/util');
 
-const order = {};
+const Order = require('./order');
 
+const order = {};
 
 /**
 * List
@@ -86,6 +86,27 @@ order.updateOrder = (req, res) => {
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `ORDER_UPDATE ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instOrder.release();
+    });
+};
+
+
+/**
+* Update an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+order.updateOrderById = (req, res) => {
+  new Log({ message: 'ORDER_UPDATE_FINAL', type: 'INFO' }).create();
+  const instOrder = new Order(req.swagger.params.body.value);
+  instOrder.update(query.validateParam(req.swagger.params, 'id', 0))
+    .then(msg => res.json({ message: `Updated ${msg}` }))
+    .catch((err) => {
+      new Log({ message: `ORDER_UPDATE_FINAL ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
