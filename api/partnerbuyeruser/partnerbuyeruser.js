@@ -10,14 +10,14 @@ const log = require('color-logs')(true, true, 'User Account');
 
 let that;
 
-function User(user) {
+function Partnerbuyeruser(user) {
   sql.setDialect('mysql');
 
   this.model = _.extend(user, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'useraccount';
+  this.table = 'partnerbuyeruser';
   this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
@@ -26,21 +26,18 @@ function User(user) {
       'username',
       'password',
       'email',
-      'firstName',
-      'lastName',
-      'uiid',
-      'gender',
-      'mobileNumber',
-      'forcedReset',
+      'name',
       'dateCreated',
       'dateUpdated',
+      'useraccount_id',
+      'partnerBuyer_id',
     ],
   });
 
   that = this;
 }
 
-User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.testConnection = () => new BluePromise((resolve, reject) => {
   if (that.dbConn) {
     resolve(that.dbConn);
     return;
@@ -54,7 +51,7 @@ User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
   * @param {string} password
   * @return {object}
 */
-User.prototype.authenticate = () => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.authenticate = () => new BluePromise((resolve, reject) => {
   const filter = {
     username: that.model.username,
   };
@@ -88,7 +85,7 @@ User.prototype.authenticate = () => new BluePromise((resolve, reject) => {
   * @param {object} userAuth
   * @return {object}
 */
-User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
   if (!userAuth) {
     reject(null);
     return;
@@ -112,7 +109,7 @@ User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
   * @param {string} uiid
   * @return {object}
 */
-User.prototype.create = () => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (that.model.password === undefined) {
@@ -157,7 +154,7 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
-User.prototype.mailConfirmation = (userAccount) => {
+Partnerbuyeruser.prototype.mailConfirmation = (userAccount) => {
   const body = `
   <div><p>Hi,</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>
@@ -174,7 +171,7 @@ User.prototype.mailConfirmation = (userAccount) => {
   };
 };
 
-User.prototype.update = id => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
     delete that.model.password;
@@ -210,7 +207,7 @@ User.prototype.update = id => new BluePromise((resolve, reject) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-User.prototype.getByValue = (value, field) => {
+Partnerbuyeruser.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
     .from(that.sqlTable)
@@ -225,8 +222,8 @@ User.prototype.getByValue = (value, field) => {
   * @return {object<Promise>}
 */
 // User.prototype.getById = id => that.dbConn.readAsync(id);
-User.prototype.findById = id => that.getByValue(id, 'id');
-User.prototype.getById = id => that.getByValue(id, 'id');
+Partnerbuyeruser.prototype.findById = id => that.getByValue(id, 'useraccount_id');
+Partnerbuyeruser.prototype.getById = id => that.getByValue(id, 'useraccount_id');
 
 
 /**
@@ -235,7 +232,7 @@ User.prototype.getById = id => that.getByValue(id, 'id');
   * @param {string} offset
   * @return {object}
 */
-User.prototype.findAll = (skip, limit, filters) => {
+Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
   let query = null;
   if (filters.username && filters.password) {
     query = that.sqlTable
@@ -274,7 +271,7 @@ User.prototype.findAll = (skip, limit, filters) => {
   * @param {object} properties
   * @return {object}
 */
-User.prototype.cleanResponse = (object, properties) => {
+Partnerbuyeruser.prototype.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
   _.merge(object, properties);
@@ -288,6 +285,6 @@ User.prototype.cleanResponse = (object, properties) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-User.prototype.release = () => that.dbConn.releaseConnectionAsync();
+Partnerbuyeruser.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
-module.exports = User;
+module.exports = Partnerbuyeruser;
