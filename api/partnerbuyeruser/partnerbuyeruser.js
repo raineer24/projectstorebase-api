@@ -24,7 +24,6 @@ function Partnerbuyeruser(user) {
     columns: [
       'id',
       'username',
-      'password',
       'email',
       'name',
       'dateCreated',
