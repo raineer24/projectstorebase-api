@@ -62,21 +62,21 @@ partnerbuyeruser.getUser = (req, res) => {
     });
 };
 
-partnerbuyeruser.sendMassEmails = (req, res) => {
+partnerbuyeruser.sendPasswordEmails = (req, res) => {
   const instUser = new User();
-  instUser.sendMassEmails(query.validateParam(req.swagger.params))
-  .then((resultList) => {
-    if (!resultList[0].name) {
-      return res.status(404).json({ message: 'Not found' });
-    }
-    return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
-  })
-  .catch(() => res.status(404).json({
-    message: 'Not found',
-  }))
-  .finally(() => {
-    instUser.release();
-  });
-}
+  instUser.sendPasswordEmails(query.validateParam(req.swagger.params))
+    .then((resultList) => {
+      if (!resultList.length) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
+    })
+    .catch(() => res.status(404).json({
+      message: 'Not found',
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
 
 module.exports = partnerbuyeruser;

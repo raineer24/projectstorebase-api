@@ -33,6 +33,23 @@ function User(user) {
       'partnerBuyer_id',
     ],
   });
+  this.sqlTableUser = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'username',
+      'password',
+      'email',
+      'firstName',
+      'lastName',
+      'uiid',
+      'gender',
+      'mobileNumber',
+      'dateCreated',
+      'dateUpdated',
+      'forceReset',
+    ],
+  });
 
   that = this;
 }
@@ -171,6 +188,49 @@ User.prototype.mailConfirmation = (userAccount) => {
   };
 };
 
+User.prototype.sendPasswordEmails = () => new BluePromise((resolve, reject) => {
+  that.findAll()
+    .then((resultList) => {
+      if (resultList.length > 0) {
+        _.forEach(resultList, (obj) => {
+          that.passwordResetEmail(obj)
+            .then((mailOptions) => {
+              new Mailer(mailOptions).send()
+                .then(() => {
+                  // log.info(`Successfully sent order with transaction # ${transactionId}`);
+                })
+                .catch(() => {
+                  // log.error(`Failed to send ${err}`);
+                });
+            })
+            .catch(() => {});
+        });
+      } else {
+        reject('Not Found');
+      }
+    })
+    .catch(() => {
+      reject('Not Found');
+    });
+});
+
+User.prototype.passwordResetEmail = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>You have successfully registered with username ${userAccount.email}</p></div>
+  <div><p>Please confirm your registration by clicking this link below</p></div>
+  <div><p><a href="hutcake.com/passwordReset/${userAccount.email}">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: userAccount.email,
+    subject: 'OMG - Successful registration',
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+
 User.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
@@ -254,9 +314,11 @@ User.prototype.findAll = (skip, limit, filters) => {
       .toQuery();
   } else if (filters.forceReset) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
-      .from(that.sqlTable)
-      .where(that.sqlTable.forceReset.equals(filters.forceReset)
+      .select(that.sqlTable.id.as('partnerBuyer_id'), that.sqlTable.star(), that.sqlTableUser.star())
+      .from(that.sqlTable.join(that.sqlTableUser)
+        .on(that.sqlTable.useraccount_id.equals(that.sqlTable.id)))
+      .where(that.sqlTable.forceReset.equals(1)
+        .and(that.sqlTable.useraccount_id.equals(that.sqlTable.id)))
       .limit(limit)
       .offset(skip)
       .toQuery();
