@@ -33,7 +33,7 @@ function Partnerbuyeruser(user) {
     ],
   });
   this.sqlTableUser = sql.define({
-    name: this.table,
+    name: 'useraccount',
     columns: [
       'id',
       'username',
@@ -46,7 +46,7 @@ function Partnerbuyeruser(user) {
       'mobileNumber',
       'dateCreated',
       'dateUpdated',
-      'forceReset',
+      'forcedReset',
     ],
   });
 
@@ -188,22 +188,22 @@ Partnerbuyeruser.prototype.mailConfirmation = (userAccount) => {
 };
 
 Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, reject) => {
-  that.findAll()
+  that.findAll(0, 5000, {
+    forcedReset: 1,
+  })
     .then((resultList) => {
       if (resultList.length > 0) {
+        let emails = "";
         _.forEach(resultList, (obj) => {
-          that.passwordResetEmail(obj)
-            .then((mailOptions) => {
-              new Mailer(mailOptions).send()
-                .then(() => {
-                  // log.info(`Successfully sent order with transaction # ${transactionId}`);
-                })
-                .catch(() => {
-                  // log.error(`Failed to send ${err}`);
-                });
+          new Mailer(that.passwordResetEmail(obj)).send()
+            .then(() => {
+              log.info(`Successfully sent password reset email to ${obj.email} for user ${obj.partnerBuyerUser_id}`);
             })
-            .catch(() => {});
+            .catch((err) => {
+              log.error(`Failed to send ${err}`);
+            });
         });
+        resolve();
       } else {
         reject('Not Found');
       }
@@ -311,13 +311,12 @@ Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.forceReset) {
+  } else if (filters.forcedReset) {
     query = that.sqlTable
-      .select(that.sqlTable.id.as('partnerBuyer_id'), that.sqlTable.star(), that.sqlTableUser.star())
+      .select(that.sqlTable.id.as('partnerBuyerUser_id'), that.sqlTable.star(), that.sqlTableUser.star())
       .from(that.sqlTable.join(that.sqlTableUser)
-        .on(that.sqlTable.useraccount_id.equals(that.sqlTable.id)))
-      .where(that.sqlTable.forceReset.equals(1)
-        .and(that.sqlTable.useraccount_id.equals(that.sqlTable.id)))
+        .on(that.sqlTable.useraccount_id.equals(that.sqlTableUser.id)))
+      .where(that.sqlTableUser.forcedReset.equals(filters.forcedReset))
       .limit(limit)
       .offset(skip)
       .toQuery();

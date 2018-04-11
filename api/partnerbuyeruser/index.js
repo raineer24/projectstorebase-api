@@ -1,5 +1,5 @@
 const query = require('../../service/query');
-// const Log = require('../logs/log');
+const Log = require('../logs/log');
 
 const Partnerbuyeruser = require('./partnerbuyeruser');
 
@@ -63,17 +63,14 @@ partnerbuyeruser.getUser = (req, res) => {
 };
 
 partnerbuyeruser.sendPasswordEmails = (req, res) => {
+  new Log({ message: 'PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS', type: 'INFO' }).create();
   const instUser = new Partnerbuyeruser();
-  instUser.sendPasswordEmails(query.validateParam(req.swagger.params))
-    .then((resultList) => {
-      if (!resultList.length) {
-        return res.status(404).json({ message: 'Not found' });
-      }
-      return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
+  instUser.sendPasswordEmails()
+    .then(msg => res.json({ message: `Password reset emails sent`}))
+    .catch((err) => {
+      new Log({ message: `PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
     })
-    .catch(() => res.status(404).json({
-      message: 'Not found',
-    }))
     .finally(() => {
       instUser.release();
     });
