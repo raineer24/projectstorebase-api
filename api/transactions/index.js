@@ -1,5 +1,5 @@
 const moment = require('moment');
-const query = require('../../service/query');
+// const query = require('../../service/query');
 const Log = require('../logs/log');
 
 const Transaction = require('./transaction');
