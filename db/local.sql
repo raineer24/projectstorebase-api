@@ -816,6 +816,8 @@ DROP TABLE IF EXISTS `useraccounttoken`;
 CREATE TABLE `useraccounttoken` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `valid` char(1) DEFAULT '1',
+  `token_id` varchar(50) NOT NULL,
+  `useraccount_id` varchar(50) NOT NULL,
   `dateCreated` bigint(20) NOT NULL,
   `dateUpdated` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
