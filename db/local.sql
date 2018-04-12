@@ -723,6 +723,7 @@ DROP TABLE IF EXISTS `token`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `token` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `key` char(100) NOT NULL,
   `type` char(20) DEFAULT NULL,
   `count` char(10) DEFAULT NULL,
   `max` char(10) DEFAULT NULL,
