@@ -886,6 +886,36 @@ INSERT INTO `timeslotorder` VALUES (1,1518409422524,1518409422524,'2018-02-15',1
 UNLOCK TABLES;
 
 --
+-- Table structure for table `token`
+--
+
+DROP TABLE IF EXISTS `token`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `token` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `key` char(100) NOT NULL,
+  `type` char(20) DEFAULT NULL,
+  `count` char(10) DEFAULT NULL,
+  `max` char(10) DEFAULT NULL,
+  `enabled` char(1) DEFAULT '1',
+  `dateExpiration` bigint(20) NOT NULL,
+  `dateCreated` bigint(20) NOT NULL,
+  `dateUpdated` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `token`
+--
+
+LOCK TABLES `token` WRITE;
+/*!40000 ALTER TABLE `token` DISABLE KEYS */;
+/*!40000 ALTER TABLE `token` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `transaction`
 --
 
@@ -911,7 +941,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','CONFIRM_PAYMENT', '',1518409422524,1518409422524,'1');
+INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','CONFIRM_PAYMENT','',1518409422524,1518409422524,'1');
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -947,6 +977,33 @@ LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
 INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0',1512810359181,1512810359181);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `useraccounttoken`
+--
+
+DROP TABLE IF EXISTS `useraccounttoken`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `useraccounttoken` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `valid` char(1) DEFAULT '1',
+  `token_id` varchar(50) NOT NULL,
+  `useraccount_id` varchar(50) NOT NULL,
+  `dateCreated` bigint(20) NOT NULL,
+  `dateUpdated` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `useraccounttoken`
+--
+
+LOCK TABLES `useraccounttoken` WRITE;
+/*!40000 ALTER TABLE `useraccounttoken` DISABLE KEYS */;
+/*!40000 ALTER TABLE `useraccounttoken` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1052,4 +1109,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-20  1:31:40
+-- Dump completed on 2018-04-12 11:26:45
