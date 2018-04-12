@@ -66,7 +66,7 @@ partnerbuyeruser.sendPasswordEmails = (req, res) => {
   new Log({ message: 'PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS', type: 'INFO' }).create();
   const instUser = new Partnerbuyeruser();
   instUser.sendPasswordEmails()
-    .then(msg => res.json({ message: `Password reset emails sent`}))
+    .then(() => res.json({ message: 'Password reset emails sent' }))
     .catch((err) => {
       new Log({ message: `PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS ${err}`, type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });

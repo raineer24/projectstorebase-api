@@ -51,6 +51,8 @@ Token.prototype.create = useraccountId => new BluePromise((resolve, reject) => {
   randomKeyGenerator() + randomKeyGenerator() + randomKeyGenerator();
   log.info(that.model.key);
   const query = that.sqlTable.insert(that.model).toQuery();
+  log.info(query.text);
+  log.info(query.values);
   that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
       if (useraccountId) {

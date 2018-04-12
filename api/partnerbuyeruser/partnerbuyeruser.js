@@ -2,9 +2,11 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 
+const moment = require('moment');
 const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
 const Mailer = require('../../service/mail');
+const Token = require('../token/token');
 
 const log = require('color-logs')(true, true, 'User Account');
 
@@ -193,14 +195,24 @@ Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, 
   })
     .then((resultList) => {
       if (resultList.length > 0) {
-        let emails = "";
         _.forEach(resultList, (obj) => {
-          new Mailer(that.passwordResetEmail(obj)).send()
+          new Token({
+            dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
+            type: 'PASSWORD_RESET',
+          }).create(obj.id)
             .then(() => {
-              log.info(`Successfully sent password reset email to ${obj.email} for user ${obj.partnerBuyerUser_id}`);
-            })
-            .catch((err) => {
-              log.error(`Failed to send ${err}`);
+              new Token({}).findAll(0, 1, {
+                useraccountId: obj.id,
+              })
+                .then((res) => {
+                  new Mailer(that.passwordResetEmail(_.merge(obj, res[0]))).send()
+                    .then(() => {
+                      log.info(`Successfully sent password reset email to ${obj.email} for user ${obj.partnerBuyerUser_id}`);
+                    })
+                    .catch((err) => {
+                      log.error(`Failed to send ${err}`);
+                    });
+                });
             });
         });
         resolve();
@@ -215,10 +227,10 @@ Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, 
 
 Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
   const body = `
-  <div><p>Hi,</p></div>
+  <div><p>Hi ${userAccount.firstName},</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>
   <div><p>Please confirm your registration by clicking this link below</p></div>
-  <div><p><a href="hutcake.com/passwordReset/${userAccount.email}">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
+  <div><p><a href="https://hutcake.com/passwordReset?email=${userAccount.email}&token=${userAccount.key}">${userAccount.key}</a></p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
