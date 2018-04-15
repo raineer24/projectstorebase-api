@@ -32,6 +32,7 @@
     "mysql-model": "0.0.2",
     "nodemailer": "^4.4.2",
     "path": "^0.12.7",
+    "random-key-generator": "^1.2.3",
     "randomstring": "^1.1.5",
     "sql": "^0.78.0",
     "swagger-express-mw": "^0.6.0",
