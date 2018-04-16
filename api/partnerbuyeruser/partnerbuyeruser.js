@@ -6,7 +6,9 @@ const moment = require('moment');
 const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
 const Mailer = require('../../service/mail');
+
 const Token = require('../token/token');
+const User = require('../users/user');
 
 const log = require('color-logs')(true, true, 'User Account');
 
@@ -199,17 +201,25 @@ Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, 
           new Token({
             dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
             type: 'PASSWORD_RESET',
-          }).create(obj.id)
+          }).create(obj.useraccount_id)
             .then(() => {
               new Token({}).findAll(0, 1, {
-                useraccountId: obj.id,
+                useraccountId: obj.useraccount_id,
               })
-                .then((res) => {
-                  new Mailer(that.passwordResetEmail(_.merge(obj, res[0]))).send()
+                .then((result) => {
+                  new Mailer(that.passwordResetEmail(_.merge(obj, { token: result[0].key }))).send()
                     .then(() => {
                       log.info(`Successfully sent password reset email to ${obj.email} for user ${obj.partnerBuyerUser_id}`);
+                      new User({ forcedReset: 0 }).update(obj.useraccount_id)
+                        .then(() => {
+                          log.info('User forcedReset field set to 0');
+                        })
+                        .catch((err) => {
+                          log.error(`Failed to update ${err}`);
+                        });
                     })
                     .catch((err) => {
+                      // TODO: update valid in useracounttoken to 0
                       log.error(`Failed to send ${err}`);
                     });
                 });
@@ -230,7 +240,7 @@ Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
   <div><p>Hi ${userAccount.firstName},</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>
   <div><p>Please confirm your registration by clicking this link below</p></div>
-  <div><p><a href="https://hutcake.com/passwordReset?email=${userAccount.email}&token=${userAccount.key}">${userAccount.key}</a></p></div>
+  <div><p><a href="https://hutcake.com/user/forgotPassword/${userAccount.useraccount_id}/${userAccount.token}">${userAccount.token}</a></p></div>
   <div><p>Thank you!</p></div>
   `;
   return {

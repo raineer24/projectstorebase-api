@@ -51,8 +51,6 @@ Token.prototype.create = useraccountId => new BluePromise((resolve, reject) => {
   randomKeyGenerator() + randomKeyGenerator() + randomKeyGenerator();
   log.info(that.model.key);
   const query = that.sqlTable.insert(that.model).toQuery();
-  log.info(query.text);
-  log.info(query.values);
   that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
       if (useraccountId) {
@@ -63,9 +61,16 @@ Token.prototype.create = useraccountId => new BluePromise((resolve, reject) => {
           dateCreated: new Date().getTime(),
           dateUpdated: new Date().getTime(),
         }).toQuery();
-        that.dbConn.queryAsync(subQuery.text, subQuery.values);
+        that.dbConn.queryAsync(subQuery.text, subQuery.values)
+          .then(() => {
+            resolve(response.insertId);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      } else {
+        resolve(response.insertId);
       }
-      resolve(response.insertId);
     })
     .catch((err) => {
       reject(err);
