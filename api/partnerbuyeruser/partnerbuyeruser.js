@@ -256,7 +256,7 @@ User.prototype.findAll = (skip, limit, filters) => {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
-      .where(that.sqlTable.forceReset.equals(filters.forceReset)
+      .where(that.sqlTable.forceReset.equals(filters.forceReset))
       .limit(limit)
       .offset(skip)
       .toQuery();
