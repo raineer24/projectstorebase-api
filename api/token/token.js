@@ -135,7 +135,7 @@ Token.prototype.getByValue = (value, field) => {
 
 Token.prototype.check = token => new BluePromise((resolve, reject) => {
   log.info('Checking.....');
-  that.getByValue(token, 'number')
+  that.getByValue(token, 'key')
     .then((result) => {
       log.info(result);
       if (result.length === 0) {
@@ -149,7 +149,7 @@ Token.prototype.check = token => new BluePromise((resolve, reject) => {
         //   });
         reject(403);
       } else {
-        reject(200);
+        resolve(result);
         // TODO: Update count
       }
     })
@@ -158,5 +158,13 @@ Token.prototype.check = token => new BluePromise((resolve, reject) => {
       reject(403);
     });
 });
+
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Token.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Token;

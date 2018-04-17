@@ -253,6 +253,32 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /user/account/token/{token}:
+    x-swagger-router-controller: token
+    get:
+      tags:
+        - user
+      summary: check if token is valid
+      operationId: check
+      parameters:
+        - $ref: "#/parameters/token"
+      responses:
+        200:
+          description: Token exist
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /partnerbuyeruser/sendpasswordemails:
     x-swagger-router-controller: partnerbuyeruser
     get:
@@ -277,6 +303,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+
   /orderkey:
     x-swagger-router-controller: orders
     get:
@@ -1795,6 +1822,11 @@ parameters:
     name: orderBy
     type: string
     required: false
+  token:
+    in: path
+    name: token
+    type: string
+    required: true
   type:
     in: query
     name: type
