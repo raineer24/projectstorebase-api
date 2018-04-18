@@ -23,11 +23,16 @@ token.connectDb = (req, res) => {
 */
 token.check = (req, res) => {
   const instToken = new Token();
-
-  instToken.check(query.validateParam(req.swagger.params, 'token', ''), 'token')
+  instToken.check(req.swagger.params.body.value)
     .then((resultList) => {
       // return res.json(instToken.cleanResponse(resultList[0], { message: 'Found' }));
-      return res.json(resultList[0]);
+      log.info(resultList[0])
+      if(resultList[0].dateExpiration >= Date.now() && resultList[0].valid == '1') {
+        return res.json({ message: 'Valid' });
+      } else {
+        return res.json({ message: 'Invalud' });
+      }
+
     })
     .catch(() => res.status(404).json({
       message: 'Not found',

@@ -253,15 +253,20 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /user/account/token/{token}:
+  /user/account/token:
     x-swagger-router-controller: token
-    get:
+    post:
       tags:
         - user
       summary: check if token is valid
       operationId: check
       parameters:
-        - $ref: "#/parameters/token"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/token"
       responses:
         200:
           description: Token exist
@@ -1561,6 +1566,19 @@ definitions:
       doc:
         type: object
         description: "Timeslot object"
+  token:
+    title: " "
+    type: object
+    required:
+      - token
+      - useraccount_id
+    properties:
+      token:
+        type: string
+        description: token
+      useraccount_id:
+        type: string
+        description: user account id
   gc:
     title: " "
     type: object

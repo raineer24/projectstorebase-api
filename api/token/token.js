@@ -86,12 +86,12 @@ Token.prototype.create = useraccountId => new BluePromise((resolve, reject) => {
 */
 Token.prototype.findAll = (skip, limit, filters) => {
   let query = null;
-  if (filters.number && filters.type && filters.useraccountId) {
+  if (filters.key && filters.type && filters.useraccountId) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
+      .select(that.sqlTable.star(), that.sqlTableUseraccountToken.star(), that.sqlTableUseraccountToken.id.as('userAccountToken_id'))
       .from(that.sqlTable.join(that.sqlTableUseraccountToken)
         .on(that.sqlTableUseraccountToken.token_id.equals(that.sqlTable.id)))
-      .where(that.sqlTable.number.equals(filters.number)
+      .where(that.sqlTable.key.equals(filters.key)
         .and(that.sqlTable.type.equals(filters.type))
         .and(that.sqlTableUseraccountToken.useraccount_id.equals(filters.useraccountId)))
       .limit(limit)
@@ -133,12 +133,16 @@ Token.prototype.getByValue = (value, field) => {
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
-Token.prototype.check = token => new BluePromise((resolve, reject) => {
+Token.prototype.check = obj => new BluePromise((resolve, reject) => {
   log.info('Checking.....');
-  that.getByValue(token, 'key')
+  that.findAll(0, 1, {
+    useraccountId: obj.useraccount_id,
+    key: obj.token,
+    type: obj.type
+  })
     .then((result) => {
       log.info(result);
-      if (result.length === 0) {
+      if (result.length > 0) {
         // const query = that.sqlTable.insert(that.model).toQuery();
         // that.dbConn.queryAsync(query.text, query.values)
         //   .then((response) => {
@@ -147,10 +151,9 @@ Token.prototype.check = token => new BluePromise((resolve, reject) => {
         //   .catch((err) => {
         //     reject(err);
         //   });
-        reject(403);
-      } else {
         resolve(result);
-        // TODO: Update count
+      } else {
+        reject(403);
       }
     })
     .catch((err) => {
