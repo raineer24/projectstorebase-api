@@ -240,3 +240,34 @@ name CHAR(100) NOT NULL,
 dateCreated BIGINT(50) NOT NULL,
 dateUpdated BIGINT(50) NOT NULL,
 PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
+
+/* partner buyer */
+CREATE TABLE grocerystore.partnerbuyer
+(id BIGINT(50) NOT NULL AUTO_INCREMENT,
+name CHAR(100) NOT NULL,
+dateCreated BIGINT(50) NOT NULL,
+dateUpdated BIGINT(50) NOT NULL,
+PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
+
+/* partner buyer user */
+CREATE TABLE grocerystore.partnerbuyeruser
+(id BIGINT(50) NOT NULL AUTO_INCREMENT,
+username CHAR(60) NOT NULL,
+password VARCHAR(250) NOT NULL,
+email CHAR(100),
+name VARCHAR(250) NOT NULL,
+dateCreated BIGINT(50) NOT NULL,
+dateUpdated BIGINT(50) NOT NULL,
+userAccount_id BIGINT(10) NOT NULL,
+partnerBuyer_id BIGINT(10) NOT NULL,
+PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
+
+/* setting table */
+CREATE TABLE grocerystore.setting
+(id BIGINT(50) NOT NULL AUTO_INCREMENT,
+name CHAR(60) NOT NULL,
+value VARCHAR(250) NOT NULL,
+dateCreated BIGINT(50) NOT NULL,
+reference BIGINT(10) NOT NULL,
+reference_id BIGINT(10) NOT NULL,
+PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf16
