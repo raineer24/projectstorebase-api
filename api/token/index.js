@@ -30,7 +30,7 @@ token.check = (req, res) => {
       if(resultList[0].dateExpiration >= Date.now() && resultList[0].valid == '1') {
         return res.json({ message: 'Valid' });
       } else {
-        return res.json({ message: 'Invalud' });
+        return res.json({ message: 'Invalid' });
       }
 
     })

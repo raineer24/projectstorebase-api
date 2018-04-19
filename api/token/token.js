@@ -97,6 +97,15 @@ Token.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.useraccountId){
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable.join(that.sqlTableUseraccountToken)
+        .on(that.sqlTableUseraccountToken.token_id.equals(that.sqlTable.id)))
+      .where(that.sqlTableUseraccountToken.useraccount_id.equals(filters.useraccountId))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
