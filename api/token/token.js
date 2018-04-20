@@ -77,6 +77,20 @@ Token.prototype.create = useraccountId => new BluePromise((resolve, reject) => {
     });
 });
 
+Token.prototype.invalidate = useraccountId => new BluePromise((resolve, reject) => {
+  const query = that.sqlTableUseraccountToken.update({
+    valid: '0',
+    dateUpdated: new Date().getTime(),
+  }).where(that.sqlTableUseraccountToken.useraccount_id.equals(useraccountId)).toQuery();
+        log.info(query);
+  that.dbConn.queryAsync(query.text, query.values)
+    .then((result) => {
+      resolve();
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
 
 /**
   * findAll
@@ -97,7 +111,7 @@ Token.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.useraccountId){
+  } else if (filters.useraccountId) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable.join(that.sqlTableUseraccountToken)
@@ -147,7 +161,7 @@ Token.prototype.check = obj => new BluePromise((resolve, reject) => {
   that.findAll(0, 1, {
     useraccountId: obj.useraccount_id,
     key: obj.token,
-    type: obj.type
+    type: obj.type,
   })
     .then((result) => {
       log.info(result);

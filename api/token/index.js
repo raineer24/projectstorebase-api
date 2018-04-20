@@ -25,14 +25,13 @@ token.check = (req, res) => {
   const instToken = new Token();
   instToken.check(req.swagger.params.body.value)
     .then((resultList) => {
-      // return res.json(instToken.cleanResponse(resultList[0], { message: 'Found' }));
-      log.info(resultList[0])
-      if(resultList[0].dateExpiration >= Date.now() && resultList[0].valid == '1') {
-        return res.json({ message: 'Valid' });
+      let response;
+      if (resultList[0].dateExpiration >= Date.now() && resultList[0].valid === '1') {
+        response = res.json({ message: 'Valid' });
       } else {
-        return res.json({ message: 'Invalid' });
+        response = res.json({ message: 'Invalid' });
       }
-
+      return response;
     })
     .catch(() => res.status(404).json({
       message: 'Not found',

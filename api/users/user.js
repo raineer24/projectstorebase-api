@@ -6,6 +6,8 @@ const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
 const Mailer = require('../../service/mail');
 
+const Token = require('../token/token');
+
 const log = require('color-logs')(true, true, 'User Account');
 
 let that;
@@ -174,7 +176,7 @@ User.prototype.mailConfirmation = (userAccount) => {
   };
 };
 
-User.prototype.update = id => new BluePromise((resolve, reject) => {
+User.prototype.update = (id, isChangePassword = false) => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
     delete that.model.password;
@@ -192,7 +194,17 @@ User.prototype.update = id => new BluePromise((resolve, reject) => {
           .where(that.sqlTable.id.equals(id)).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
-            resolve(response.message);
+            if (isChangePassword) {
+              new Token().invalidate(id)
+                .then(() => {
+                  resolve(response.message);
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            } else {
+              resolve(response.message);
+            }
           })
           .catch((err) => {
             reject(err);
