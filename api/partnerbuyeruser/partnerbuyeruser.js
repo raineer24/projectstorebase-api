@@ -238,9 +238,9 @@ Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, 
 Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
   const body = `
   <div><p>Hi ${userAccount.firstName},</p></div>
-  <div><p>You have successfully registered with username ${userAccount.email}</p></div>
-  <div><p>Please confirm your registration by clicking this link below</p></div>
-  <div><p><a href="https://hutcake.com/user/guestActivation/${userAccount.useraccount_id}/${userAccount.token}">${userAccount.token}</a></p></div>
+  <div><p>You have successfully registered to <b>Oh My Grocery</b> with username ${userAccount.email}</p></div>
+  <div><p>Please confirm your registration by clicking this link below:</p></div>
+  <div><p><a href="https://hutcake.com/user/guestActivation?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.useraccount_id}">${userAccount.token}</a></p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
