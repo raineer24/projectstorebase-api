@@ -527,6 +527,7 @@ CREATE TABLE `orderseller` (
   `checkedBy` varchar(50) DEFAULT '',
   `itemList` varchar(500) DEFAULT NULL,
   `totalItems` varchar(50) DEFAULT '',
+  `status` char(20) DEFAULT 'Pending',
   `order_id` bigint(50) NOT NULL,
   `selleraccount_id` bigint(50) DEFAULT 0,
   `seller_id` bigint(50) DEFAULT 0,
