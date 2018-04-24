@@ -1,6 +1,5 @@
-const query = require('../../service/query');
+// const query = require('../../service/query');
 const Log = require('../logs/log');
-const log = require('color-logs')(true, true, 'Token');
 const Token = require('./token');
 
 const token = {};
@@ -22,6 +21,7 @@ token.connectDb = (req, res) => {
 * @return {Object}
 */
 token.check = (req, res) => {
+  new Log({ message: 'TOKEN_CHECK', type: 'INFO' }).create();
   const instToken = new Token();
   instToken.check(req.swagger.params.body.value)
     .then((resultList) => {

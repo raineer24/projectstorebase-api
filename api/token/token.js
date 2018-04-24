@@ -82,9 +82,8 @@ Token.prototype.invalidate = useraccountId => new BluePromise((resolve, reject) 
     valid: '0',
     dateUpdated: new Date().getTime(),
   }).where(that.sqlTableUseraccountToken.useraccount_id.equals(useraccountId)).toQuery();
-        log.info(query);
   that.dbConn.queryAsync(query.text, query.values)
-    .then((result) => {
+    .then(() => {
       resolve();
     })
     .catch((err) => {
