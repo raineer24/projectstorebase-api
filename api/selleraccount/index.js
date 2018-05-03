@@ -5,6 +5,15 @@ const Selleraccount = require('./selleraccount');
 
 const selleraccount = {};
 
+selleraccount.connectDb = (req, res) => {
+  const instSellerAccount = new Selleraccount({});
+  instSellerAccount.testConnection()
+    .then(result => res.json({ message: result }))
+    .catch(() => res.status(404).json({
+      message: 'Not found',
+    }));
+};
+
 /**
 * Create seller
 * @param {Object} req
@@ -87,5 +96,27 @@ selleraccount.viewAccount = (req, res) => {
       instSellerAccount.release();
     });
 };
+
+/**
+* User authentication and authorization
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+selleraccount.loginAccount = (req, res) => {
+  new Log({ message: 'SELLER_ACCOUNT_LOGIN', type: 'INFO' }).create();
+  const instSellerAccount = new Selleraccount(req.swagger.params.body.value);
+  instSellerAccount.authenticate()
+    .then(userAuth => userAuth)
+    .then(instSellerAccount.authorize)
+    .then(result => res.json(instSellerAccount.cleanResponse(result, { message: 'Found' })))
+    .catch(() => res.status(404).json({
+      message: 'Not found',
+    }))
+    .finally(() => {
+      instSellerAccount.release();
+    });
+};
+
 
 module.exports = selleraccount;

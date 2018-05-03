@@ -4,6 +4,7 @@ const _ = require('lodash');
 const log = require('color-logs')(true, true, 'Seller Account');
 
 const Conn = require('../../service/connection');
+const Util = require('../helpers/util');
 
 let that;
 
@@ -102,7 +103,58 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
       reject(err);
     });
 });
+/**
+  * User authentication of username and password
+  * @param {string} username
+  * @param {string} password
+  * @return {object}
+*/
+Selleraccount.prototype.authenticate = () => new BluePromise((resolve, reject) => {
+  const filter = {
+    username: that.model.username,
+  };
 
+  if (that.model.password) {
+    filter.password = that.model.password;
+  }
+
+  that.findAll(0, 1, filter)
+    .then((results) => {
+      if (results.length === 0) {
+        reject('Not found');
+        return;
+      }
+
+      resolve(_.merge({
+        authenticated: true,
+        token: Util.signToken(results[0].username),
+        dateTime: new Date().getTime(),
+      }, results[0]));
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+/**
+  * Check user entitlement
+  * @param {object} userAuth
+  * @return {object}
+*/
+Selleraccount.prototype.authorize = sellerAuth => new BluePromise((resolve, reject) => {
+  if (!sellerAuth) {
+    reject(null);
+    return;
+  }
+  resolve(_.merge({
+    authorize: true,
+    roles: [
+      'customer',
+      'limited',
+    ],
+    dateAuthenticated: sellerAuth.dateTime,
+    dateAuthorized: new Date().getTime(),
+  }, sellerAuth));
+});
 /**
   * findById
   * @param {string} limit
@@ -146,6 +198,15 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .from(that.sqlTable)
       .where(that.sqlTable.seller_id.equals(filters.sellerId))
       .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.username && filters.password) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.username.equals(filters.username)
+        .and(that.sqlTable.password.equals(filters.password)))
       .limit(limit)
       .offset(skip)
       .toQuery();
