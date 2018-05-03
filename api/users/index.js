@@ -22,14 +22,34 @@ user.connectDb = (req, res) => {
 * @return {Object}
 */
 user.getAllUsers = (req, res) => {
-  new Log({ message: 'ORDER_LIST', type: 'INFO' }).create();
+  new Log({ message: 'Show all users', action: 'USER_LIST', type: 'INFO' }).create();
   const instUser = new User({});
   instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     // useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 0),
   })
     .then(result => res.json(result))
     .catch((err) => {
-      new Log({ message: `ORDER_LIST ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'USER_LIST', type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+/**
+* List
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.getAllUsersAdmin = (req, res) => {
+  new Log({ message: 'Show all users', action: 'ADMIN_USER_LIST', type: 'INFO' }).create();
+  const instUser = new User({});
+  instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), { useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 1) })
+    .then(result => res.json(result))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'ADMIN_USER_LIST', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
@@ -44,6 +64,7 @@ user.getAllUsers = (req, res) => {
 * @return {Object}
 */
 user.loginAccount = (req, res) => {
+  new Log({ message: 'Logged into user account', action: 'USER_LOGIN', type: 'INFO' }).create();
   const instUser = new User(req.swagger.params.body.value);
   instUser.authenticate()
     .then(userAuth => userAuth)
@@ -64,6 +85,7 @@ user.loginAccount = (req, res) => {
 * @return {Object}
 */
 user.registerAccount = (req, res) => {
+  new Log({ message: 'Create new user account', action: 'USER_REGISTER', type: 'INFO' }).create();
   const instUser = new User(req.swagger.params.body.value);
   instUser.create()
     .then(userData => res.json(instUser.cleanResponse(userData, { message: 'Saved' })))
@@ -82,6 +104,7 @@ user.registerAccount = (req, res) => {
 * @return {Object}
 */
 user.updateAccount = (req, res) => {
+  new Log({ message: 'Updated current user account', action: 'USER_UPDATE', type: 'INFO' }).create();
   const instUser = new User(req.swagger.params.body.value);
   instUser.update(query.validateParam(req.swagger.params, 'id', 0))
     .then(status => res.json({ status, message: 'Updated' }))

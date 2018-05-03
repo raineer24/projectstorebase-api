@@ -59,7 +59,7 @@ selleraccount.updateAccount = (req, res) => {
   instSellerAccount.update(query.validateParam(req.swagger.params, 'id', 0))
     .then(status => res.json({ status, message: 'Updated' }))
     .catch((err) => {
-      new Log({ message: `SELLER_ACCOUNT_UPDATE ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_UPDATE', type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
@@ -75,12 +75,12 @@ selleraccount.updateAccount = (req, res) => {
 * @return {Object}
 */
 selleraccount.viewAccount = (req, res) => {
-  new Log({ message: 'SELLER_ACCOUNT_GET', type: 'INFO' }).create();
+  new Log({ message: 'View seller account', action: 'SELLER_ACCOUNT_VIEW', type: 'INFO' }).create();
   const instSellerAccount = new Selleraccount();
   instSellerAccount.getById(query.validateParam(req.swagger.params, 'id', 0))
     .then(result => res.json(Selleraccount.cleanResponse(result, { message: 'Found' })))
     .catch((err) => {
-      new Log({ message: `SELLER_ACCOUNT_GET ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_VIEW', type: 'ERROR' }).create();
       return res.status(404).json({ message: 'Not found' });
     })
     .finally(() => {

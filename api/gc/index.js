@@ -13,12 +13,12 @@ const gc = {};
 * @return {Object}
 */
 gc.updateGc = (req, res) => {
-  new Log({ message: 'GC_UPDATE', type: 'INFO' }).create();
+  new Log({ message: 'Update current gift certification', action: 'GC_UPDATE', type: 'INFO' }).create();
   const instGc = new Gc(req.swagger.params.body.value);
   instGc.update(query.validateParam(req.swagger.params, 'code', ''))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
-      new Log({ message: `GC_UPDATE ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'GC_UPDATE', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })
     .finally(() => {
@@ -33,7 +33,7 @@ gc.updateGc = (req, res) => {
 * @return {Object}
 */
 gc.getGc = (req, res) => {
-  new Log({ message: 'GC_GET', type: 'INFO' }).create();
+  new Log({ message: 'Get Gift Certificate', action: 'GC_GET', type: 'INFO' }).create();
   const instGc = new Gc({});
   instGc.getByValue(query.validateParam(req.swagger.params, 'code', ''), 'code')
     .then((resultList) => {
@@ -43,7 +43,7 @@ gc.getGc = (req, res) => {
       return res.json(resultList[0]);
     })
     .catch((err) => {
-      new Log({ message: `GC_GET ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'GC_GET', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
     })
     .finally(() => {
