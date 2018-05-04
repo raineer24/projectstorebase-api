@@ -140,20 +140,20 @@ Selleraccount.prototype.authenticate = () => new BluePromise((resolve, reject) =
   * @param {object} userAuth
   * @return {object}
 */
-Selleraccount.prototype.authorize = sellerAuth => new BluePromise((resolve, reject) => {
-  if (!sellerAuth) {
+Selleraccount.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
+  if (!userAuth) {
     reject(null);
     return;
   }
   resolve(_.merge({
     authorize: true,
-    roles: [
-      'customer',
-      'limited',
-    ],
-    dateAuthenticated: sellerAuth.dateTime,
+    // roles: [
+    //   'customer',
+    //   'limited',
+    // ],
+    dateAuthenticated: userAuth.dateTime,
     dateAuthorized: new Date().getTime(),
-  }, sellerAuth));
+  }, userAuth));
 });
 /**
   * findById
@@ -225,7 +225,13 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
-Selleraccount.cleanResponse = (object, properties) => {
+/**
+  * Format response object and/or append additional object properties
+  * @param {object} object
+  * @param {object} properties
+  * @return {object}
+*/
+Selleraccount.prototype.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
   _.merge(object, properties);
