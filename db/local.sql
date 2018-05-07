@@ -875,6 +875,7 @@ CREATE TABLE `useraccount` (
   `uiid` char(150) DEFAULT NULL,
   `gender` char(10) DEFAULT NULL,
   `mobileNumber` char(20) DEFAULT NULL,
+  `deactivated` char(1) DEFAULT '0',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -887,7 +888,7 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',1512810359181,1512810359181),(5,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor','Queja','12345','M','09292293939',1522637372669,1522637372669);
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0',1512810359181,1512810359181),(5,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor','Queja','12345','M','09292293939','0',1522637372669,1522637372669);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 

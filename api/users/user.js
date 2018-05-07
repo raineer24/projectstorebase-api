@@ -173,6 +173,22 @@ User.prototype.mailConfirmation = (userAccount) => {
   };
 };
 
+User.prototype.deactivationEmail = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>We woud like to inform you that your account - ${userAccount.email}</p></div>
+  <div><p>has been deactivated</p></div>
+  <div><p><a href="hutcake.com">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: userAccount.email,
+    subject: 'OMG - User Account Deactivation Notice',
+    html: body,
+  };
+};
+
 User.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {

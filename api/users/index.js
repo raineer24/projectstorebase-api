@@ -116,6 +116,44 @@ user.updateAccount = (req, res) => {
     });
 };
 
+/**
+* Deactivate user
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.deactivateAcct = (req, res) => {
+  new Log({ message: 'Deactivate user account', action: 'USER_Deactivate', type: 'INFO' }).create();
+  const instUser = new User(req.swagger.params.body.value);
+  instUser.update(query.validateParam(req.swagger.params, 'id', 0))
+    .then(status => res.json({ status, message: 'Deactivated' }))
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
+      message: err === 'Not Found' ? 'Not found' : err,
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+/**
+* Activate user
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.activateAcct = (req, res) => {
+  new Log({ message: 'Activate user account', action: 'USER_Activate', type: 'INFO' }).create();
+  const instUser = new User(req.swagger.params.body.value);
+  instUser.update(query.validateParam(req.swagger.params, 'id', 0))
+    .then(status => res.json({ status, message: 'Activated' }))
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
+      message: err === 'Not Found' ? 'Not found' : err,
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
+
 
 /**
 * View user profile
