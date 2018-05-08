@@ -43,6 +43,7 @@ function Transaction(transaction) {
       'action',
       'type',
       'order_id',
+      'value',
       'dateCreated',
       'dateUpdated',
     ],
@@ -109,5 +110,15 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
       reject(err);
     });
 });
+
+Transaction.prototype.grandTotal = () => {
+  let query = null;
+  query = that.sqlTable
+    .select('SUM(VALUE)')
+    .from(that.sqlTable)
+    .toQuery();
+  log.info(query.text);
+  return that.dbConn.queryAsync(query.text, query.values);
+};
 
 module.exports = Transaction;

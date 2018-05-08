@@ -841,6 +841,7 @@ CREATE TABLE `transaction` (
   `comments` varchar(500) NOT NULL,
   `action` char(50) NOT NULL,
   `type` char(20) NOT NULL DEFAULT '',
+  `value` bigint(50) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   `order_id` varchar(50) NOT NULL,
