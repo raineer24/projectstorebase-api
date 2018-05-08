@@ -111,6 +111,32 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /user/account/partnerbuyeruser/{useraccount_id}:
+    x-swagger-router-controller: partnerbuyeruser
+    get:
+      tags:
+        - user
+      summary: check if user is in partnerbuyeruser table
+      operationId: getUser
+      parameters:
+        - $ref: "#/parameters/useraccount_id"
+      responses:
+        200:
+          description: User is under a Partner Buyer
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /user/account/save:
     x-swagger-router-controller: users
     post:
@@ -1486,7 +1512,7 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
-  transactions:
+  getPartnerbuyeruser:
     title: ""
     type: object
     properties:
@@ -1496,7 +1522,7 @@ definitions:
         type: string
       doc:
         type: object
-        description: "transactions object"
+        description: "partnerbuyeruser object"
   selleraccount:
     title: ""
     type: object
@@ -1682,6 +1708,11 @@ definitions:
         type: number
         description: category level
 parameters:
+  useraccount_id:
+    in: path
+    name: useraccount_id
+    type: string
+    required: true
   id:
     in: path
     name: id
