@@ -127,7 +127,7 @@ Selleraccount.prototype.authenticate = () => new BluePromise((resolve, reject) =
 
       resolve(_.merge({
         authenticated: true,
-        token: Util.signToken(results[0].username),
+        token: Util.signSellerToken(results[0]),
         dateTime: new Date().getTime(),
       }, results[0]));
     })
