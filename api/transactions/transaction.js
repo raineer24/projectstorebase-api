@@ -79,6 +79,15 @@ Transaction.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.dateFrom && filters.dateTo) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.dateFrom.greaterThanOrEqualTo(filters.dateFrom)
+        .and(that.sqlTable.dateTo.lessThanOrEqualTo(filters.dateTo)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
