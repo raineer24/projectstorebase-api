@@ -325,6 +325,64 @@ LOCK TABLES `notification` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `partnerbuyer`
+--
+
+DROP TABLE IF EXISTS `partnerbuyer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `partnerbuyer` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`name` CHAR(100) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`dateUpdated` BIGINT(50) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+
+--
+-- Dumping data for table `partnerbuyer`
+--
+
+LOCK TABLES `partnerbuyer` WRITE;
+/*!40000 ALTER TABLE `partnerbuyer` DISABLE KEYS */;
+INSERT INTO `partnerbuyer` VALUES (1,'Gaisano',1522637372669,1522637372669),(2,'SM',1522637372669,1522637372669),(3,'Rustans',1522637372669,1522637372669);
+/*!40000 ALTER TABLE `partnerbuyer` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+--
+-- Table structure for table `partnerbuyeruser`
+--
+
+DROP TABLE IF EXISTS `partnerbuyeruser`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `partnerbuyeruser` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`username` CHAR(60) NOT NULL,
+`email` CHAR(100),
+`name` VARCHAR(250) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`dateUpdated` BIGINT(50) NOT NULL,
+`useraccount_id` BIGINT(10) NOT NULL,
+`partnerBuyer_id` BIGINT(10) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+
+--
+-- Dumping data for table `partnerbuyeruser`
+--
+
+LOCK TABLES `partnerbuyeruser` WRITE;
+/*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',1522637372669,1522637372669,5,1);
+/*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
 -- Table structure for table `order`
 --
 
@@ -557,7 +615,7 @@ DROP TABLE IF EXISTS `rating`;
 CREATE TABLE `rating` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `starCount` char(1) NOT NULL,
-  `orderkey` char(150) DEFAULT NULL,
+  `orderkey` char(150) NOT NULL,
   `useraccount_id` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
@@ -736,6 +794,36 @@ INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `setting`
+--
+
+DROP TABLE IF EXISTS `setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `setting` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`name` CHAR(60) NOT NULL,
+`value` VARCHAR(250) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`reference` VARCHAR(50) NOT NULL,
+`reference_id` BIGINT(10) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Dumping data for table `setting`
+--
+
+LOCK TABLES `setting` WRITE;
+/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
+INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
+/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
 -- Table structure for table `timeslot`
 --
 
@@ -875,6 +963,7 @@ CREATE TABLE `useraccount` (
   `uiid` char(150) DEFAULT NULL,
   `gender` char(10) DEFAULT NULL,
   `mobileNumber` char(20) DEFAULT NULL,
+  `forcedReset` char(1) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)

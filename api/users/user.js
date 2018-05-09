@@ -31,6 +31,7 @@ function User(user) {
       'uiid',
       'gender',
       'mobileNumber',
+      'forcedReset',
       'dateCreated',
       'dateUpdated',
     ],
