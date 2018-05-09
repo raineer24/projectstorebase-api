@@ -454,6 +454,33 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  # /order:
+  #   x-swagger-router-controller: orders
+  #   get:
+  #     tags:
+  #       - order
+  #     summary: Get all orders
+  #     operationId: getAllOrders
+  #     parameters:
+  #       - $ref: "#/parameters/skip"
+  #       - $ref: "#/parameters/limit"
+  #     responses:
+  #       200:
+  #         description: Get all orders
+  #         schema:
+  #           type: object
+  #           properties:
+  #             id:
+  #               type: number
+  #               example: 10012
+  #       403:
+  #         description: Unauthorized
+  #         schema:
+  #           type: object
+  #           properties:
+  #             message:
+  #               type: string
+  #               example: Unauthorized
   /selleraccounts:
     x-swagger-router-controller: selleraccount
     get:
