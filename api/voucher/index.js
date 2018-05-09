@@ -13,12 +13,12 @@ const voucher = {};
 * @return {Object}
 */
 voucher.updateVoucherStatus = (req, res) => {
-  new Log({ message: 'voucher_UPDATE', type: 'INFO' }).create();
+  new Log({ message: 'Update voucher status', action: 'UPDATE_VOUCHER', type: 'INFO' }).create();
   const instvoucher = new Voucher(req.swagger.params.body.value);
   instvoucher.update(query.validateParam(req.swagger.params, 'code', ''))
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
-      new Log({ message: `voucher_UPDATE ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'UPDATE_VOUCHER', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })
     .finally(() => {
@@ -33,7 +33,7 @@ voucher.updateVoucherStatus = (req, res) => {
 * @return {Object}
 */
 voucher.getvoucher = (req, res) => {
-  new Log({ message: 'voucher_GET', type: 'INFO' }).create();
+  new Log({ message: 'Show a specific voucher', action: 'GET_VOUCHER', type: 'INFO' }).create();
   const instvoucher = new Voucher({});
   instvoucher.getByValue(query.validateParam(req.swagger.params, 'code', ''), 'code')
     .then((resultList) => {
@@ -43,7 +43,7 @@ voucher.getvoucher = (req, res) => {
       return res.json(resultList[0]);
     })
     .catch((err) => {
-      new Log({ message: `voucher_GET ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'GET_VOUCHER', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
     })
     .finally(() => {

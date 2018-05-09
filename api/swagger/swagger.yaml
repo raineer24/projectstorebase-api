@@ -1674,6 +1674,10 @@ paths:
               id:
                 type: number
                 example: 10012
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         403:
           description: Unauthorized
           schema:
@@ -1682,6 +1686,34 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /logs:
+    x-swagger-router-controller: logs
+    get:
+      tags:
+        - logs
+      summary: show logs
+      operationId: showallLogs
+      parameters:
+        - $ref: "#/parameters/sellerIdQ"
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
+      responses:
+       200:
+         description: Fetch all logs
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 10012
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
 
 
   /swagger:
