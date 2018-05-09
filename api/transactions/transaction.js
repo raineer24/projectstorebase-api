@@ -110,4 +110,13 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Transaction.prototype.release = () => that.dbConn.releaseConnectionAsync();
+
+
 module.exports = Transaction;

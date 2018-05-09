@@ -333,6 +333,7 @@ Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+<<<<<<< HEAD
   } else if (filters.forcedReset) {
     query = that.sqlTable
       .select(that.sqlTable.id.as('partnerBuyerUser_id'), that.sqlTable.star(), that.sqlTableUser.star())
@@ -342,6 +343,8 @@ Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+=======
+>>>>>>> develop
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
