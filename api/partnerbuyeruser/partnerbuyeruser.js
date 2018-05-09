@@ -222,7 +222,13 @@ Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, 
                       // TODO: update valid in useracounttoken to 0
                       log.error(`Failed to send ${err}`);
                     });
+                })
+                .catch(() => {
+                  reject('Not Found');
                 });
+            })
+            .catch(() => {
+              reject('Not Found');
             });
         });
         resolve();

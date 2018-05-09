@@ -316,6 +316,38 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /user/account/{email}/forgotpassword:
+    x-swagger-router-controller: users
+    post:
+      tags:
+        - user
+      summary: request password reset
+      operationId: forgotPassword
+      parameters:
+        - $ref: "#/parameters/email"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Password reset email sent
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /partnerbuyeruser/sendpasswordemails:
     x-swagger-router-controller: partnerbuyeruser
     get:
@@ -1095,7 +1127,7 @@ paths:
     x-swagger-router-controller: sellers
     post:
       tags:
-        - seller
+        - sellers
       summary: Update seller account
       operationId: updateAccount
       parameters:
@@ -1109,6 +1141,37 @@ paths:
       responses:
         200:
           description: Successful registration
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /seller/user/login:
+    x-swagger-router-controller: selleraccount
+    post:
+      tags:
+        - selleraccount
+      summary: Return authenticated & authorized seller user
+      operationId: loginAccount
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserLogin"
+      responses:
+        200:
+          description: Successful login
           schema:
             type: object
             properties:
@@ -1956,5 +2019,10 @@ parameters:
   itemId:
     in: path
     name: itemId
+    type: string
+    required: true
+  email:
+    in: path
+    name: email
     type: string
     required: true

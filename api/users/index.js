@@ -100,6 +100,7 @@ user.updateAccount = (req, res) => {
 * @return {Object}
 */
 user.changePassword = (req, res) => {
+  new Log({ message: 'USER_CHANGE_PASSWORD', type: 'INFO' }).create();
   const instUser = new User(req.swagger.params.body.value);
   instUser.update(query.validateParam(req.swagger.params, 'id', 0), true)
     .then(status => res.json({ status, message: 'Updated' }))
@@ -111,6 +112,24 @@ user.changePassword = (req, res) => {
     });
 };
 
+/**
+* User registration
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.forgotPassword = (req, res) => {
+  new Log({ message: 'USER_SEND_PASSWORD_RESET_EMAIL', type: 'INFO' }).create();
+  const instUser = new User();
+  instUser.sendPasswordResetEmail(req.swagger.params.body.value)
+    .then(status => res.json({ status, message: 'Success' }))
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
+      message: err === 'Not Found' ? 'Not found' : err,
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
 
 /**
 * View user profile
