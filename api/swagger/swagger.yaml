@@ -111,32 +111,6 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /user/account/partnerbuyeruser/{useraccount_id}:
-    x-swagger-router-controller: partnerbuyeruser
-    get:
-      tags:
-        - user
-      summary: check if user is in partnerbuyeruser table
-      operationId: getUser
-      parameters:
-        - $ref: "#/parameters/useraccount_id"
-      responses:
-        200:
-          description: User is under a Partner Buyer
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-                example: norbert@hutcake.com
-        403:
-          description: Not Found
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
   /user/account/save:
     x-swagger-router-controller: users
     post:
@@ -279,6 +253,94 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /user/account/{id}/changepassword:
+    x-swagger-router-controller: users
+    put:
+      tags:
+        - user
+      summary: user change password
+      operationId: changePassword
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: false
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /user/account/token:
+    x-swagger-router-controller: token
+    post:
+      tags:
+        - user
+      summary: check if token is valid
+      operationId: check
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/token"
+      responses:
+        200:
+          description: Token exist
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /partnerbuyeruser/sendpasswordemails:
+    x-swagger-router-controller: partnerbuyeruser
+    get:
+      tags:
+        - user
+      summary: send password reset emails to partner buyer users
+      operationId: sendPasswordEmails
+      responses:
+        200:
+          description: password reset emails sent
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+
   /orderkey:
     x-swagger-router-controller: orders
     get:
@@ -1565,17 +1627,6 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
-  getPartnerbuyeruser:
-    title: ""
-    type: object
-    properties:
-      id:
-        type: string
-      value:
-        type: string
-      doc:
-        type: object
-        description: "partnerbuyeruser object"
   selleraccount:
     title: ""
     type: object
@@ -1598,6 +1649,19 @@ definitions:
       doc:
         type: object
         description: "Timeslot object"
+  token:
+    title: " "
+    type: object
+    required:
+      - token
+      - useraccount_id
+    properties:
+      token:
+        type: string
+        description: token
+      useraccount_id:
+        type: string
+        description: user account id
   gc:
     title: " "
     type: object
@@ -1859,6 +1923,11 @@ parameters:
     name: orderBy
     type: string
     required: false
+  token:
+    in: path
+    name: token
+    type: string
+    required: true
   type:
     in: query
     name: type

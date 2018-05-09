@@ -377,7 +377,7 @@ PRIMARY KEY (`id`)
 
 LOCK TABLES `partnerbuyeruser` WRITE;
 /*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
-INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',1522637372669,1522637372669,5,1);
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',1522637372669,1522637372669,7,1);
 /*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -551,64 +551,6 @@ LOCK TABLES `orderseller` WRITE;
 /*!40000 ALTER TABLE `orderseller` DISABLE KEYS */;
 INSERT INTO `orderseller` VALUES (1,'100000','YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','','pending','','shampoo, soap, sardines','3',1,2,0,1518409395109,1518409395109,1518409395109),(2,'100001','fs4ELZ1xR3dc8a14yTCw1518409390169k6VxV0f22tZ6pdryq9LO','','pending','','shampoo, soap, sardines, milk, pancit canton','5',1,1,1,1518409395109,1518409395109,1518409395109),(3,'100002','fs6ELK1vR3dT8aD4yTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','','in-transit','','shampoo, soap, sardines','3',1,1,1,1518409395109,1518409395109,1518409395109),(4,'100003','fs6ELK1vR3dT8sf45lpTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','','in-transit','','shampoo, soap, sardines','3',1,1,1,1518409395109,1518409395109,1518409395109);
 /*!40000 ALTER TABLE `orderseller` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `partnerbuyer`
---
-
-DROP TABLE IF EXISTS `partnerbuyer`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `partnerbuyer` (
-`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
-`name` CHAR(100) NOT NULL,
-`dateCreated` BIGINT(50) NOT NULL,
-`dateUpdated` BIGINT(50) NOT NULL,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-
---
--- Dumping data for table `partnerbuyer`
---
-
-LOCK TABLES `partnerbuyer` WRITE;
-/*!40000 ALTER TABLE `partnerbuyer` DISABLE KEYS */;
-INSERT INTO `partnerbuyer` VALUES (1,'Gaisano',1522637372669,1522637372669),(2,'SM',1522637372669,1522637372669),(3,'Rustans',1522637372669,1522637372669);
-/*!40000 ALTER TABLE `partnerbuyer` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
---
--- Table structure for table `partnerbuyeruser`
---
-
-DROP TABLE IF EXISTS `partnerbuyeruser`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `partnerbuyeruser` (
-`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
-`username` CHAR(60) NOT NULL,
-`password` VARCHAR(250) NOT NULL,
-`email` CHAR(100),
-`name` VARCHAR(250) NOT NULL,
-`dateCreated` BIGINT(50) NOT NULL,
-`dateUpdated` BIGINT(50) NOT NULL,
-`useraccount_id` BIGINT(10) NOT NULL,
-`partnerBuyer_id` BIGINT(10) NOT NULL,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-
---
--- Dumping data for table `partnerbuyeruser`
---
-
-LOCK TABLES `partnerbuyeruser` WRITE;
-/*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
-INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor Queja',1522637372669,1522637372669,5,1);
-/*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -983,7 +925,7 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',1512810359181,1512810359181),(5,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor','Queja','12345','M','09292293939',1522637372669,1522637372669);
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0',1512810359181,1512810359181),(5,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor','Queja','12345','M','123123','1',1512763400407,1512763400407),(6,'dzulai@gmail.com','password','dzulai@gmail.com','Mark','Julio','12345','M','123123','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','12345','M','123123','1',1512763400407,1512763400407);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 

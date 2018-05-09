@@ -2,9 +2,13 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 
+const moment = require('moment');
 const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
 const Mailer = require('../../service/mail');
+
+const Token = require('../token/token');
+const User = require('../users/user');
 
 const log = require('color-logs')(true, true, 'User Account');
 
@@ -30,6 +34,23 @@ function Partnerbuyeruser(user) {
       'dateUpdated',
       'useraccount_id',
       'partnerBuyer_id',
+    ],
+  });
+  this.sqlTableUser = sql.define({
+    name: 'useraccount',
+    columns: [
+      'id',
+      'username',
+      'password',
+      'email',
+      'firstName',
+      'lastName',
+      'uiid',
+      'gender',
+      'mobileNumber',
+      'dateCreated',
+      'dateUpdated',
+      'forcedReset',
     ],
   });
 
@@ -170,6 +191,67 @@ Partnerbuyeruser.prototype.mailConfirmation = (userAccount) => {
   };
 };
 
+Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, reject) => {
+  that.findAll(0, 5000, {
+    forcedReset: 1,
+  })
+    .then((resultList) => {
+      if (resultList.length > 0) {
+        _.forEach(resultList, (obj) => {
+          new Token({
+            dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
+            type: 'PASSWORD_RESET',
+          }).create(obj.useraccount_id)
+            .then(() => {
+              new Token({}).findAll(0, 1, {
+                useraccountId: obj.useraccount_id,
+              })
+                .then((result) => {
+                  new Mailer(that.passwordResetEmail(_.merge(obj, { token: result[0].key }))).send()
+                    .then(() => {
+                      log.info(`Successfully sent password reset email to ${obj.email} for user ${obj.partnerBuyerUser_id}`);
+                      new User({ forcedReset: 0 }).update(obj.useraccount_id)
+                        .then(() => {
+                          log.info('User forcedReset field set to 0');
+                        })
+                        .catch((err) => {
+                          log.error(`Failed to update ${err}`);
+                        });
+                    })
+                    .catch((err) => {
+                      // TODO: update valid in useracounttoken to 0
+                      log.error(`Failed to send ${err}`);
+                    });
+                });
+            });
+        });
+        resolve();
+      } else {
+        reject('Not Found');
+      }
+    })
+    .catch(() => {
+      reject('Not Found');
+    });
+});
+
+Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
+  const body = `
+  <div><p>Hi ${userAccount.firstName},</p></div>
+  <div><p>You have successfully registered to <b>Oh My Grocery</b> with username ${userAccount.email}</p></div>
+  <div><p>Please confirm your registration by clicking this link below:</p></div>
+  <div><p><a href="https://hutcake.com/user/guestActivation?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.useraccount_id}">${userAccount.token}</a></p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: userAccount.email,
+    subject: 'OMG - Successful registration',
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+
 Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
@@ -248,6 +330,15 @@ Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable)
       .where(that.sqlTable.username.equals(filters.username)
         .and(that.sqlTable.uiid.equals(filters.uiid)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.forcedReset) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('partnerBuyerUser_id'), that.sqlTable.star(), that.sqlTableUser.star())
+      .from(that.sqlTable.join(that.sqlTableUser)
+        .on(that.sqlTable.useraccount_id.equals(that.sqlTableUser.id)))
+      .where(that.sqlTableUser.forcedReset.equals(filters.forcedReset))
       .limit(limit)
       .offset(skip)
       .toQuery();

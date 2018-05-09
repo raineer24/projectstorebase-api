@@ -93,6 +93,24 @@ user.updateAccount = (req, res) => {
     });
 };
 
+/**
+* User registration
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.changePassword = (req, res) => {
+  const instUser = new User(req.swagger.params.body.value);
+  instUser.update(query.validateParam(req.swagger.params, 'id', 0), true)
+    .then(status => res.json({ status, message: 'Updated' }))
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
+      message: err === 'Not Found' ? 'Not found' : err,
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
+
 
 /**
 * View user profile

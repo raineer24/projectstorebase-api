@@ -1,5 +1,5 @@
 const query = require('../../service/query');
-// const Log = require('../logs/log');
+const Log = require('../logs/log');
 
 const Partnerbuyeruser = require('./partnerbuyeruser');
 
@@ -57,6 +57,20 @@ partnerbuyeruser.getUser = (req, res) => {
     .catch(() => res.status(404).json({
       message: 'Not found',
     }))
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+partnerbuyeruser.sendPasswordEmails = (req, res) => {
+  new Log({ message: 'PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS', type: 'INFO' }).create();
+  const instUser = new Partnerbuyeruser();
+  instUser.sendPasswordEmails()
+    .then(() => res.json({ message: 'Password reset emails sent' }))
+    .catch((err) => {
+      new Log({ message: `PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS ${err}`, type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
+    })
     .finally(() => {
       instUser.release();
     });
