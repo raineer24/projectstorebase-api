@@ -449,6 +449,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
+INSERT INTO `order` VALUES (1,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','1524040718929','71','0','271','0',NULL,'271','0','0',NULL,NULL,NULL,'Pending','victor.queja@yahoo.com','',NULL,NULL,NULL,NULL,NULL,NULL,'3',NULL,'Victor','Queja','+63 9223234451','','','','','','Philippines','0','Cabancalan','','Mandaue','6014','Philippines',0,NULL,NULL,1524040716797,1524040716799,5,0,NULL,0);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -508,7 +509,10 @@ CREATE TABLE `orderitem` (
 
 LOCK TABLES `orderitem` WRITE;
 /*!40000 ALTER TABLE `orderitem` DISABLE KEYS */;
-INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,5,0,'5','ordered','0'),(2,'',1518409396634,1518409396635,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,6,0,'4','ordered','0'),(3,'',1518409398453,1518409398454,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,7,0,'5','ordered','0'),(4,'',1518409408609,1518409408609,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,18,0,'6','ordered','0'),(5,'',1518409453725,1518409453725,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,3,0,'7','ordered','0'),(6,'',1518409454960,1518409454960,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,4,0,'3','ordered','0'),(7,'',1518409456281,1518409456282,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,5,0,'4','ordered','0'),(8,'',1518409457495,1518409457496,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,6,0,'4','ordered','0'),(9,'',1518409513274,1518409513275,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,8,0,'4','ordered','0');
+INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,5,0,'5','ordered','0'),(2,'',1518409396634,1518409396635,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,6,0,'4','ordered','0'),(3,'',1518409398453,1518409398454,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,7,0,'5','ordered','0'),(4,'',1518409408609,1518409408609,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,18,0,'6','ordered','0'),(5,'',1518409453725,1518409453725,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,3,0,'7','ordered','0'),(6,'',1518409454960,1518409454960,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,4,0,'3','ordered','0'),(7,'',1518409456281,1518409456282,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,5,0,'4','ordered','0'),(8,'',1518409457495,1518409457496,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,6,0,'4','ordered','0'),(9,'',1518409513274,1518409513275,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,8,0,'4','ordered','0'),
+(10,'',1524047665263,1524047665263,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,9,2,'1','ordered','0'),
+(11,'',1524047665982,1524047665982,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,10,2,'1','ordered','0'),
+(12,'',1524047670793,1524047670794,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,8,2,'8','ordered','0');
 /*!40000 ALTER TABLE `orderitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -524,6 +528,7 @@ CREATE TABLE `orderseller` (
   `orderNumber` char(60) DEFAULT '',
   `orderBarcode` varchar(100) DEFAULT '',
   `printedBy` varchar(50) DEFAULT '',
+  `status` varchar(50) NOT NULL,
   `checkedBy` varchar(50) DEFAULT '',
   `itemList` varchar(500) DEFAULT NULL,
   `totalItems` varchar(50) DEFAULT '',
@@ -544,6 +549,7 @@ CREATE TABLE `orderseller` (
 
 LOCK TABLES `orderseller` WRITE;
 /*!40000 ALTER TABLE `orderseller` DISABLE KEYS */;
+INSERT INTO `orderseller` VALUES (1,'100000','YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','','pending','','shampoo, soap, sardines','3',1,2,0,1518409395109,1518409395109,1518409395109),(2,'100001','fs4ELZ1xR3dc8a14yTCw1518409390169k6VxV0f22tZ6pdryq9LO','','pending','','shampoo, soap, sardines, milk, pancit canton','5',1,1,1,1518409395109,1518409395109,1518409395109),(3,'100002','fs6ELK1vR3dT8aD4yTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','','in-transit','','shampoo, soap, sardines','3',1,1,1,1518409395109,1518409395109,1518409395109),(4,'100003','fs6ELK1vR3dT8sf45lpTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','','in-transit','','shampoo, soap, sardines','3',1,1,1,1518409395109,1518409395109,1518409395109);
 /*!40000 ALTER TABLE `orderseller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -623,6 +629,7 @@ CREATE TABLE `seller` (
 
 LOCK TABLES `seller` WRITE;
 /*!40000 ALTER TABLE `seller` DISABLE KEYS */;
+INSERT INTO `seller` VALUES (1,'Bisdak','bsk',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `seller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -689,11 +696,11 @@ DROP TABLE IF EXISTS `selleraccount`;
 CREATE TABLE `selleraccount` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `username` char(60) NOT NULL,
-  `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
   `seller_id` bigint(50) DEFAULT 0,
   `role_id` bigint(10) NOT NULL,
+  `useraccount_id` bigint(10) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -706,7 +713,7 @@ CREATE TABLE `selleraccount` (
 
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
-INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531);
+INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','norbs@gmail.com','Norberts',1,1,2,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','victor.queja@yahoo.com','Victor Queja',1,1,5,1512763935519,1512763935531);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1033,7 +1040,7 @@ CREATE TABLE `voucher` (
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
+--local.sql
 -- Dumping data for table `voucher`
 --
 

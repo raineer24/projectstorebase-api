@@ -547,7 +547,34 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /selleraccount:
+  # /order:
+  #   x-swagger-router-controller: orders
+  #   get:
+  #     tags:
+  #       - order
+  #     summary: Get all orders
+  #     operationId: getAllOrders
+  #     parameters:
+  #       - $ref: "#/parameters/skip"
+  #       - $ref: "#/parameters/limit"
+  #     responses:
+  #       200:
+  #         description: Get all orders
+  #         schema:
+  #           type: object
+  #           properties:
+  #             id:
+  #               type: number
+  #               example: 10012
+  #       403:
+  #         description: Unauthorized
+  #         schema:
+  #           type: object
+  #           properties:
+  #             message:
+  #               type: string
+  #               example: Unauthorized
+  /selleraccounts:
     x-swagger-router-controller: selleraccount
     get:
       tags:
@@ -891,6 +918,30 @@ paths:
       responses:
         200:
           description: Successful created
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /transactions:
+    x-swagger-router-controller: transactions
+    get:
+      tags:
+      - transactions
+      summary: Get timeslotorder record
+      operationId: getTransactions
+      responses:
+        200:
+          description: Fetch all transactions
           schema:
             type: object
             properties:
