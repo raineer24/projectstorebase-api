@@ -42,6 +42,39 @@ Log.prototype.create = () => {
 };
 
 /**
+  * findAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Log.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
+  let query = null;
+  let sortString = `${that.table}.dateUpdated DESC`;
+  if (sortBy) {
+    sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
+  }
+  if (filters.dateFrom && filters.dateTo) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.dateFrom.greaterThanOrEqualTo(filters.dateFrom)
+        .and(that.sqlTable.dateTo.lessThanOrEqualTo(filters.dateTo)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .order(sortString)
+    .limit(limit)
+    .offset(skip)
+    .toQuery();
+
+  return that.dbConn.queryAsync(query.text, query.values);
+};
+
+/**
   * Release connection
   * @param {any} value
   * @param {string} field
