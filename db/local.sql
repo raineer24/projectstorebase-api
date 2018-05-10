@@ -601,7 +601,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000);
+INSERT INTO `role` VALUES (1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000),(5,'EOS Internal',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -691,11 +691,11 @@ DROP TABLE IF EXISTS `selleraccount`;
 CREATE TABLE `selleraccount` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `username` char(60) NOT NULL,
+  `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
   `seller_id` bigint(50) DEFAULT 0,
   `role_id` bigint(10) NOT NULL,
-  `useraccount_id` bigint(10) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -708,7 +708,8 @@ CREATE TABLE `selleraccount` (
 
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
-INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','norbs@gmail.com','Norberts',1,1,2,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','victor.queja@yahoo.com','Victor Queja',1,1,5,1512763935519,1512763935531);
+INSERT INTO `selleraccount` VALUES
+(1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',1,1,1512763935519,1512763935531),(3,'admin.personnel','password','admin.personnel@mailinator.com','Admin Personel',1,1,1525937317483,1525937317483),(4,'assembly.personnel','password','assembly.personnel@mailinator.com','assembly Personel',1,2,1525937317483,1525937317483),(5,'finance.personnel','password','finance.personnel@mailinator.com','finance Personel',1,3,1525937317483,1525937317483),(6,'managment.personnel','password','managment.personnel@mailinator.com','managment Personel',1,4,1525937317483,1525937317483),(7,'eos.internal','password','eos.internal@mailinator.com','eos internal',1,5,1525937317483,1525937317483);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -885,7 +886,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','CONFIRM_PAYMENT','',1518409422524,1518409422524,'1');
+INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','CONFIRM_PAYMENT','',0,1518409422524,1518409422524,'1');
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
