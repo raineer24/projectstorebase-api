@@ -24,7 +24,6 @@ function generate() {
 */
 function Transaction(transaction) {
   sql.setDialect('mysql');
-
   this.model = _.extend(transaction, {
     comments: transaction.comments || '',
     dateCreated: new Date().getTime(),

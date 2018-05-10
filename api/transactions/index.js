@@ -7,21 +7,13 @@ const Transaction = require('./transaction');
 const transactions = {};
 
 /**
-<<<<<<< HEAD
 * Get all transactions at a specific range
-=======
-* Get all timeslots at a specific range
->>>>>>> develop
 * @param {Object} req
 * @param {Object} res
 * @return {Object}
 */
 transactions.getTransactions = (req, res) => {
-<<<<<<< HEAD
   new Log({ message: 'Show all transactions', action: 'GET_ALL_TRANSACTIONS', type: 'INFO' }).create();
-=======
-  new Log({ message: 'GET_ALL_TRANSACTIONS', type: 'INFO' }).create();
->>>>>>> develop
   const instTransactions = new Transaction({});
   instTransactions.findAll(0, 100, {
     current: moment().format('YYYY-MM-DD'),
@@ -35,11 +27,7 @@ transactions.getTransactions = (req, res) => {
       return res.json(resOrder);
     })
     .catch((err) => {
-<<<<<<< HEAD
       new Log({ message: `${err}`, action: 'GET_ALL_TRANSACTIONS', type: 'ERROR' }).create();
-=======
-      new Log({ message: `GET_ALL_TRANSACTIONS ${err}`, type: 'ERROR' }).create();
->>>>>>> develop
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
     })
     .finally(() => {
@@ -47,7 +35,6 @@ transactions.getTransactions = (req, res) => {
     });
 };
 
-<<<<<<< HEAD
 /**
 * Get grand totals at a specific range
 * @param {Object} req
@@ -66,6 +53,4 @@ transactions.getGrandTotal = (req, res) => {
     });
 };
 
-=======
->>>>>>> develop
 module.exports = transactions;
