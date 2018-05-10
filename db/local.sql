@@ -659,10 +659,6 @@ LOCK TABLES `sellerEntitlement` WRITE;
 /*!40000 ALTER TABLE `sellerEntitlement` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `sellerTag`
---
-
 DROP TABLE IF EXISTS `sellerTag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -728,9 +724,7 @@ CREATE TABLE `setting` (
 `reference_id` BIGINT(10) NOT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
+/*!40101 SET character_set_client = utf8 */;
 --
 -- Dumping data for table `setting`
 --
@@ -877,6 +871,7 @@ CREATE TABLE `transaction` (
   `comments` varchar(500) NOT NULL,
   `action` char(50) NOT NULL,
   `type` char(20) NOT NULL DEFAULT '',
+  `value` bigint(50) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   `order_id` varchar(50) NOT NULL,
@@ -911,7 +906,8 @@ CREATE TABLE `useraccount` (
   `uiid` char(150) DEFAULT NULL,
   `gender` char(10) DEFAULT NULL,
   `mobileNumber` char(20) DEFAULT NULL,
-  `forcedReset` char(1) DEFAULT 0,
+  `deactivated` char(1) DEFAULT '0',
+  `forcedReset` char(1) DEFAULT '0',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -924,7 +920,7 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0',1512810359181,1512810359181),(5,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor','Queja','12345','M','123123','1',1512763400407,1512763400407),(6,'dzulai@gmail.com','password','dzulai@gmail.com','Mark','Julio','12345','M','123123','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','12345','M','123123','1',1512763400407,1512763400407);
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0','0',1512810359181,1512810359181),(5,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor','Queja','12345','M','123123','0','1',1512763400407,1512763400407),(6,'dzulai@gmail.com','password','dzulai@gmail.com','Mark','Julio','12345','M','123123','0','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','12345','M','123123','0','1',1512763400407,1512763400407);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -7,13 +7,13 @@ const Transaction = require('./transaction');
 const transactions = {};
 
 /**
-* Get all timeslots at a specific range
+* Get all transactions at a specific range
 * @param {Object} req
 * @param {Object} res
 * @return {Object}
 */
 transactions.getTransactions = (req, res) => {
-  new Log({ message: 'GET_ALL_TRANSACTIONS', type: 'INFO' }).create();
+  new Log({ message: 'Show all transactions', action: 'GET_ALL_TRANSACTIONS', type: 'INFO' }).create();
   const instTransactions = new Transaction({});
   instTransactions.findAll(0, 100, {
     current: moment().format('YYYY-MM-DD'),
@@ -27,9 +27,27 @@ transactions.getTransactions = (req, res) => {
       return res.json(resOrder);
     })
     .catch((err) => {
-      new Log({ message: `GET_ALL_TRANSACTIONS ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'GET_ALL_TRANSACTIONS', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
     })
+    .finally(() => {
+      instTransactions.release();
+    });
+};
+
+/**
+* Get grand totals at a specific range
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+transactions.getGrandTotal = (req, res) => {
+  new Log({ message: 'Show totals of all transactions', action: 'TRANSACTIONS_GRANDTOTAL', type: 'INFO' }).create();
+  const instTransactions = new Transaction({});
+  instTransactions.grandTotal().then(results => results).catch((err) => {
+    new Log({ message: `${err}`, action: 'TRANSACTIONS_GRANDTOTAL', type: 'ERROR' }).create();
+    return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+  })
     .finally(() => {
       instTransactions.release();
     });
