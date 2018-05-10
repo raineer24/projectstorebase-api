@@ -117,16 +117,16 @@ user.updateAccount = (req, res) => {
 };
 
 /**
-* Deactivate user
+* User registration
 * @param {Object} req
 * @param {Object} res
 * @return {Object}
 */
-user.deactivateAcct = (req, res) => {
-  new Log({ message: 'Deactivate user account', action: 'USER_Deactivate', type: 'INFO' }).create();
+user.changePassword = (req, res) => {
+  new Log({ message: 'USER_CHANGE_PASSWORD', type: 'INFO' }).create();
   const instUser = new User(req.swagger.params.body.value);
-  instUser.update(query.validateParam(req.swagger.params, 'id', 0))
-    .then(status => res.json({ status, message: 'Deactivated' }))
+  instUser.update(query.validateParam(req.swagger.params, 'id', 0), true)
+    .then(status => res.json({ status, message: 'Updated' }))
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
       message: err === 'Not Found' ? 'Not found' : err,
     }))
@@ -136,16 +136,16 @@ user.deactivateAcct = (req, res) => {
 };
 
 /**
-* Activate user
+* User registration
 * @param {Object} req
 * @param {Object} res
 * @return {Object}
 */
-user.activateAcct = (req, res) => {
-  new Log({ message: 'Activate user account', action: 'USER_Activate', type: 'INFO' }).create();
-  const instUser = new User(req.swagger.params.body.value);
-  instUser.update(query.validateParam(req.swagger.params, 'id', 0))
-    .then(status => res.json({ status, message: 'Activated' }))
+user.forgotPassword = (req, res) => {
+  new Log({ message: 'USER_SEND_PASSWORD_RESET_EMAIL', type: 'INFO' }).create();
+  const instUser = new User();
+  instUser.sendPasswordResetEmail(req.swagger.params.body.value)
+    .then(status => res.json({ status, message: 'Success' }))
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
       message: err === 'Not Found' ? 'Not found' : err,
     }))
@@ -153,7 +153,6 @@ user.activateAcct = (req, res) => {
       instUser.release();
     });
 };
-
 
 /**
 * View user profile
