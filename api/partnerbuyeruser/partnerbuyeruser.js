@@ -1,29 +1,43 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
-const moment = require('moment');
 
+const moment = require('moment');
 const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
 const Mailer = require('../../service/mail');
 
 const Token = require('../token/token');
+const User = require('../users/user');
 
 const log = require('color-logs')(true, true, 'User Account');
 
 let that;
 
-function User(user) {
+function Partnerbuyeruser(user) {
   sql.setDialect('mysql');
 
   this.model = _.extend(user, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'useraccount';
+  this.table = 'partnerbuyeruser';
   this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
+    columns: [
+      'id',
+      'username',
+      'email',
+      'name',
+      'dateCreated',
+      'dateUpdated',
+      'useraccount_id',
+      'partnerBuyer_id',
+    ],
+  });
+  this.sqlTableUser = sql.define({
+    name: 'useraccount',
     columns: [
       'id',
       'username',
@@ -34,16 +48,16 @@ function User(user) {
       'uiid',
       'gender',
       'mobileNumber',
-      'forcedReset',
       'dateCreated',
       'dateUpdated',
+      'forcedReset',
     ],
   });
 
   that = this;
 }
 
-User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.testConnection = () => new BluePromise((resolve, reject) => {
   if (that.dbConn) {
     resolve(that.dbConn);
     return;
@@ -57,7 +71,7 @@ User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
   * @param {string} password
   * @return {object}
 */
-User.prototype.authenticate = () => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.authenticate = () => new BluePromise((resolve, reject) => {
   const filter = {
     username: that.model.username,
   };
@@ -91,7 +105,7 @@ User.prototype.authenticate = () => new BluePromise((resolve, reject) => {
   * @param {object} userAuth
   * @return {object}
 */
-User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
   if (!userAuth) {
     reject(null);
     return;
@@ -115,7 +129,7 @@ User.prototype.authorize = userAuth => new BluePromise((resolve, reject) => {
   * @param {string} uiid
   * @return {object}
 */
-User.prototype.create = () => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (that.model.password === undefined) {
@@ -160,7 +174,7 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
-User.prototype.mailConfirmation = (userAccount) => {
+Partnerbuyeruser.prototype.mailConfirmation = (userAccount) => {
   const body = `
   <div><p>Hi,</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>
@@ -177,7 +191,74 @@ User.prototype.mailConfirmation = (userAccount) => {
   };
 };
 
-User.prototype.update = (id, isChangePassword = false) => new BluePromise((resolve, reject) => {
+Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, reject) => {
+  that.findAll(0, 5000, {
+    forcedReset: 1,
+  })
+    .then((resultList) => {
+      if (resultList.length > 0) {
+        _.forEach(resultList, (obj) => {
+          new Token({
+            dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
+            type: 'PASSWORD_RESET',
+          }).create(obj.useraccount_id)
+            .then(() => {
+              new Token({}).findAll(0, 1, {
+                useraccountId: obj.useraccount_id,
+              })
+                .then((result) => {
+                  new Mailer(that.passwordResetEmail(_.merge(obj, { token: result[0].key }))).send()
+                    .then(() => {
+                      log.info(`Successfully sent password reset email to ${obj.email} for user ${obj.partnerBuyerUser_id}`);
+                      new User({ forcedReset: 0 }).update(obj.useraccount_id)
+                        .then(() => {
+                          log.info('User forcedReset field set to 0');
+                        })
+                        .catch((err) => {
+                          log.error(`Failed to update ${err}`);
+                        });
+                    })
+                    .catch((err) => {
+                      // TODO: update valid in useracounttoken to 0
+                      log.error(`Failed to send ${err}`);
+                    });
+                })
+                .catch(() => {
+                  reject('Not Found');
+                });
+            })
+            .catch(() => {
+              reject('Not Found');
+            });
+        });
+        resolve();
+      } else {
+        reject('Not Found');
+      }
+    })
+    .catch(() => {
+      reject('Not Found');
+    });
+});
+
+Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
+  const body = `
+  <div><p>Hi ${userAccount.firstName},</p></div>
+  <div><p>You have successfully registered to <b>Oh My Grocery</b> with username ${userAccount.email}</p></div>
+  <div><p>Please confirm your registration by clicking this link below:</p></div>
+  <div><p><a href="https://hutcake.com/user/guestActivation?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.useraccount_id}">${userAccount.token}</a></p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: userAccount.email,
+    subject: 'OMG - Successful registration',
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+
+Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
     delete that.model.password;
@@ -195,17 +276,7 @@ User.prototype.update = (id, isChangePassword = false) => new BluePromise((resol
           .where(that.sqlTable.id.equals(id)).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
-            if (isChangePassword) {
-              new Token().invalidate(id)
-                .then(() => {
-                  resolve(response.message);
-                })
-                .catch((err) => {
-                  reject(err);
-                });
-            } else {
-              resolve(response.message);
-            }
+            resolve(response.message);
           })
           .catch((err) => {
             reject(err);
@@ -223,85 +294,7 @@ User.prototype.update = (id, isChangePassword = false) => new BluePromise((resol
   * @param {string} field
   * @return {object<Promise>}
 */
-User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject) => {
-  that.getByValue(obj.email, 'email')
-    .then((resultList) => {
-      if (resultList[0].id) {
-        new Token().invalidate(resultList[0].id);
-        new Token({
-          dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
-          type: 'PASSWORD_RESET',
-        }).create(resultList[0].id)
-          .then((tokenId) => {
-            new Token({}).findAll(0, 1, {
-              useraccountId: resultList[0].id,
-              tokenId,
-            })
-              .then((resultList2) => {
-                if (resultList2.length > 0) {
-                  new Mailer(that.passwordResetEmail(_.merge(resultList[0], {
-                    token: resultList2[0].key,
-                  }))).send()
-                    .then(() => {
-                      log.info(`Successfully sent password reset email to ${resultList[0].email}`);
-                      resolve('Success');
-                    })
-                    .catch((err) => {
-                      log.error(`Failed to send ${err}`);
-                      reject(err);
-                    });
-                } else {
-                  reject('Not found');
-                }
-              })
-              .catch((err) => {
-                reject(err);
-              });
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      } else {
-        reject('Not found');
-      }
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
-
-/**
-  * Get by value
-  * @param {any} value
-  * @param {string} field
-  * @return {object<Promise>}
-*/
-User.prototype.passwordResetEmail = (userAccount) => {
-  const body = `
-  <div><p>Hi ${userAccount.firstName},</p></div>
-  <div><p>Your <b>Oh My Grocery</b> password has been reset.</p></div>
-  <div><p>Please provide a new password by clicking on this link within the next 24 hours:
-  <a href="http://hutcake.com/user/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
-  </p></div>
-  <div><p>Please remember to keep your username and password confidential at all times.</p></div>
-  <div><p>Thank you!</p></div>
-  `;
-  return {
-    from: 'info@eos.com.ph',
-    to: userAccount.email,
-    subject: 'OMG - Account Password Reset',
-    text: `Password reset request for e-mail ${userAccount.email}`,
-    html: body,
-  };
-};
-
-/**
-  * Get by value
-  * @param {any} value
-  * @param {string} field
-  * @return {object<Promise>}
-*/
-User.prototype.getByValue = (value, field) => {
+Partnerbuyeruser.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
     .from(that.sqlTable)
@@ -316,8 +309,8 @@ User.prototype.getByValue = (value, field) => {
   * @return {object<Promise>}
 */
 // User.prototype.getById = id => that.dbConn.readAsync(id);
-User.prototype.findById = id => that.getByValue(id, 'id');
-User.prototype.getById = id => that.getByValue(id, 'id');
+Partnerbuyeruser.prototype.findById = id => that.getByValue(id, 'useraccount_id');
+Partnerbuyeruser.prototype.getById = id => that.getByValue(id, 'useraccount_id');
 
 
 /**
@@ -326,7 +319,7 @@ User.prototype.getById = id => that.getByValue(id, 'id');
   * @param {string} offset
   * @return {object}
 */
-User.prototype.findAll = (skip, limit, filters) => {
+Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
   let query = null;
   if (filters.username && filters.password) {
     query = that.sqlTable
@@ -343,6 +336,15 @@ User.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable)
       .where(that.sqlTable.username.equals(filters.username)
         .and(that.sqlTable.uiid.equals(filters.uiid)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.forcedReset) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('partnerBuyerUser_id'), that.sqlTable.star(), that.sqlTableUser.star())
+      .from(that.sqlTable.join(that.sqlTableUser)
+        .on(that.sqlTable.useraccount_id.equals(that.sqlTableUser.id)))
+      .where(that.sqlTableUser.forcedReset.equals(filters.forcedReset))
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -365,7 +367,7 @@ User.prototype.findAll = (skip, limit, filters) => {
   * @param {object} properties
   * @return {object}
 */
-User.prototype.cleanResponse = (object, properties) => {
+Partnerbuyeruser.prototype.cleanResponse = (object, properties) => {
   // eslint-disable-next-line
   delete object.password;
   _.merge(object, properties);
@@ -379,6 +381,6 @@ User.prototype.cleanResponse = (object, properties) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-User.prototype.release = () => that.dbConn.releaseConnectionAsync();
+Partnerbuyeruser.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
-module.exports = User;
+module.exports = Partnerbuyeruser;

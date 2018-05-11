@@ -325,6 +325,64 @@ LOCK TABLES `notification` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `partnerbuyer`
+--
+
+DROP TABLE IF EXISTS `partnerbuyer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `partnerbuyer` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`name` CHAR(100) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`dateUpdated` BIGINT(50) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+
+--
+-- Dumping data for table `partnerbuyer`
+--
+
+LOCK TABLES `partnerbuyer` WRITE;
+/*!40000 ALTER TABLE `partnerbuyer` DISABLE KEYS */;
+INSERT INTO `partnerbuyer` VALUES (1,'Gaisano',1522637372669,1522637372669),(2,'SM',1522637372669,1522637372669),(3,'Rustans',1522637372669,1522637372669);
+/*!40000 ALTER TABLE `partnerbuyer` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+--
+-- Table structure for table `partnerbuyeruser`
+--
+
+DROP TABLE IF EXISTS `partnerbuyeruser`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `partnerbuyeruser` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`username` CHAR(60) NOT NULL,
+`email` CHAR(100),
+`name` VARCHAR(250) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`dateUpdated` BIGINT(50) NOT NULL,
+`useraccount_id` BIGINT(10) NOT NULL,
+`partnerBuyer_id` BIGINT(10) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+
+--
+-- Dumping data for table `partnerbuyeruser`
+--
+
+LOCK TABLES `partnerbuyeruser` WRITE;
+/*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',1522637372669,1522637372669,7,1);
+/*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
 -- Table structure for table `order`
 --
 
@@ -391,6 +449,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
+INSERT INTO `order` VALUES (1,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','1524040718929','71','0','271','0',NULL,'271','0','0',NULL,NULL,NULL,'Pending','victor.queja@yahoo.com','',NULL,NULL,NULL,NULL,NULL,NULL,'3',NULL,'Victor','Queja','+63 9223234451','','','','','','Philippines','0','Cabancalan','','Mandaue','6014','Philippines',0,NULL,NULL,1524040716797,1524040716799,5,0,NULL,0);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -450,7 +509,10 @@ CREATE TABLE `orderitem` (
 
 LOCK TABLES `orderitem` WRITE;
 /*!40000 ALTER TABLE `orderitem` DISABLE KEYS */;
-INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,5,0,'5','ordered','0'),(2,'',1518409396634,1518409396635,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,6,0,'4','ordered','0'),(3,'',1518409398453,1518409398454,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,7,0,'5','ordered','0'),(4,'',1518409408609,1518409408609,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,18,0,'6','ordered','0'),(5,'',1518409453725,1518409453725,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,3,0,'7','ordered','0'),(6,'',1518409454960,1518409454960,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,4,0,'3','ordered','0'),(7,'',1518409456281,1518409456282,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,5,0,'4','ordered','0'),(8,'',1518409457495,1518409457496,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,6,0,'4','ordered','0'),(9,'',1518409513274,1518409513275,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,8,0,'4','ordered','0');
+INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,5,0,'5','ordered','0'),(2,'',1518409396634,1518409396635,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,6,0,'4','ordered','0'),(3,'',1518409398453,1518409398454,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,7,0,'5','ordered','0'),(4,'',1518409408609,1518409408609,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,18,0,'6','ordered','0'),(5,'',1518409453725,1518409453725,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,3,0,'7','ordered','0'),(6,'',1518409454960,1518409454960,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,4,0,'3','ordered','0'),(7,'',1518409456281,1518409456282,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,5,0,'4','ordered','0'),(8,'',1518409457495,1518409457496,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,6,0,'4','ordered','0'),(9,'',1518409513274,1518409513275,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,8,0,'4','ordered','0'),
+(10,'',1524047665263,1524047665263,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,9,2,'1','ordered','0'),
+(11,'',1524047665982,1524047665982,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,10,2,'1','ordered','0'),
+(12,'',1524047670793,1524047670794,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,8,2,'8','ordered','0');
 /*!40000 ALTER TABLE `orderitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -466,10 +528,10 @@ CREATE TABLE `orderseller` (
   `orderNumber` char(60) DEFAULT '',
   `orderBarcode` varchar(100) DEFAULT '',
   `printedBy` varchar(50) DEFAULT '',
+  `status` varchar(50) NOT NULL,
   `checkedBy` varchar(50) DEFAULT '',
   `itemList` varchar(500) DEFAULT NULL,
   `totalItems` varchar(50) DEFAULT '',
-  `status` char(20) DEFAULT 'Pending',
   `order_id` bigint(50) NOT NULL,
   `selleraccount_id` bigint(50) DEFAULT 0,
   `seller_id` bigint(50) DEFAULT 0,
@@ -486,6 +548,7 @@ CREATE TABLE `orderseller` (
 
 LOCK TABLES `orderseller` WRITE;
 /*!40000 ALTER TABLE `orderseller` DISABLE KEYS */;
+INSERT INTO `orderseller` VALUES (1,'100000','YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','','pending','','shampoo, soap, sardines','3',1,2,0,1518409395109,1518409395109,1518409395109),(2,'100001','fs4ELZ1xR3dc8a14yTCw1518409390169k6VxV0f22tZ6pdryq9LO','','pending','','shampoo, soap, sardines, milk, pancit canton','5',1,1,1,1518409395109,1518409395109,1518409395109),(3,'100002','fs6ELK1vR3dT8aD4yTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','','in-transit','','shampoo, soap, sardines','3',1,1,1,1518409395109,1518409395109,1518409395109),(4,'100003','fs6ELK1vR3dT8sf45lpTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','','in-transit','','shampoo, soap, sardines','3',1,1,1,1518409395109,1518409395109,1518409395109);
 /*!40000 ALTER TABLE `orderseller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -499,7 +562,7 @@ DROP TABLE IF EXISTS `rating`;
 CREATE TABLE `rating` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `starCount` char(1) NOT NULL,
-  `orderkey` char(150) DEFAULT NULL,
+  `orderkey` char(150) NOT NULL,
   `useraccount_id` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
@@ -565,6 +628,7 @@ CREATE TABLE `seller` (
 
 LOCK TABLES `seller` WRITE;
 /*!40000 ALTER TABLE `seller` DISABLE KEYS */;
+INSERT INTO `seller` VALUES (1,'Bisdak','bsk',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `seller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -594,10 +658,6 @@ LOCK TABLES `sellerEntitlement` WRITE;
 /*!40000 ALTER TABLE `sellerEntitlement` DISABLE KEYS */;
 /*!40000 ALTER TABLE `sellerEntitlement` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `sellerTag`
---
 
 DROP TABLE IF EXISTS `sellerTag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -631,11 +691,11 @@ DROP TABLE IF EXISTS `selleraccount`;
 CREATE TABLE `selleraccount` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `username` char(60) NOT NULL,
-  `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
   `seller_id` bigint(50) DEFAULT 0,
   `role_id` bigint(10) NOT NULL,
+  `useraccount_id` bigint(10) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -648,9 +708,62 @@ CREATE TABLE `selleraccount` (
 
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
-INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531);
+INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','norbs@gmail.com','Norberts',1,1,2,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','victor.queja@yahoo.com','Victor Queja',1,1,5,1512763935519,1512763935531);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `setting` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`name` CHAR(60) NOT NULL,
+`value` VARCHAR(250) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`reference` VARCHAR(50) NOT NULL,
+`reference_id` BIGINT(10) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = utf8 */;
+--
+-- Dumping data for table `setting`
+--
+
+LOCK TABLES `setting` WRITE;
+/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
+INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
+/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `setting`
+--
+
+DROP TABLE IF EXISTS `setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `setting` (
+`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
+`name` CHAR(60) NOT NULL,
+`value` VARCHAR(250) NOT NULL,
+`dateCreated` BIGINT(50) NOT NULL,
+`reference` VARCHAR(50) NOT NULL,
+`reference_id` BIGINT(10) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Dumping data for table `setting`
+--
+
+LOCK TABLES `setting` WRITE;
+/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
+INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
+/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 --
 -- Table structure for table `timeslot`
@@ -758,6 +871,7 @@ CREATE TABLE `transaction` (
   `comments` varchar(500) NOT NULL,
   `action` char(50) NOT NULL,
   `type` char(20) NOT NULL DEFAULT '',
+  `value` bigint(50) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   `order_id` varchar(50) NOT NULL,
@@ -792,6 +906,8 @@ CREATE TABLE `useraccount` (
   `uiid` char(150) DEFAULT NULL,
   `gender` char(10) DEFAULT NULL,
   `mobileNumber` char(20) DEFAULT NULL,
+  `deactivated` char(1) DEFAULT '0',
+  `forcedReset` char(1) DEFAULT '0',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -804,7 +920,7 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',1512810359181,1512810359181);
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0','0',1512810359181,1512810359181),(5,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor','Queja','12345','M','123123','0','1',1512763400407,1512763400407),(6,'dzulai@gmail.com','password','dzulai@gmail.com','Mark','Julio','12345','M','123123','0','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','12345','M','123123','0','1',1512763400407,1512763400407);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -919,7 +1035,7 @@ CREATE TABLE `voucher` (
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
+--local.sql
 -- Dumping data for table `voucher`
 --
 
@@ -930,7 +1046,7 @@ INSERT INTO `voucher` VALUES (1,'10000','100',1522454400000,1522454400000,152245
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

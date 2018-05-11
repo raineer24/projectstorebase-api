@@ -174,6 +174,70 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /user/account/{id}/deactivate:
+    x-swagger-router-controller: users
+    put:
+      tags:
+        - user
+      summary: Deactivate user account
+      operationId: deactivateAcct
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /user/account/{id}/activate:
+    x-swagger-router-controller: users
+    put:
+      tags:
+        - user
+      summary: Activate user account
+      operationId: activateAcct
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /user/account/order/{useraccountId}:
     x-swagger-router-controller: orders
     get:
@@ -227,6 +291,152 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /user/account/partnerbuyeruser/{useraccount_id}:
+    x-swagger-router-controller: partnerbuyeruser
+    get:
+      tags:
+        - user
+      summary: check if user is in partnerbuyeruser table
+      operationId: getUser
+      parameters:
+        - $ref: "#/parameters/useraccount_id"
+      responses:
+        200:
+          description: User is under a Partner Buyer
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /user/account/{id}/changepassword:
+    x-swagger-router-controller: users
+    put:
+      tags:
+        - user
+      summary: user change password
+      operationId: changePassword
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: false
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /user/account/token:
+    x-swagger-router-controller: token
+    post:
+      tags:
+        - user
+      summary: check if token is valid
+      operationId: check
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/token"
+      responses:
+        200:
+          description: Token exist
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /user/account/{email}/forgotpassword:
+    x-swagger-router-controller: users
+    post:
+      tags:
+        - user
+      summary: request password reset
+      operationId: forgotPassword
+      parameters:
+        - $ref: "#/parameters/email"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Password reset email sent
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /partnerbuyeruser/sendpasswordemails:
+    x-swagger-router-controller: partnerbuyeruser
+    get:
+      tags:
+        - user
+      summary: send password reset emails to partner buyer users
+      operationId: sendPasswordEmails
+      responses:
+        200:
+          description: password reset emails sent
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+
   /orderkey:
     x-swagger-router-controller: orders
     get:
@@ -402,6 +612,33 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  # /order:
+  #   x-swagger-router-controller: orders
+  #   get:
+  #     tags:
+  #       - order
+  #     summary: Get all orders
+  #     operationId: getAllOrders
+  #     parameters:
+  #       - $ref: "#/parameters/skip"
+  #       - $ref: "#/parameters/limit"
+  #     responses:
+  #       200:
+  #         description: Get all orders
+  #         schema:
+  #           type: object
+  #           properties:
+  #             id:
+  #               type: number
+  #               example: 10012
+  #       403:
+  #         description: Unauthorized
+  #         schema:
+  #           type: object
+  #           properties:
+  #             message:
+  #               type: string
+  #               example: Unauthorized
   /selleraccounts:
     x-swagger-router-controller: selleraccount
     get:
@@ -613,6 +850,30 @@ paths:
       responses:
         200:
           description: Successful created
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /transactions:
+    x-swagger-router-controller: transactions
+    get:
+      tags:
+      - transactions
+      summary: Get timeslotorder record
+      operationId: getTransactions
+      responses:
+        200:
+          description: Fetch all transactions
           schema:
             type: object
             properties:
@@ -930,7 +1191,7 @@ paths:
     x-swagger-router-controller: sellers
     post:
       tags:
-        - seller
+        - sellers
       summary: Update seller account
       operationId: updateAccount
       parameters:
@@ -944,6 +1205,37 @@ paths:
       responses:
         200:
           description: Successful registration
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /seller/user/login:
+    x-swagger-router-controller: selleraccount
+    post:
+      tags:
+        - selleraccount
+      summary: Return authenticated & authorized seller user
+      operationId: loginAccount
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserLogin"
+      responses:
+        200:
+          description: Successful login
           schema:
             type: object
             properties:
@@ -1448,6 +1740,10 @@ paths:
               id:
                 type: number
                 example: 10012
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         403:
           description: Unauthorized
           schema:
@@ -1456,6 +1752,34 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /logs:
+    x-swagger-router-controller: logs
+    get:
+      tags:
+        - logs
+      summary: show logs
+      operationId: showallLogs
+      parameters:
+        - $ref: "#/parameters/sellerIdQ"
+        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/limit"
+      responses:
+       200:
+         description: Fetch all logs
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 10012
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
 
 
   /swagger:
@@ -1484,6 +1808,19 @@ definitions:
       doc:
         type: object
         description: "Timeslot object"
+  token:
+    title: " "
+    type: object
+    required:
+      - token
+      - useraccount_id
+    properties:
+      token:
+        type: string
+        description: token
+      useraccount_id:
+        type: string
+        description: user account id
   gc:
     title: " "
     type: object
@@ -1647,6 +1984,11 @@ definitions:
         type: number
         description: category level
 parameters:
+  useraccount_id:
+    in: path
+    name: useraccount_id
+    type: string
+    required: true
   id:
     in: path
     name: id
@@ -1740,6 +2082,11 @@ parameters:
     name: orderBy
     type: string
     required: false
+  token:
+    in: path
+    name: token
+    type: string
+    required: true
   type:
     in: query
     name: type
@@ -1768,5 +2115,10 @@ parameters:
   itemId:
     in: path
     name: itemId
+    type: string
+    required: true
+  email:
+    in: path
+    name: email
     type: string
     required: true

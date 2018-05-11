@@ -24,7 +24,6 @@ function generate() {
 */
 function Transaction(transaction) {
   sql.setDialect('mysql');
-
   this.model = _.extend(transaction, {
     comments: transaction.comments || '',
     dateCreated: new Date().getTime(),
@@ -43,6 +42,7 @@ function Transaction(transaction) {
       'action',
       'type',
       'order_id',
+      'value',
       'dateCreated',
       'dateUpdated',
     ],
@@ -78,6 +78,15 @@ Transaction.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.dateFrom && filters.dateTo) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.dateFrom.greaterThanOrEqualTo(filters.dateFrom)
+        .and(that.sqlTable.dateTo.lessThanOrEqualTo(filters.dateTo)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
@@ -109,5 +118,15 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
       reject(err);
     });
 });
+
+Transaction.prototype.grandTotal = () => {
+  let query = null;
+  query = that.sqlTable
+    .select('SUM(VALUE)')
+    .from(that.sqlTable)
+    .toQuery();
+  log.info(query.text);
+  return that.dbConn.queryAsync(query.text, query.values);
+};
 
 module.exports = Transaction;
