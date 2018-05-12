@@ -4,12 +4,12 @@ const Log = require('../logs/log');
 const category = {};
 
 category.listAll = (req, res) => {
-  new Log({ message: 'CATEGORY_LIST_STRUCTURED', type: 'INFO' }).create();
+  new Log({ message: 'List all product categories', action: 'CATEGORY_LIST_STRUCTURED', type: 'INFO' }).create();
   const instCategory = new Category({});
   instCategory.findStructuredAll()
     .then(result => res.json(result))
     .catch((err) => {
-      new Log({ message: `CATEGORY_LIST_STRUCTURED ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'CATEGORY_LIST_STRUCTURED', type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
     })
     .finally(() => {
@@ -18,12 +18,12 @@ category.listAll = (req, res) => {
 };
 
 category.addCategory = (req, res) => {
-  new Log({ message: 'CATEGORY_ADD', type: 'INFO' }).create();
+  new Log({ message: 'Add new category', action: 'CATEGORY_ADD', type: 'INFO' }).create();
   const instCategory = new Category(req.swagger.params.body.value);
   instCategory.create()
     .then(id => res.json({ id, message: 'Saved' }))
     .catch((err) => {
-      new Log({ message: `CATEGORY_ADD ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'CATEGORY_ADD', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })
     .finally(() => {

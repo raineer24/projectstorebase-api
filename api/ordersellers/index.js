@@ -63,7 +63,7 @@ orderseller.createOrderSeller = (req, res) => {
 * @return {Object}
 */
 orderseller.getOrderseller = (req, res) => {
-  new Log({ message: 'ORDERSELLER_GET', type: 'INFO' }).create();
+  new Log({ message: 'Get specific order by seller account', action: 'ORDERSELLER_GET', type: 'INFO' }).create();
   const instOrderseller = new OrderSeller({});
   instOrderseller.getById(query.validateParam(req.swagger.params, 'id', ''))
     .then((resultList) => {
@@ -73,7 +73,7 @@ orderseller.getOrderseller = (req, res) => {
       return res.json(resultList[0]);
     })
     .catch((err) => {
-      new Log({ message: `ORDERSELLER_GET ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'ORDERSELLER_GET', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
     })
     .finally(() => {
