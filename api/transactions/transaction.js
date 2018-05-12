@@ -129,4 +129,12 @@ Transaction.prototype.grandTotal = () => {
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
+/**
+  * Release connection
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Transaction.prototype.release = () => that.dbConn.releaseConnectionAsync();
+
 module.exports = Transaction;

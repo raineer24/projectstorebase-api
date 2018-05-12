@@ -13,7 +13,6 @@ const transactions = {};
 * @return {Object}
 */
 transactions.getTransactions = (req, res) => {
-  new Log({ message: 'Show all transactions', action: 'GET_ALL_TRANSACTIONS', type: 'INFO' }).create();
   const instTransactions = new Transaction({});
   instTransactions.findAll(0, 100, {
     current: moment().format('YYYY-MM-DD'),
@@ -24,6 +23,9 @@ transactions.getTransactions = (req, res) => {
       if (resOrder.length === 0) {
         return res.status(404).json({ message: 'Not found' });
       }
+      new Log({
+        message: 'Show all transactions', action: 'GET_ALL_TRANSACTIONS', type: 'INFO', selleraccount_id: `${resOrder.id}`,
+      }).create();
       return res.json(resOrder);
     })
     .catch((err) => {
