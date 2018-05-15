@@ -1807,6 +1807,35 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /address/{id}/view:
+    x-swagger-router-controller: address
+    get:
+      tags:
+        - address
+      summary: Get address by address id
+      operationId: getAddress
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Get address by address id
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+              status:
+                type: string
+                example: consumed
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /address/save:
     x-swagger-router-controller: address
     post:

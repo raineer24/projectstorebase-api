@@ -15,7 +15,27 @@ address.connectDb = (req, res) => {
 };
 
 /**
-* List
+* Get address
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+address.getAddress = (req, res) => {
+  new Log({ message: 'Return address by id', action: 'ADDRESS_GET', type: 'INFO' }).create();
+  const instAddress = new Address({});
+  instAddress.getById(query.validateParam(req.swagger.params, 'id', 0))
+    .then(result => res.json(result))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'ADDRESS_GET', type: 'ERROR' }).create();
+      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instAddress.release();
+    });
+};
+
+/**
+* List address
 * @param {Object} req
 * @param {Object} res
 * @return {Object}
@@ -37,7 +57,7 @@ address.getAllAddress = (req, res) => {
 };
 
 /**
-* Create seller
+* Create address
 * @param {Object} req
 * @param {Object} res
 * @return {Object}
@@ -57,7 +77,7 @@ address.createAddress = (req, res) => {
 };
 
 /**
-* Update an order
+* Update an address
 * @param {Object} req
 * @param {Object} res
 * @return {Object}
