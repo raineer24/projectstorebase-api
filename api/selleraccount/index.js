@@ -104,12 +104,16 @@ selleraccount.viewAccount = (req, res) => {
 * @return {Object}
 */
 selleraccount.loginAccount = (req, res) => {
-  new Log({ message: 'SELLER_ACCOUNT_LOGIN', type: 'INFO' }).create();
   const instSellerAccount = new Selleraccount(req.swagger.params.body.value);
   instSellerAccount.authenticate()
     .then(userAuth => userAuth)
     .then(instSellerAccount.authorize)
-    .then(result => res.json(instSellerAccount.cleanResponse(result, { message: 'Found' })))
+    .then((result) => {
+      res.json(instSellerAccount.cleanResponse(result, { message: 'Found' }));
+      new Log({
+        message: 'Logged into Seller Account', action: 'SELLER_ACCOUNT_LOGIN', type: 'INFO', selleraccount_id: `${result.id}`,
+      }).create();
+    })
     .catch(() => res.status(404).json({
       message: 'Not found',
     }))
