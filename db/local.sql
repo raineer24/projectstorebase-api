@@ -530,7 +530,7 @@ CREATE TABLE `orderseller` (
   `orderNumber` char(60) DEFAULT '',
   `orderBarcode` varchar(100) DEFAULT '',
   `printedBy` varchar(50) DEFAULT '',
-  `status` varchar(50) NOT NULL,
+  `status` varchar(50) DEFAULT 'Pending',
   `checkedBy` varchar(50) DEFAULT '',
   `itemList` varchar(500) DEFAULT NULL,
   `totalItems` varchar(50) DEFAULT '',
@@ -603,7 +603,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000);
+INSERT INTO `role` VALUES (1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000),(5,'EOS Internal',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -710,7 +710,8 @@ CREATE TABLE `selleraccount` (
 
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
-INSERT INTO `selleraccount` VALUES (1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',2,1,1512763935519,1512763935531);
+INSERT INTO `selleraccount` VALUES
+(1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',1,1,1512763935519,1512763935531),(3,'admin.personnel','password','admin.personnel@mailinator.com','Admin Personel',1,1,1525937317483,1525937317483),(4,'assembly.personnel','password','assembly.personnel@mailinator.com','assembly Personel',1,2,1525937317483,1525937317483),(5,'finance.personnel','password','finance.personnel@mailinator.com','finance Personel',1,3,1525937317483,1525937317483),(6,'managment.personnel','password','managment.personnel@mailinator.com','managment Personel',1,4,1525937317483,1525937317483),(7,'eos.internal','password','eos.internal@mailinator.com','eos internal',1,5,1525937317483,1525937317483);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
