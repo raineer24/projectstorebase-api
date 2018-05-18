@@ -909,6 +909,7 @@ CREATE TABLE `useraccount` (
   `uiid` char(150) DEFAULT NULL,
   `gender` char(10) DEFAULT NULL,
   `mobileNumber` char(20) DEFAULT NULL,
+  `birthdate` bigint(50) DEFAULT NULL,
   `deactivated` char(1) DEFAULT '0',
   `forcedReset` char(1) DEFAULT '0',
   `dateCreated` bigint(50) NOT NULL,
@@ -923,7 +924,7 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0','0',1512810359181,1512810359181),(5,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor','Queja','12345','M','123123','0','0',1512763400407,1512763400407),(6,'dzulai@gmail.com','password','dzulai@gmail.com','Mark','Julio','12345','M','123123','0','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','12345','M','123123','0','1',1512763400407,1512763400407);
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','+63 9087654321',468432000000,'0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',468432000000,'0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',468432000000,'0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',468432000000,'0','0',1512810359181,1512810359181),(5,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor','Queja','12345','M','+63 9087654321',460483200000,'0','0',1512763400407,1512763400407),(6,'dzulai1@gmail.com','password','dzulai1@gmail.com','Mark','Julio','12345','M','+63 9085121742',463593600000,'0','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','111111','M','+63 9177433202',463593600000,'0','1',1512763400407,1512763400407);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
