@@ -364,6 +364,8 @@ CREATE TABLE `partnerbuyeruser` (
 `username` CHAR(60) NOT NULL,
 `email` CHAR(100),
 `name` VARCHAR(250) NOT NULL,
+`credit` BIGINT(20) NOT NULL,
+`balance` BIGINT(20),
 `dateCreated` BIGINT(50) NOT NULL,
 `dateUpdated` BIGINT(50) NOT NULL,
 `useraccount_id` BIGINT(10) NOT NULL,
@@ -378,7 +380,7 @@ PRIMARY KEY (`id`)
 
 LOCK TABLES `partnerbuyeruser` WRITE;
 /*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
-INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',1522637372669,1522637372669,7,1);
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500,2500,1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500,2500,1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500,2500,1522637372669,1522637372669,7,1);
 /*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -696,7 +698,7 @@ CREATE TABLE `selleraccount` (
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
   `seller_id` bigint(50) DEFAULT 0,
-  `role_id` bigint(10) NOT NULL,
+  `role_id` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -887,7 +889,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','CONFIRM_PAYMENT','',0,1518409422524,1518409422524,'1');
+INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','','CONFIRM_PAYMENT',1200,1518409422524,1518409422524,'1');
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -922,7 +924,7 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0','0',1512810359181,1512810359181),(5,'vqueja@yahoo.com','password','vqueja@yahoo.com','Victor','Queja','12345','M','123123','0','1',1512763400407,1512763400407),(6,'dzulai@gmail.com','password','dzulai@gmail.com','Mark','Julio','12345','M','123123','0','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','12345','M','123123','0','1',1512763400407,1512763400407);
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0','0',1512810359181,1512810359181),(5,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor','Queja','12345','M','123123','0','0',1512763400407,1512763400407),(6,'dzulai@gmail.com','password','dzulai@gmail.com','Mark','Julio','12345','M','123123','0','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','12345','M','123123','0','1',1512763400407,1512763400407);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
