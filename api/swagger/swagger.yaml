@@ -1778,8 +1778,130 @@ paths:
              message:
                type: string
                example: Unauthorized
-
-
+  /address/{useraccountId}/list:
+    x-swagger-router-controller: address
+    get:
+      tags:
+        - address
+      summary: Get all address by user
+      operationId: getAllAddress
+      parameters:
+        - $ref: "#/parameters/useraccountId"
+      responses:
+        200:
+          description: Get all address
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+              status:
+                type: string
+                example: consumed
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /address/{id}/view:
+    x-swagger-router-controller: address
+    get:
+      tags:
+        - address
+      summary: Get address by address id
+      operationId: getAddress
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Get address by address id
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+              status:
+                type: string
+                example: consumed
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /address/save:
+    x-swagger-router-controller: address
+    post:
+      tags:
+        - address
+      summary: Create user address
+      operationId: createAddress
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/Address"
+      responses:
+        200:
+          description: Successful address creation
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /address/{id}/save:
+    x-swagger-router-controller: address
+    put:
+      tags:
+        - address
+      summary: Update address
+      operationId: updateAddress
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: update address
+          required: true
+          schema:
+            $ref: "#/definitions/Address"
+      responses:
+        200:
+          description: Successfully updated voucher record
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+              status:
+                type: string
+                example: consumed
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -1874,6 +1996,18 @@ definitions:
     properties:
       message:
         type: string
+  Address:
+    title: Address
+    type: object
+    required:
+      - useraccount_id
+    properties:
+      useraccount_id:
+        type: string
+        description: user id
+      doc:
+        type: object
+        description: "Address object"
   UserLogin:
     title: User
     type: object

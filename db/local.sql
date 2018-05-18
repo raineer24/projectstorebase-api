@@ -31,6 +31,7 @@ CREATE TABLE `address` (
   `country_id` bigint(50) DEFAULT NULL,
   `postalCode` char(50) NOT NULL,
   `default` bit(1) DEFAULT b'1',
+  `billing` bit(1) DEFAULT b'1',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   `useraccount_id` varchar(50) NOT NULL,
