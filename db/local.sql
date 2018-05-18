@@ -1048,6 +1048,34 @@ INSERT INTO `voucher` VALUES (1,'10000','100',1522454400000,1522454400000,152245
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+DROP TABLE IF EXISTS `orderpaymentdetails`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `orderpaymentdetails` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `orderId` char(50) NOT NULL,
+  `paymentType` char(20) NOT NULL,
+  `referenceId` char(50) NOT NULL,
+  `referenceId2` char(50),
+  `amount` bigint(50) NOT NULL,
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--local.sql
+-- Dumping data for table `voucher`
+--
+
+LOCK TABLES `orderpaymentdetails` WRITE;
+/*!40000 ALTER TABLE `orderpaymentdetails` DISABLE KEYS */;
+-- INSERT INTO `orderpaymentdetails` VALUES (1,'10000','100',1522454400000,1522454400000,1522454400000,'good'),(2,'1001','20',1522454400000,1519257600000,1519257600000,'good'),(3,'1003','50',1522454400000,1519257600000,1519257600000,'good'),(4,'1004','100',1522454400000,1519257600000,1519257600000,'expired'),(5,'1005','100',1522454400000,1519257600000,1519257600000,'good'),(6,'1006','100',1522454400000,1519257600000,1519257600000,'good'),(7,'1007','100',1522454400000,1519257600000,1519257600000,'good');
+/*!40000 ALTER TABLE `orderpaymentdetails` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+
 
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
