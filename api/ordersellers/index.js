@@ -12,14 +12,18 @@ const orderseller = {};
 * @return {Object}
 */
 orderseller.getAllOrderSellers = (req, res) => {
-  new Log({ message: 'ORDERSELLER_LIST', type: 'INFO' }).create();
   const instOrder = new OrderSeller({});
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
+    sellerId: query.validateParam(req.swagger.params, 'selleraccount_id', `${res.id}`),
   })
-    .then(result => res.json(result))
+    .then((result) => {
+      res.json(result);
+      new Log({
+        message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', selleraccount_id: `${result.id}`,
+      }).create();
+    })
     .catch((err) => {
-      new Log({ message: `ORDERSELLER_LIST ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'ORDERSELLER_LIST', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
@@ -34,7 +38,7 @@ orderseller.getAllOrderSellers = (req, res) => {
 * @return {Object}
 */
 orderseller.createOrderSeller = (req, res) => {
-  new Log({ message: 'ORDERSELLER_CREATE', type: 'INFO' }).create();
+  new Log({ message: 'Created a new order seller', action: 'ORDERSELLER_CREATE', type: 'INFO' }).create();
   const instOrderseller = new OrderSeller(req.swagger.params.body.value);
   instOrderseller.create()
     .then((result) => {
@@ -48,7 +52,7 @@ orderseller.createOrderSeller = (req, res) => {
       });
     })
     .catch((err) => {
-      new Log({ message: `ORDERSELLER_CREATE ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'ORDERSELLER_CREATE', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
     })
     .finally(() => {
