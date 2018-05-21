@@ -27,6 +27,7 @@ function Rating(orderSeller) {
       'starCount',
       'orderkey',
       'useraccount_id',
+      'feedback',
       'dateCreated',
       'dateUpdated',
     ],

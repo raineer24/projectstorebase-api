@@ -567,6 +567,7 @@ CREATE TABLE `rating` (
   `starCount` char(1) NOT NULL,
   `orderkey` char(150) NOT NULL,
   `useraccount_id` bigint(50) DEFAULT 0,
+  `feedback` char(200) DEFAULT ' ',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
