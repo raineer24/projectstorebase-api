@@ -1750,6 +1750,41 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /orderfeedback:
+    x-swagger-router-controller: orderfeedback
+    post:
+      tags:
+        - orderfeedback
+      summary: create an order feedback entry
+      operationId: createFeedBack
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/RatingCreate"
+      responses:
+        200:
+          description: Successful rated
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /logs:
     x-swagger-router-controller: logs
     get:
@@ -2065,6 +2100,15 @@ definitions:
       starCount:
         type: number
         description: number of stars
+  # FeedBackCreate:
+  #   title: FeedBackCreate
+  #   type: object
+  #   required:
+  #     - starCount
+  #   properties:
+  #     starCount:
+  #       type: number
+  #       description: number of stars
   TimeslotOrderEntry:
     title: TimeslotOrderEntry
     type: object
