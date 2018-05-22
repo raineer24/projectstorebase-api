@@ -457,6 +457,34 @@ INSERT INTO `order` VALUES (1,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVi
 UNLOCK TABLES;
 
 --
+-- Table structure for table `rating`
+--
+
+DROP TABLE IF EXISTS `orderfeedback`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `orderfeedback` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `starCount` char(1) NOT NULL,
+  `orderkey` char(150) NOT NULL,
+  `useraccount_id` bigint(50) DEFAULT 0,
+  `feedback` char(200) DEFAULT ' ',
+  `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rating`
+--
+
+LOCK TABLES `orderfeedback` WRITE;
+/*!40000 ALTER TABLE `orderfeedback` DISABLE KEYS */;
+/*!40000 ALTER TABLE `orderfeedback` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ordergc`
 --
 
@@ -568,6 +596,7 @@ CREATE TABLE `rating` (
   `starCount` char(1) NOT NULL,
   `orderkey` char(150) NOT NULL,
   `useraccount_id` bigint(50) DEFAULT 0,
+  `feedback` char(200) DEFAULT ' ',
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
