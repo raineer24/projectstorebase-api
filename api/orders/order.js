@@ -9,6 +9,7 @@ const Timeslotorder = require('../timeslotorders/timeslotorder');
 const Transaction = require('../transactions/transaction');
 const OrderItem = require('../orderItems/orderItem');
 const Orderseller = require('../ordersellers/orderseller');
+const Gc = require('../gc/gc');
 
 let that;
 
@@ -276,9 +277,19 @@ Order.prototype.getByValue = (value, field) => {
 };
 
 
-Order.prototype.processOrder = id => new BluePromise((resolve, reject) => {
+Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject) => {
   const instTrans = new Transaction({});
   const transactionId = instTrans.getTransaction();
+  const instGc = new Gc({});
+  log.info('GC LIST:');
+  log.info(gcList);
+  for (let ctr = 0; ctr < gcList.length; ctr += 1) {
+    instGc.getByValue(gcList[ctr], 'code').then((resultList) => {
+      if (resultList[0].status !== 'unused') {
+        reject(`Cannot complete order. GC ${gcList[ctr]} is not available!`);
+      }
+    });
+  }
   that.setTransactionNumber(transactionId);
   that.update(id, true) // update(order_id, confirmOrder)
     .then(new Timeslotorder({ confirmed: 1 }).confirmOrder) // Update timeslotorder
