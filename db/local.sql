@@ -530,6 +530,7 @@ CREATE TABLE `orderitem` (
   `quantity` char(5) DEFAULT NULL,
   `status` char(20) DEFAULT 'ordered',
   `processed` char(1) DEFAULT '0',
+  `specialInstructions` tinytext DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -540,10 +541,10 @@ CREATE TABLE `orderitem` (
 
 LOCK TABLES `orderitem` WRITE;
 /*!40000 ALTER TABLE `orderitem` DISABLE KEYS */;
-INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,5,0,'5','ordered','0'),(2,'',1518409396634,1518409396635,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,6,0,'4','ordered','0'),(3,'',1518409398453,1518409398454,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,7,0,'5','ordered','0'),(4,'',1518409408609,1518409408609,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,18,0,'6','ordered','0'),(5,'',1518409453725,1518409453725,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,3,0,'7','ordered','0'),(6,'',1518409454960,1518409454960,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,4,0,'3','ordered','0'),(7,'',1518409456281,1518409456282,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,5,0,'4','ordered','0'),(8,'',1518409457495,1518409457496,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,6,0,'4','ordered','0'),(9,'',1518409513274,1518409513275,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,8,0,'4','ordered','0'),
-(10,'',1524047665263,1524047665263,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,9,2,'1','ordered','0'),
-(11,'',1524047665982,1524047665982,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,10,2,'1','ordered','0'),
-(12,'',1524047670793,1524047670794,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,8,2,'8','ordered','0');
+INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,5,0,'5','ordered','0',''),(2,'',1518409396634,1518409396635,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,6,0,'4','ordered','0',''),(3,'',1518409398453,1518409398454,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,7,0,'5','ordered','0',''),(4,'',1518409408609,1518409408609,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,18,0,'6','ordered','0',''),(5,'',1518409453725,1518409453725,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,3,0,'7','ordered','0',''),(6,'',1518409454960,1518409454960,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,4,0,'3','ordered','0',''),(7,'',1518409456281,1518409456282,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,5,0,'4','ordered','0',''),(8,'',1518409457495,1518409457496,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,6,0,'4','ordered','0',''),(9,'',1518409513274,1518409513275,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,8,0,'4','ordered','0',''),
+(10,'',1524047665263,1524047665263,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,9,2,'1','ordered','0',''),
+(11,'',1524047665982,1524047665982,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,10,2,'1','ordered','0',''),
+(12,'',1524047670793,1524047670794,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,8,2,'8','ordered','0','');
 /*!40000 ALTER TABLE `orderitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -939,6 +940,7 @@ CREATE TABLE `useraccount` (
   `uiid` char(150) DEFAULT NULL,
   `gender` char(10) DEFAULT NULL,
   `mobileNumber` char(20) DEFAULT NULL,
+  `birthdate` bigint(50) DEFAULT NULL,
   `deactivated` char(1) DEFAULT '0',
   `forcedReset` char(1) DEFAULT '0',
   `dateCreated` bigint(50) NOT NULL,
@@ -953,7 +955,7 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','123123','0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','','0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','','0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','','0','0',1512810359181,1512810359181),(5,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor','Queja','12345','M','123123','0','0',1512763400407,1512763400407),(6,'dzulai@gmail.com','password','dzulai@gmail.com','Mark','Julio','12345','M','123123','0','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','12345','M','123123','0','1',1512763400407,1512763400407);
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','+63 9087654321',468432000000,'0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',468432000000,'0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',468432000000,'0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',468432000000,'0','0',1512810359181,1512810359181),(5,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor','Queja','12345','M','+63 9087654321',460483200000,'0','0',1512763400407,1512763400407),(6,'dzulai1@gmail.com','password','dzulai1@gmail.com','Mark','Julio','12345','M','+63 9085121742',463593600000,'0','1',1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','111111','M','+63 9177433202',463593600000,'0','1',1512763400407,1512763400407);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
