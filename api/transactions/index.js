@@ -92,7 +92,7 @@ transactions.recordTransaction = (req, res) => {
 transactions.updateTransaction = (req, res) => {
   new Log({ message: 'Update a transaction', action: 'TRANSACTION_UPDATE', type: 'INFO' }).create();
   const instTrans = new Transaction(req.swagger.params.body.value);
-  instTrans.update()
+  instTrans.updateByOrderId(query.validateParam(req.swagger.params, 'order_id', 'order_id'))
     .then(id => res.json({ id, message: 'Saved' }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'TRANSACTION_UPDATE', type: 'ERROR' }).create();

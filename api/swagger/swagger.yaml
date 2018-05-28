@@ -1082,7 +1082,7 @@ paths:
         - name: body
           in: body
           description: post contents
-          required: true
+          required: false
           schema:
             $ref: "#/definitions/transactionEntry"
       responses:
@@ -1102,7 +1102,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /transactions/{orderId}:
+  /transactions/{order_id}:
     x-swagger-router-controller: transactions
     get:
       tags:
@@ -1110,7 +1110,7 @@ paths:
       summary: Get a transaction record bases on transaction number
       operationId: getTransaction
       parameters:
-        - $ref: "#/parameters/orderId"
+        - $ref: "#/parameters/order_id"
       responses:
         200:
           description: Fetch a transactions
@@ -1134,11 +1134,11 @@ paths:
       summary: create transaction record
       operationId: updateTransaction
       parameters:
-        - $ref: "#/parameters/orderId"
+        - $ref: "#/parameters/order_id"
         - name: body
           in: body
           description: post contents
-          required: true
+          required: false
           schema:
             $ref: "#/definitions/transactionUpdate"
       responses:
@@ -2088,11 +2088,14 @@ definitions:
   transactionUpdate:
     type: object
     required:
-      - number
+      - order_id
     properties:
-      number:
-        type: string
-        description: transaction number
+      order_id:
+        type: integer
+        description: order Id
+      value:
+        type: number
+        description: transaction value
   selleraccount:
     title: ""
     type: object
@@ -2333,6 +2336,11 @@ definitions:
         type: number
         description: category level
 parameters:
+  order_id:
+    in: path
+    name: order_id
+    type: integer
+    required: true
   number:
     in: query
     name: number
