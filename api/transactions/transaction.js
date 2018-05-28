@@ -57,6 +57,12 @@ function Transaction(transaction) {
 */
 Transaction.prototype.getTransaction = () => that.transactionId;
 
+Transaction.prototype.setTransactionNumber = (number) => {
+  that.model = _.merge(that.model, {
+    number,
+  });
+};
+
 /**
   * findAll
   * @param {string} limit
@@ -110,6 +116,21 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
     delete that.model.id;
   }
   const query = that.sqlTable.insert(that.model).toQuery();
+  that.dbConn.queryAsync(query.text, query.values)
+    .then((response) => {
+      resolve(that.model.number ? that.model.number : response.insertId);
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+
+/**
+  * update
+  * @return {object/number}
+*/
+Transaction.prototype.update = () => new BluePromise((resolve, reject) => {
+  const query = that.sqlTable.update(that.model).toQuery();
   that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
       resolve(that.model.number ? that.model.number : response.insertId);

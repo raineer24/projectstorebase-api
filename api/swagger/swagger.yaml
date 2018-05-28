@@ -887,6 +887,59 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  # /orderpaymentdetails:
+  #   x-swagger-router-controller: orderItems
+  #   get:
+  #     tags:
+  #       - orderpaymentDetails
+  #     summary: Get items from the current order
+  #     operationId: getOrderPaymentDetails
+  #     responses:
+  #       200:
+  #         description: Fetch all order items
+  #         schema:
+  #           type: object
+  #           properties:
+  #             id:
+  #               type: number
+  #               example: 10012
+  #       403:
+  #         description: Unauthorized
+  #         schema:
+  #           type: object
+  #           properties:
+  #             message:
+  #               type: string
+  #               example: Unauthorized
+  #   post:
+  #     tags:
+  #       - orderpaymentDetails
+  #     summary: Add an item to the order
+  #     operationId: addOrderPaymentDetails
+  #     parameters:
+  #       - name: body
+  #         in: body
+  #         description: post contents
+  #         required: true
+  #         schema:
+  #           $ref: "#/definitions/OrderPaymentDetailsEntry"
+  #     responses:
+  #       200:
+  #         description: Successful created item
+  #         schema:
+  #           type: object
+  #           properties:
+  #             id:
+  #               type: number
+  #               example: 10012
+  #       403:
+  #         description: Unauthorized
+  #         schema:
+  #           type: object
+  #           properties:
+  #             message:
+  #             type: string
+  #             example: Unauthorized
   /orderItem/{id}:
     x-swagger-router-controller: orderItems
     put:
@@ -1001,11 +1054,96 @@ paths:
     get:
       tags:
       - transactions
-      summary: Get timeslotorder record
+      summary: Get all transaction record
       operationId: getTransactions
       responses:
         200:
           description: Fetch all transactions
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    post:
+      tags:
+        - transactions
+      summary: create transaction record
+      operationId: recordTransaction
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/transactionEntry"
+      responses:
+        200:
+          description: Successful updated order
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /transactions/{tNum}:
+    x-swagger-router-controller: transactions
+    get:
+      tags:
+      - transactions
+      summary: Get a transaction record bases on transaction number
+      operationId: getTransaction
+      parameters:
+        - $ref: "#/parameters/tNum"
+      responses:
+        200:
+          description: Fetch a transactions
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    put:
+      tags:
+        - transactions
+      summary: create transaction record
+      operationId: updateTransaction
+      parameters:
+        - $ref: "#/parameters/tNum"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/transactionUpdate"
+      responses:
+        200:
+          description: Successful updated order
           schema:
             type: object
             properties:
@@ -1941,6 +2079,20 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  transactionEntry:
+    type: object
+    properties:
+      id:
+        type: string
+        description: transaction id
+  transactionUpdate:
+    type: object
+    required:
+      - number
+    properties:
+      number:
+        type: string
+        description: transaction number
   selleraccount:
     title: ""
     type: object
@@ -2135,6 +2287,19 @@ definitions:
       orderkey:
         type: string
         description: user session id
+  OrderPaymentDetailsEntry:
+    title: OrderPayment
+    type: object
+    required:
+      - order_id
+      - payment
+    properties:
+      order_id:
+        type: number
+        description: order id
+      payment:
+        type: number
+        description: payment made for the order
   OrderItemEntry:
     title: ItemOrder
     type: object
@@ -2168,6 +2333,11 @@ definitions:
         type: number
         description: category level
 parameters:
+  number:
+    in: query
+    name: number
+    type: string
+    required: true
   useraccount_id:
     in: path
     name: useraccount_id
@@ -2203,6 +2373,11 @@ parameters:
   orderkey:
     in: query
     name: orderkey
+    type: string
+    required: true
+  tNum:
+    in: path
+    name: tNum
     type: string
     required: true
   orderkeypath:
