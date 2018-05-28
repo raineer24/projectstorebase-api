@@ -16,7 +16,7 @@ const transactions = {};
 transactions.getTransaction = (req, res) => {
   new Log({ message: 'Show current order details', action: 'ORDER_GET', type: 'INFO' }).create();
   const instTransactions = new Transaction({});
-  instTransactions.getByValue(query.validateParam(req.swagger.params, 'number', ''), 'number')
+  instTransactions.getByValue(query.validateParam(req.swagger.params, 'orderId', 0), 'order_id')
     .then((resultList) => {
       if (resultList.length === 0) {
         return res.status(404).json({ message: 'Not found' });

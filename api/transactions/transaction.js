@@ -151,6 +151,29 @@ Transaction.prototype.grandTotal = () => {
 };
 
 /**
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Transaction.prototype.findById = id => that.getByValue(id, 'id');
+Transaction.prototype.getById = id => that.getByValue(id, 'id');
+
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Transaction.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
+  return that.dbConn.queryAsync(query.text, query.values);
+};
+
+/**
   * Release connection
   * @param {any} value
   * @param {string} field

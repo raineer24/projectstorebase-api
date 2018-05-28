@@ -1102,7 +1102,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /transactions/{tNum}:
+  /transactions/{orderId}:
     x-swagger-router-controller: transactions
     get:
       tags:
@@ -1110,7 +1110,7 @@ paths:
       summary: Get a transaction record bases on transaction number
       operationId: getTransaction
       parameters:
-        - $ref: "#/parameters/tNum"
+        - $ref: "#/parameters/orderId"
       responses:
         200:
           description: Fetch a transactions
@@ -1134,7 +1134,7 @@ paths:
       summary: create transaction record
       operationId: updateTransaction
       parameters:
-        - $ref: "#/parameters/tNum"
+        - $ref: "#/parameters/orderId"
         - name: body
           in: body
           description: post contents
