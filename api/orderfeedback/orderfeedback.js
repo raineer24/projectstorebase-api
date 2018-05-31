@@ -11,14 +11,14 @@ let that;
   * @param {object} order
   * @return {object}
 */
-function Rating(orderSeller) {
+function Orderfb(orderSeller) {
   sql.setDialect('mysql');
 
   this.model = _.extend(orderSeller, {
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
-  this.table = 'rating';
+  this.table = 'Orderfb';
   this.dbConn = Conn;
   this.sqlTable = sql.define({
     name: this.table,
@@ -39,7 +39,7 @@ function Rating(orderSeller) {
   * create
   * @return {object/number}
 */
-Rating.prototype.create = () => new BluePromise((resolve, reject) => {
+Orderfb.prototype.create = () => new BluePromise((resolve, reject) => {
   const query = that.sqlTable.insert(that.model).toQuery();
   that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
@@ -56,8 +56,8 @@ Rating.prototype.create = () => new BluePromise((resolve, reject) => {
   * @param {string} offset
   * @return {object}
 */
-Rating.prototype.findById = id => that.getByValue(id, 'id');
-Rating.prototype.getById = id => that.getByValue(id, 'id');
+Orderfb.prototype.findById = id => that.getByValue(id, 'id');
+Orderfb.prototype.getById = id => that.getByValue(id, 'id');
 
 /**
   * Get by value
@@ -65,7 +65,7 @@ Rating.prototype.getById = id => that.getByValue(id, 'id');
   * @param {string} field
   * @return {object<Promise>}
 */
-Rating.prototype.getByValue = (value, field) => {
+Orderfb.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
     .from(that.sqlTable)
@@ -79,6 +79,6 @@ Rating.prototype.getByValue = (value, field) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Rating.prototype.release = () => that.dbConn.releaseConnectionAsync();
+Orderfb.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
-module.exports = Rating;
+module.exports = Orderfb;
