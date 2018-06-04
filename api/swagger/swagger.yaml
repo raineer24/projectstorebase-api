@@ -611,13 +611,13 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  # /order:
+  # /validategc:
   #   x-swagger-router-controller: orders
   #   get:
   #     tags:
-  #       - order
-  #     summary: Get all orders
-  #     operationId: getAllOrders
+  #       - gc
+  #     summary: Get all giftcerts
+  #     operationId: validateGC
   #     parameters:
   #       - $ref: "#/parameters/skip"
   #       - $ref: "#/parameters/limit"
@@ -1750,6 +1750,41 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /orderfeedback:
+    x-swagger-router-controller: orderfeedback
+    post:
+      tags:
+        - orderfeedback
+      summary: create an order feedback entry
+      operationId: createFeedBack
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/RatingCreate"
+      responses:
+        200:
+          description: Successful rated
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /logs:
     x-swagger-router-controller: logs
     get:
@@ -1990,6 +2025,14 @@ definitions:
       doc:
         type: object
         description: "Item object"
+  gcList:
+    title: gc
+    type: object
+    properties:
+      code:
+        type: string
+      value:
+        type: string
   ErrorResponse:
     required:
       - message
@@ -2057,6 +2100,15 @@ definitions:
       starCount:
         type: number
         description: number of stars
+  # FeedBackCreate:
+  #   title: FeedBackCreate
+  #   type: object
+  #   required:
+  #     - starCount
+  #   properties:
+  #     starCount:
+  #       type: number
+  #       description: number of stars
   TimeslotOrderEntry:
     title: TimeslotOrderEntry
     type: object
@@ -2126,6 +2178,13 @@ parameters:
     name: id
     type: string
     required: true
+  gcArr:
+    in: query
+    name: gcArr
+    type: array
+    required: false
+    items:
+      type: string
   code:
     in: path
     name: code

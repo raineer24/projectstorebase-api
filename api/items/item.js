@@ -313,15 +313,24 @@ Item.prototype.getItemSuggestions = (id, skip, limit) => new BluePromise((resolv
   that.findById(id)
     .then((results) => {
       if (results.length > 0) {
+        let category = results[0].category1;
+        if (results[0].category2) {
+          category = results[0].category2;
+        }
+        if (results[0].category3) {
+          category = results[0].category3;
+        }
         new Category({}).findAll(0, 10, {
-          list: [results[0].category1, results[0].category2, results[0].category3],
+          list: [category],
         })
           .then((catResult) => {
             that.findAll(skip, limit, {
               suggestions: _.map(catResult, obj => obj.id),
             })
               .then((itemList) => {
-                resolve(itemList);
+                const toDelete = new Set([id]);
+                const newArray = itemList.filter(obj => !toDelete.has(obj.id));
+                resolve(newArray);
               })
               .catch((err) => {
                 reject(err);

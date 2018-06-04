@@ -35,6 +35,7 @@ function OrderItem(orderItem) {
       'quantity',
       'status',
       'processed',
+      'specialInstructions',
     ],
   });
   this.sqlTableItem = sql.define({
