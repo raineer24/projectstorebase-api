@@ -135,9 +135,9 @@ function executeQuery(skip, limit, filters, sortBy, sort) {
         ${filters.keywords[1] && filters.keywords[1].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[1]}%'` : ''}
         ${filters.keywords[2] && filters.keywords[2].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[2]}%'` : ''}
         ${filters.keywords[3] && filters.keywords[3].length > 2 ? ` OR ${that.table}.name LIKE '%${filters.keywords[3]}%'` : ''}
-        OR ${that.table}.category1 IN ${filters.categories}
-        OR ${that.table}.category2 IN ${filters.categories}
-        OR ${that.table}.category3 IN ${filters.categories}
+        OR ${that.table}.category1 IN (${filters.categories})
+        OR ${that.table}.category2 IN (${filters.categories})
+        OR ${that.table}.category3 IN (${filters.categories})
       ) ORDER BY ${sortString} ${sort} LIMIT ${skip}, ${limit}`;
   } else if (filters.keywords && filters.keywords.length > 1) {
     strSql = `
