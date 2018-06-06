@@ -1715,7 +1715,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /ratings:
+  /ratings/save:
     x-swagger-router-controller: ratings
     post:
       tags:
@@ -1750,41 +1750,32 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /orderfeedback:
-    x-swagger-router-controller: orderfeedback
-    post:
+  /ratings:
+    x-swagger-router-controller: ratings
+    get:
       tags:
-        - orderfeedback
-      summary: create an order feedback entry
-      operationId: createFeedBack
+        - rating
+      summary: get a rating entry
+      operationId: getRating
       parameters:
-        - name: body
-          in: body
-          description: post contents
-          required: true
-          schema:
-            $ref: "#/definitions/RatingCreate"
+        - $ref: "#/parameters/orderkey"
       responses:
-        200:
-          description: Successful rated
-          schema:
-            type: object
-            properties:
-              id:
-                type: number
-                example: 10012
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        403:
-          description: Unauthorized
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
+       200:
+         description: Success
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 123445
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
   /logs:
     x-swagger-router-controller: logs
     get:

@@ -28,6 +28,7 @@ function Rating(orderSeller) {
       'orderkey',
       'useraccount_id',
       'feedback',
+      'feedbacktype',
       'dateCreated',
       'dateUpdated',
     ],
