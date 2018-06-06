@@ -57,6 +57,12 @@ function Transaction(transaction) {
 */
 Transaction.prototype.getTransaction = () => that.transactionId;
 
+Transaction.prototype.setTransactionNumber = (number) => {
+  that.model = _.merge(that.model, {
+    number,
+  });
+};
+
 /**
   * findAll
   * @param {string} limit
@@ -119,6 +125,33 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
+/**
+  * update
+  * @return {object/number}
+*/
+Transaction.prototype.updateByOrderId = orderId => new BluePromise((resolve, reject) => {
+  that.getByValue(orderId, 'order_id')
+    .then((resultList) => {
+      if (resultList.length === 0) {
+        reject('Not found');
+      } else {
+        that.model = _.merge(resultList[0], that.model);
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
+        that.dbConn.queryAsync(query.text, query.values)
+          .then((response) => {
+            resolve(response.message);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      }
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+
 Transaction.prototype.grandTotal = () => {
   let query = null;
   query = that.sqlTable
@@ -126,6 +159,29 @@ Transaction.prototype.grandTotal = () => {
     .from(that.sqlTable)
     .toQuery();
   log.info(query.text);
+  return that.dbConn.queryAsync(query.text, query.values);
+};
+
+/**
+  * findById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Transaction.prototype.findById = id => that.getByValue(id, 'id');
+Transaction.prototype.getById = id => that.getByValue(id, 'id');
+
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Transaction.prototype.getByValue = (value, field) => {
+  const query = that.sqlTable
+    .select(that.sqlTable.star())
+    .from(that.sqlTable)
+    .where(that.sqlTable[field].equals(value)).toQuery();
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
