@@ -1,8 +1,33 @@
-// const query = require('../../service/query');
+const query = require('../../service/query');
 const Rating = require('./rating');
 const Log = require('../logs/log');
 
 const rating = {};
+
+/**
+* Get an rating
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+rating.getRating = (req, res) => {
+  new Log({ message: 'Search rating', action: 'RATING_GET', type: 'INFO' }).create();
+  const instRating = new Rating({});
+  instRating.getByValue(query.validateParam(req.swagger.params, 'orderkey', ''), 'orderkey')
+    .then((resultList) => {
+      if (resultList.length === 0) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(resultList[0]);
+    })
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'RATING_GET', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instRating.release();
+    });
+};
 
 /**
 * List
