@@ -30,6 +30,8 @@ function Partnerbuyeruser(user) {
       'username',
       'email',
       'name',
+      'credit',
+      'balance',
       'dateCreated',
       'dateUpdated',
       'useraccount_id',
@@ -259,21 +261,15 @@ Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
 };
 
 Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
-  delete that.model.username;
-  if (!that.model.password || !that.model.newPassword) {
-    delete that.model.password;
-  } else {
-    delete that.model.newPassword;
-  }
   that.model.dateUpdated = new Date().getTime();
-  that.getById(id)
+  that.getByValue(id, 'useraccount_id')
     .then((resultList) => {
       if (!resultList[0].id) {
-        reject('Not Found');
+        reject('Not foundssss');
       } else {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
-          .where(that.sqlTable.id.equals(id)).toQuery();
+          .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             resolve(response.message);
@@ -283,8 +279,8 @@ Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
           });
       }
     })
-    .catch(() => {
-      reject('Not Found');
+    .catch((err) => {
+      reject(err);
     });
 });
 

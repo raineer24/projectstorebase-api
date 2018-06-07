@@ -62,6 +62,26 @@ partnerbuyeruser.getUser = (req, res) => {
     });
 };
 
+/**
+* Update seller
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+partnerbuyeruser.updateAccount = (req, res) => {
+  new Log({ message: 'PARTNERBUYERUSER_ACCOUNT_UPDATE', type: 'INFO' }).create();
+  const instPartnerbuyeruser = new Partnerbuyeruser(req.swagger.params.body.value);
+  instPartnerbuyeruser.update(query.validateParam(req.swagger.params, 'useraccount_id', 0))
+    .then(status => res.json({ status, message: 'Updated' }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'PARTNERBUYERUSER_ACCOUNT_UPDATE', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instPartnerbuyeruser.release();
+    });
+};
+
 partnerbuyeruser.sendPasswordEmails = (req, res) => {
   new Log({ message: 'PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS', type: 'INFO' }).create();
   const instUser = new Partnerbuyeruser();
