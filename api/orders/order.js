@@ -357,6 +357,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
       body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
       resolve({
         from: 'info@eos.com.ph',
+        bcc: 'raineerdelarita@gmail.com',
         to: orderEntry.email,
         subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
         text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
