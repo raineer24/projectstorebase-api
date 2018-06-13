@@ -528,6 +528,8 @@ CREATE TABLE `orderitem` (
   `item_id` bigint(50) NOT NULL,
   `order_id` bigint(50) DEFAULT 0,
   `quantity` char(5) DEFAULT NULL,
+  `finalQuantity` char(5) DEFAULT NULL,
+  `finalPrice` char(5) DEFAULT NULL,
   `status` char(20) DEFAULT 'ordered',
   `processed` char(1) DEFAULT '0',
   `specialInstructions` tinytext DEFAULT NULL,
@@ -541,10 +543,10 @@ CREATE TABLE `orderitem` (
 
 LOCK TABLES `orderitem` WRITE;
 /*!40000 ALTER TABLE `orderitem` DISABLE KEYS */;
-INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,5,0,'5','ordered','0',''),(2,'',1518409396634,1518409396635,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,6,0,'4','ordered','0',''),(3,'',1518409398453,1518409398454,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,7,0,'5','ordered','0',''),(4,'',1518409408609,1518409408609,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,18,0,'6','ordered','0',''),(5,'',1518409453725,1518409453725,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,3,0,'7','ordered','0',''),(6,'',1518409454960,1518409454960,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,4,0,'3','ordered','0',''),(7,'',1518409456281,1518409456282,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,5,0,'4','ordered','0',''),(8,'',1518409457495,1518409457496,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,6,0,'4','ordered','0',''),(9,'',1518409513274,1518409513275,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,8,0,'4','ordered','0',''),
-(10,'',1524047665263,1524047665263,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,9,2,'1','ordered','0',''),
-(11,'',1524047665982,1524047665982,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,10,2,'1','ordered','0',''),
-(12,'',1524047670793,1524047670794,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,8,2,'8','ordered','0','');
+INSERT INTO `orderitem` VALUES (1,'',1518409395109,1518409395109,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,5,0,'5','','','ordered','0',''),(2,'',1518409396634,1518409396635,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,6,0,'4','','','ordered','0',''),(3,'',1518409398453,1518409398454,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,7,0,'5','','','ordered','0',''),(4,'',1518409408609,1518409408609,'fs6ELK1vR3dT8aD4yTCw1518409390169k6VxV0ff6tZ6pdryq9LO',0,18,0,'6','','','ordered','0',''),(5,'',1518409453725,1518409453725,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,3,0,'7','','','ordered','0',''),(6,'',1518409454960,1518409454960,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,4,0,'3','','','ordered','0',''),(7,'',1518409456281,1518409456282,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,5,0,'4','','','ordered','0',''),(8,'',1518409457495,1518409457496,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,6,0,'4','','','ordered','0',''),(9,'',1518409513274,1518409513275,'2FmPNpfaAf1Ayb7ln0MQ1518409422562FCCRz26jRsNn6exWBqIf',0,8,0,'4','','','ordered','0',''),
+(10,'',1524047665263,1524047665263,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,9,1,'1','','','ordered','0',''),
+(11,'',1524047665982,1524047665982,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,10,1,'1','','','ordered','0',''),
+(12,'',1524047670793,1524047670794,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l',5,8,1,'8','','','ordered','0','');
 /*!40000 ALTER TABLE `orderitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -559,11 +561,13 @@ CREATE TABLE `orderseller` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `orderNumber` char(60) DEFAULT '',
   `orderBarcode` varchar(100) DEFAULT '',
-  `printedBy` varchar(50) DEFAULT '',
   `status` varchar(50) DEFAULT 'Pending',
-  `checkedBy` varchar(50) DEFAULT '',
+  `assembledBy` bigint(50) DEFAULT 0,
+  `deliveredBy` bigint(50) DEFAULT 0,
+  `updatedBy` bigint(50) DEFAULT 0,
   `itemList` varchar(500) DEFAULT NULL,
   `totalItems` varchar(50) DEFAULT '',
+  `comments` tinytext DEFAULT NULL,
   `order_id` bigint(50) NOT NULL,
   `selleraccount_id` bigint(50) DEFAULT 0,
   `seller_id` bigint(50) DEFAULT 0,
@@ -580,7 +584,7 @@ CREATE TABLE `orderseller` (
 
 LOCK TABLES `orderseller` WRITE;
 /*!40000 ALTER TABLE `orderseller` DISABLE KEYS */;
-INSERT INTO `orderseller` VALUES (1,'100000','YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','','pending','','shampoo, soap, sardines','3',1,2,0,1518409395109,1518409395109,1518409395109),(2,'100001','fs4ELZ1xR3dc8a14yTCw1518409390169k6VxV0f22tZ6pdryq9LO','','pending','','shampoo, soap, sardines, milk, pancit canton','5',1,1,1,1518409395109,1518409395109,1518409395109),(3,'100002','fs6ELK1vR3dT8aD4yTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','','in-transit','','shampoo, soap, sardines','3',1,1,1,1518409395109,1518409395109,1518409395109),(4,'100003','fs6ELK1vR3dT8sf45lpTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','','in-transit','','shampoo, soap, sardines','3',1,1,1,1518409395109,1518409395109,1518409395109);
+INSERT INTO `orderseller` VALUES (1,'100000','YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','Pending',0,0,0,'shampoo, soap, sardines','3','',1,0,1,1518409395109,1518409395109,1518409395109),(2,'100001','fs4ELZ1xR3dc8a14yTCw1518409390169k6VxV0f22tZ6pdryq9LO','Pending',0,0,0,'shampoo, soap, sardines, milk, pancit canton','5','',1,0,1,1518409395109,1518409395109,1518409395109),(3,'100002','fs6ELK1vR3dT8aD4yTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','In-Transit',0,0,0,'shampoo, soap, sardines','3','',1,0,1,1518409395109,1518409395109,1518409395109),(4,'100003','fs6ELK1vR3dT8sf45lpTCw15184e93Acd59k6VxV0ff6tZ6pdryq9LO','In-Transit',0,0,0,'shampoo, soap, sardines','3','',1,0,1,1518409395109,1518409395109,1518409395109);
 /*!40000 ALTER TABLE `orderseller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -662,7 +666,7 @@ CREATE TABLE `seller` (
 
 LOCK TABLES `seller` WRITE;
 /*!40000 ALTER TABLE `seller` DISABLE KEYS */;
-INSERT INTO `seller` VALUES (1,'Bisdak','bsk',1521072000000,1521072000000);
+INSERT INTO `seller` VALUES (1,'EOS Test Seller','eos',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `seller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -743,7 +747,7 @@ CREATE TABLE `selleraccount` (
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
 INSERT INTO `selleraccount` VALUES
-(1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',1,1,1512763935519,1512763935531),(3,'admin.personnel','password','admin.personnel@mailinator.com','Admin Personel',1,1,1525937317483,1525937317483),(4,'assembly.personnel','password','assembly.personnel@mailinator.com','assembly Personel',1,2,1525937317483,1525937317483),(5,'finance.personnel','password','finance.personnel@mailinator.com','finance Personel',1,3,1525937317483,1525937317483),(6,'managment.personnel','password','managment.personnel@mailinator.com','managment Personel',1,4,1525937317483,1525937317483),(7,'eos.internal','password','eos.internal@mailinator.com','eos internal',1,5,1525937317483,1525937317483);
+(1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',1,1,1512763935519,1512763935531),(3,'admin.personnel','password','admin.personnel@mailinator.com','Admin Personel',1,1,1525937317483,1525937317483),(4,'assembly.personnel','password','assembly.personnel@mailinator.com','assembly Personel',1,2,1525937317483,1525937317483),(5,'finance.personnel','password','finance.personnel@mailinator.com','finance Personel',1,3,1525937317483,1525937317483),(6,'managment.personnel','password','managment.personnel@mailinator.com','managment Personel',1,4,1525937317483,1525937317483),(7,'eos.internal','password','eos.internal@mailinator.com','eos internal',1,5,1525937317483,1525937317483),(8,'shopper1','password','shopper1@mailinator.com','shopper one',1,2,1525937317483,1525937317483),(9,'shopper2','password','shopper2@mailinator.com','shopper two',1,2,1525937317483,1525937317483);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
