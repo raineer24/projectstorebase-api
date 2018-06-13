@@ -340,6 +340,34 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
   // Create notification
 });
 
+// Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, reject) => {
+//   new OrderItem({}).findAll(0, 1000, {
+//     orderkey: orderEntry.orderkey,
+//   })
+//     .then((resultList) => {
+//       let body = `
+//       <div><p>Hi,</p></div>
+//       <div><p>You have successfully confirmed and paid for your order</p></div>
+//       <div><b>Transaction # ${orderEntry.transactionId}</b></div>
+//       <h2>Shopping summary</h2>
+//       `;
+//       _.forEach(resultList, (obj) => {
+//         body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
+//       });
+//       body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
+//       resolve({
+//         from: 'info@eos.com.ph',
+//         bcc: 'raineerdelarita@gmail.com',
+//         to: orderEntry.email,
+//         subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
+//         text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+//         html: body,
+//       });
+//     })
+//     .catch((err) => {
+//       reject(err);
+//     });
+// });
 Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, reject) => {
   new OrderItem({}).findAll(0, 1000, {
     orderkey: orderEntry.orderkey,
