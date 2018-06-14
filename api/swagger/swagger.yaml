@@ -1988,7 +1988,7 @@ paths:
       summary: show logs
       operationId: showallLogs
       parameters:
-        - $ref: "#/parameters/sellerIdQ"
+        # - $ref: "#/parameters/sellerIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
       responses:
@@ -2293,7 +2293,7 @@ definitions:
         description: PBU balance
       doc:
         type: object
-        description: "Address object"  
+        description: "Address object"
   ItemCreate:
     title: ItemCreate
     type: object
@@ -2411,6 +2411,11 @@ definitions:
         type: number
         description: category level
 parameters:
+  selleraccountid:
+    in: path
+    name: selleraccountid
+    type: number
+    required: true
   order_id:
     in: path
     name: order_id
