@@ -322,17 +322,17 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
                   .catch((err) => {
                     log.error(`Failed to send ${err}`);
                   });
+              });
+            that.mailAuditConfirmation(_.merge(orderEntry, { transactionId }))
+              .then((mailOptions) => {
+                new Mailer(mailOptions).send()
+                  .then(() => {
+                    log.info(`Email Notification - User and Audit Personnel # ${transactionId}`);
+                  })
+                  .catch((err) => {
+                    log.error(`Failed to send ${err}`);
+                  });
               })
-            // that.mailAuditConfirmation(_.merge(orderEntry, { email }))
-            //   .then((mailOptions) => {
-            //     new Mailer(mailOptions).send()
-            //       .then(() => {
-            //         log.info(`Email Notification - User and Audit Personnel # ${transactionId}`);
-            //       })
-            //       .catch((err) => {
-            //         log.error(`Failed to send ${err}`);
-            //       });
-            //   })
               .catch(() => {});
             new Orderseller({
               order_id: orderEntry.id,
