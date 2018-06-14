@@ -22,7 +22,6 @@ function Order(order) {
   sql.setDialect('mysql');
 
   this.model = _.extend(order, {
-    number: 0,
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
@@ -87,17 +86,20 @@ function Order(order) {
     columns: [
       'id',
       'orderNumber',
-      'orderBarCode',
-      'dateCreated',
-      'dateCompleted',
-      'orderslip_printedby',
-      'assembly_personnel',
-      'checkedBy',
-      'item_List',
-      'total_Items',
-      'dateUpdated',
-      'seller_id',
+      'orderBarcode',
+      'status',
+      'assembledBy',
+      'deliveredBy',
+      'updatedBy',
+      'itemList',
+      'totalItems',
+      'comments',
       'order_id',
+      'selleraccount_id',
+      'seller_id',
+      'dateCompleted',
+      'dateCreated',
+      'dateUpdated',
     ],
   });
   this.sqlTableUser = sql.define({
@@ -130,6 +132,7 @@ Order.prototype.setTransactionNumber = (number) => {
   * @return {object/number}
 */
 Order.prototype.create = () => new BluePromise((resolve, reject) => {
+  that.model.number = 0;
   that.getByValue(that.model.orderkey, 'orderkey')
     .then((results) => {
       if (results.length === 0) {
@@ -303,6 +306,7 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
       number: transactionId,
       action: 'CONFIRM_ORDER',
       type: transType,
+      value: 0,
     }).create) // Create transaction
     .then(() => {
       that.getById(id)
