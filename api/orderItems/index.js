@@ -56,6 +56,7 @@ orderItem.getOrderItems = (req, res) => {
   instOrderItem.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     orderkey: query.validateParam(req.swagger.params, 'key', ''),
     orderId: query.validateParam(req.swagger.params, 'orderId', ''),
+    addCategory: query.validateParam(req.swagger.params, 'addCategory', ''),
   })
     .then(result => res.json(result))
     .catch((err) => {
