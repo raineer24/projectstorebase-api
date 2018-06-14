@@ -1809,6 +1809,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /timeslots/all:
+    x-swagger-router-controller: timeslots
+    put:
+      tags:
+        - timeslot
+      summary: Update all timeslots
+      operationId: updateAllTimeslots
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/Timeslots"
+      responses:
+        200:
+          description: Successful updated
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /ordersellers:
     x-swagger-router-controller: ordersellers
     get:
@@ -2320,6 +2351,11 @@ definitions:
       date:
         type: string
         description: date of time slot
+  Timeslots:
+    title: timeslots
+    type: array
+    items:
+      type: object
   OrderEntry:
     title: OrderEntry
     type: object
