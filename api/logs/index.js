@@ -5,7 +5,7 @@ const log = {};
 
 log.showallLogs = (req, res) => {
   const instLog = new Log({});
-  instLog.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+  instLog.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 5000), {
     sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
   })
     .then(result => res.json(result))

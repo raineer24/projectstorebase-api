@@ -64,12 +64,16 @@ user.getAllUsersAdmin = (req, res) => {
 * @return {Object}
 */
 user.loginAccount = (req, res) => {
-  new Log({ message: 'Logged into user account', action: 'USER_LOGIN', type: 'INFO' }).create();
   const instUser = new User(req.swagger.params.body.value);
   instUser.authenticate()
     .then(userAuth => userAuth)
     .then(instUser.authorize)
-    .then(result => res.json(instUser.cleanResponse(result, { message: 'Found' })))
+    .then((result) => {
+      res.json(instUser.cleanResponse(result, { message: 'Found' }));
+      new Log({
+        message: 'Logged into user account', action: 'USER_LOGIN', type: 'INFO', user_id: `${result.id}`,
+      }).create();
+    })
     .catch(() => res.status(404).json({
       message: 'Not found',
     }))
@@ -104,7 +108,9 @@ user.registerAccount = (req, res) => {
 * @return {Object}
 */
 user.updateAccount = (req, res) => {
-  new Log({ message: 'Updated current user account', action: 'USER_UPDATE', type: 'INFO' }).create();
+  new Log({
+    message: 'Updated current user account', action: 'USER_UPDATE', type: 'INFO', user_id: `${res.id}`,
+  }).create();
   const instUser = new User(req.swagger.params.body.value);
   instUser.update(query.validateParam(req.swagger.params, 'id', 0))
     .then(status => res.json({ status, message: 'Updated' }))
@@ -123,7 +129,7 @@ user.updateAccount = (req, res) => {
 * @return {Object}
 */
 user.changePassword = (req, res) => {
-  new Log({ message: 'USER_CHANGE_PASSWORD', type: 'INFO' }).create();
+  new Log({ message: 'Change password initiated.', action: 'USER_CHANGE_PASSWORD', type: 'INFO' }).create();
   const instUser = new User(req.swagger.params.body.value);
   instUser.update(query.validateParam(req.swagger.params, 'id', 0), true)
     .then(status => res.json({ status, message: 'Updated' }))
@@ -142,7 +148,7 @@ user.changePassword = (req, res) => {
 * @return {Object}
 */
 user.forgotPassword = (req, res) => {
-  new Log({ message: 'USER_SEND_PASSWORD_RESET_EMAIL', type: 'INFO' }).create();
+  new Log({ message: 'Reset password initiated.', action: 'USER_SEND_PASSWORD_RESET_EMAIL', type: 'INFO' }).create();
   const instUser = new User();
   instUser.sendPasswordResetEmail(req.swagger.params.body.value)
     .then(status => res.json({ status, message: 'Success' }))

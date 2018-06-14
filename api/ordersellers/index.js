@@ -1,6 +1,6 @@
 const query = require('../../service/query');
 const Log = require('../logs/log');
-
+const log = require('color-logs')(true, true, 'Order');
 const OrderSeller = require('./orderseller');
 
 const orderseller = {};
@@ -12,7 +12,12 @@ const orderseller = {};
 * @return {Object}
 */
 orderseller.getAllOrderSellers = (req, res) => {
+  const x = req.swagger.params.sellerId.value;
+  log.info(x);
   const instOrder = new OrderSeller({});
+  new Log({
+    message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', seller_id: `${res.id}`,
+  }).create();
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 25), {
     sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
     sellerAccount: true,
@@ -23,7 +28,7 @@ orderseller.getAllOrderSellers = (req, res) => {
     .then((result) => {
       res.json(result);
       new Log({
-        message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO',
+        message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', selleraccount_id: `${x}`,
       }).create();
     })
     .catch((err) => {
@@ -42,11 +47,13 @@ orderseller.getAllOrderSellers = (req, res) => {
 * @return {Object}
 */
 orderseller.createOrderSeller = (req, res) => {
-  new Log({ message: 'Created a new order seller', action: 'ORDERSELLER_CREATE', type: 'INFO' }).create();
   const instOrderseller = new OrderSeller(req.swagger.params.body.value);
   instOrderseller.create()
     .then((result) => {
       if (result === 'Existing') {
+        new Log({
+          message: 'Created a new order seller', action: 'ORDERSELLER_CREATE', type: 'INFO', selleraccount_id: `${result.id}`,
+        }).create();
         return res.status(201).json({
           message: result,
         });

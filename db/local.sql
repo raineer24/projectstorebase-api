@@ -282,6 +282,7 @@ CREATE TABLE `log` (
   `selleraccount_id` bigint(50) DEFAULT 0,
   `seller_id` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
+  `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
 /*!40101 SET character_set_client = @saved_cs_client */;
