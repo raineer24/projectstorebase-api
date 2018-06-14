@@ -640,7 +640,8 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000),(5,'EOS Internal',1521072000000,1521072000000);
+INSERT INTO `role` VALUES
+(1,'EOS Dev',1521072000000,1521072000000),(2,'EOS Admin',1521072000000,1521072000000),(3,'PS Admin',1521072000000,1521072000000),(4,'PS Assembly',1521072000000,1521072000000),(5,'PS Finance',1521072000000,1521072000000),(6,'PS Management',1521072000000,1521072000000),(7,'PB Admin',1521072000000,1521072000000),(8,'PB Finance',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -667,7 +668,7 @@ CREATE TABLE `seller` (
 
 LOCK TABLES `seller` WRITE;
 /*!40000 ALTER TABLE `seller` DISABLE KEYS */;
-INSERT INTO `seller` VALUES (1,'EOS Test Seller','eos',1521072000000,1521072000000);
+INSERT INTO `seller` VALUES (1,'EOS Internal','eos',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `seller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -733,8 +734,10 @@ CREATE TABLE `selleraccount` (
   `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
+  `enabled` bit(1) DEFAULT b'1',
   `seller_id` bigint(50) DEFAULT 0,
   `role_id` bigint(50) DEFAULT 0,
+  `lastLogin` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -748,7 +751,7 @@ CREATE TABLE `selleraccount` (
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
 INSERT INTO `selleraccount` VALUES
-(1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',1,1,1512763935519,1512763935531),(3,'admin.personnel','password','admin.personnel@mailinator.com','Admin Personel',1,1,1525937317483,1525937317483),(4,'assembly.personnel','password','assembly.personnel@mailinator.com','assembly Personel',1,2,1525937317483,1525937317483),(5,'finance.personnel','password','finance.personnel@mailinator.com','finance Personel',1,3,1525937317483,1525937317483),(6,'managment.personnel','password','managment.personnel@mailinator.com','managment Personel',1,4,1525937317483,1525937317483),(7,'eos.internal','password','eos.internal@mailinator.com','eos internal',1,5,1525937317483,1525937317483),(8,'shopper1','password','shopper1@mailinator.com','shopper one',1,2,1525937317483,1525937317483),(9,'shopper2','password','shopper2@mailinator.com','shopper two',1,2,1525937317483,1525937317483);
+(1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1,0,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',1,1,1,0,1512763935519,1512763935531),(3,'ps.admin','password','admin.personnel@mailinator.com','Admin Personel',1,1,3,0,1525937317483,1525937317483),(4,'ps.assembly','password','assembly.personnel@mailinator.com','assembly Personel',1,1,4,0,1525937317483,1525937317483),(5,'ps.finance','password','finance.personnel@mailinator.com','finance Personel',1,1,5,0,1525937317483,1525937317483),(6,'ps.management','password','managment.personnel@mailinator.com','managment Personel',1,1,6,0,1525937317483,1525937317483),(7,'eos.dev','password','eos.internal@mailinator.com','eos developer',1,1,1,0,1525937317483,1525937317483),(8,'eos.internal','password','eos.internal@mailinator.com','eos internal',1,1,2,0,1525937317483,1525937317483),(9,'shopper1','password','shopper1@mailinator.com','shopper one',1,1,4,0,1525937317483,1525937317483),(10,'shopper2','password','shopper2@mailinator.com','shopper two',1,1,4,0,1525937317483,1525937317483),(11,'pb.admin','password','pb.admin@mailinator.com','partner buyer admin',1,1,7,0,1525937317483,1525937317483),(12,'pb.finance','password','pb.finance@mailinator.com','partner buyer finance',1,1,8,0,1525937317483,1525937317483),(13,'disabled.test','password','disabled.test@mailinator.com','juan dela cruz',0,1,1,0,1512763935519,1512763935531);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
