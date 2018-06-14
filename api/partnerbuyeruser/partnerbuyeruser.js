@@ -32,6 +32,7 @@ function Partnerbuyeruser(user) {
       'name',
       'credit',
       'balance',
+      'status',
       'dateCreated',
       'dateUpdated',
       'useraccount_id',
@@ -125,22 +126,15 @@ Partnerbuyeruser.prototype.authorize = userAuth => new BluePromise((resolve, rej
 
 /**
   * Save User account
-  * @param {string} username
-  * @param {string} password
-  * @param {string} email
-  * @param {string} uiid
+  * @param {string} useraccount_id
   * @return {object}
 */
 Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
-  that.getByValue(that.model.username, 'username')
+  const id = that.model.useraccount_id;
+  that.getById(that.model.useraccount_id, 'useraccount_id')
     .then((results) => {
-      if (that.model.password === undefined) {
-        that.model.password = '';
-      }
-      if (that.model.uiid === undefined) {
-        that.model.uiid = '';
-      }
       if (results.length === 0) {
+        log.info(id);
         const query = that.sqlTable.insert(that.model).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
@@ -262,7 +256,7 @@ Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
 
 Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
-  that.getByValue(id, 'useraccount_id')
+  that.getByValue(id, 'id')
     .then((resultList) => {
       if (!resultList[0].id) {
         reject('Not foundssss');
@@ -326,12 +320,11 @@ Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.username && filters.uiid) {
+  } else if (filters.partnerBuyer_id) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
-      .where(that.sqlTable.username.equals(filters.username)
-        .and(that.sqlTable.uiid.equals(filters.uiid)))
+      .where(that.sqlTable.partnerBuyer_id.equals(filters.partnerBuyer_id))
       .limit(limit)
       .offset(skip)
       .toQuery();

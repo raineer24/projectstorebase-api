@@ -1,5 +1,6 @@
 const query = require('../../service/query');
 const Log = require('../logs/log');
+const log = require('color-logs')(true, true, 'User Account');
 
 const Partnerbuyeruser = require('./partnerbuyeruser');
 
@@ -14,30 +15,53 @@ partnerbuyeruser.connectDb = (req, res) => {
     }));
 };
 
-// /**
-// * Search user in partnerbuyeruser table
-// * @param {Object} req
-// * @param {Object} res
-// * @return {Object}
-// */
-// partnerbuyeruser.getUser = (req, res) => {
-//   new Log({ message: 'PARTNER BUYER USER', type: 'INFO' }).create();
-//   const instUser = new User();
-//   instUser.getById(query.validateParam(query.validateParam(req.swagger.params, 'id', 0))
-//     .then((resultList) => {
-//       if (!resultList[0].id) {
-//         return res.status(404).json({ message: 'Not found' });
-//       }
-//       return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
-//     })
-//     .catch((err) => {
-//       new Log({ message: `PARTNER BUYER USER ${err}`, type: 'ERROR' }).create();
-//       return res.status(404).json({ message: 'Not found' });
-//     }))
-//     .finally(() => {
-//       instUser.release();
-//     });
-// };
+/**
+* Add an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+partnerbuyeruser.addUser = (req, res) => {
+  new Log({ message: 'Add a new order', action: 'PBU_CREATE', type: 'INFO' }).create();
+  const instUser = new Partnerbuyeruser(req.swagger.params.body.value);
+  instUser.create()
+    .then(status => res.json({ status, message: 'Saved' }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'PBU_CREATE', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+
+/**
+* View user profile
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+partnerbuyeruser.getUsers = (req, res) => {
+  const instUser = new Partnerbuyeruser();
+  const x = req.swagger.params.partnerbuyer_id.value;
+  log.info(x);
+  instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+    partnerBuyer_id: query.validateParam(req.swagger.params, 'partnerBuyer_id', x),
+  })
+    .then((result) => {
+      res.json(result);
+      new Log({
+        message: 'Show all partner buyer users', action: 'PBU_LIST', type: 'INFO', user_id: `${x}`,
+      }).create();
+    })
+    .catch(() => res.status(404).json({
+      message: 'Not found',
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
 
 /**
 * View user profile
@@ -70,7 +94,7 @@ partnerbuyeruser.getUser = (req, res) => {
 */
 partnerbuyeruser.updateAccount = (req, res) => {
   const instPartnerbuyeruser = new Partnerbuyeruser(req.swagger.params.body.value);
-  instPartnerbuyeruser.update(query.validateParam(req.swagger.params, 'useraccount_id', 0))
+  instPartnerbuyeruser.update(query.validateParam(req.swagger.params, 'id', 0))
     .then((status) => {
       new Log({
         message: 'Updated the partner buyer user account.', action: 'PARTNERBUYERUSER_ACCOUNT_UPDATE', type: 'INFO', selleraccount_id: `${status.id}`,

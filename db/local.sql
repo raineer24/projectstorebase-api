@@ -363,10 +363,11 @@ DROP TABLE IF EXISTS `partnerbuyeruser`;
 CREATE TABLE `partnerbuyeruser` (
 `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
 `username` CHAR(60) NOT NULL,
-`email` CHAR(100),
+`email` CHAR(100) NOT NULL,
 `name` VARCHAR(250) NOT NULL,
 `credit` BIGINT(20) NOT NULL,
-`balance` BIGINT(20),
+`balance` BIGINT(20) NOT NULL,
+`status` VARCHAR(250) NOT NULL,
 `dateCreated` BIGINT(50) NOT NULL,
 `dateUpdated` BIGINT(50) NOT NULL,
 `useraccount_id` BIGINT(10) NOT NULL,
@@ -381,7 +382,7 @@ PRIMARY KEY (`id`)
 
 LOCK TABLES `partnerbuyeruser` WRITE;
 /*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
-INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500,2500,1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500,2500,1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500,2500,1522637372669,1522637372669,7,1);
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500,2500,'enabled',1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500,2500,'enabled',1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500,2500,'enabled',1522637372669,1522637372669,7,1);
 /*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -636,7 +637,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000),(5,'EOS Internal',1521072000000,1521072000000);
+INSERT INTO `role` VALUES (1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000),(5,'EOS Internal',1521072000000,1521072000000),(7,'Partner Buyer Admin',1528795134177,1528795134177);
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -748,13 +749,13 @@ INSERT INTO `selleraccount` VALUES
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `setting`;
+DROP TABLE IF EXISTS `settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `setting` (
+CREATE TABLE `settings` (
 `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
 `name` CHAR(60) NOT NULL,
-`value` VARCHAR(250) NOT NULL,
+`value` BIGINT(50) NOT NULL,
 `dateCreated` BIGINT(50) NOT NULL,
 `reference` VARCHAR(50) NOT NULL,
 `reference_id` BIGINT(10) NOT NULL,
@@ -765,41 +766,11 @@ PRIMARY KEY (`id`)
 -- Dumping data for table `setting`
 --
 
-LOCK TABLES `setting` WRITE;
-/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
-INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
-/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
+LOCK TABLES `settings` WRITE;
+/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
+INSERT INTO `settings` VALUES (1,'delivery fee',49,1512763935519,'user',1),(2,'service fee',99,1512763935519,'user',2),(3,'VAT',0.12,1512763935519,'user',3);
+/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `setting`
---
-
-DROP TABLE IF EXISTS `setting`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `setting` (
-`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
-`name` CHAR(60) NOT NULL,
-`value` VARCHAR(250) NOT NULL,
-`dateCreated` BIGINT(50) NOT NULL,
-`reference` VARCHAR(50) NOT NULL,
-`reference_id` BIGINT(10) NOT NULL,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
---
--- Dumping data for table `setting`
---
-
-LOCK TABLES `setting` WRITE;
-/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
-INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
-/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
-UNLOCK TABLES;
-
 
 --
 -- Table structure for table `timeslot`

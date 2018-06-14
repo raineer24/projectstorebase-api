@@ -19,7 +19,7 @@ orderseller.getAllOrderSellers = (req, res) => {
     message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', seller_id: `${res.id}`,
   }).create();
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    sellerId: query.validateParam(req.swagger.params, 'seller_id', 1),
+    sellerId: query.validateParam(req.swagger.params, 'seller_id', x),
   })
     .then((result) => {
       res.json(result);
