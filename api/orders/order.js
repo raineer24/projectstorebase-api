@@ -374,7 +374,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
   })
     .then((resultList) => {
       let body = `
-      <div><p>Hi,</p></div>
+      <div><p>Test User</p></div>
       <div><p>You have successfully confirmed and paid for your order</p></div>
       <div><b>Transaction # ${orderEntry.transactionId}</b></div>
       <h2>Shopping summary</h2>
