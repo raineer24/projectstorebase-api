@@ -3,6 +3,7 @@ const sql = require('sql');
 const _ = require('lodash');
 const log = require('color-logs')(true, true, 'Order');
 
+
 const Conn = require('../../service/connection');
 const Mailer = require('../../service/mail');
 const Timeslotorder = require('../timeslotorders/timeslotorder');
@@ -10,6 +11,7 @@ const Transaction = require('../transactions/transaction');
 const OrderItem = require('../orderItems/orderItem');
 const Orderseller = require('../ordersellers/orderseller');
 const Gc = require('../gc/gc');
+const User = require('../users/user');
 
 let that;
 
@@ -278,11 +280,12 @@ Order.prototype.getByValue = (value, field) => {
 
 Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject) => {
   const instTrans = new Transaction({});
+  const instUser = new User({});
   const transactionId = instTrans.getTransaction();
   const instGc = new Gc({});
   let transType = '';
   log.info('GC LIST:');
-  log.info(gcList);
+  log.info(instUser);
   if (gcList) {
     for (let ctr = 0; ctr < gcList.length; ctr += 1) {
       instGc.getByValue(gcList[ctr], 'code').then((resultList) => {
@@ -311,6 +314,7 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
             const orderEntry = resultList[0];
             that.mailConfirmation(_.merge(orderEntry, { transactionId }))
               .then((mailOptions) => {
+                log.info(orderEntry);
                 new Mailer(mailOptions).send()
                   .then(() => {
                     log.info(`Successfully sent order with transaction # ${transactionId}`);
@@ -319,6 +323,16 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
                     log.error(`Failed to send ${err}`);
                   });
               })
+            // that.mailAuditConfirmation(_.merge(orderEntry, { email }))
+            //   .then((mailOptions) => {
+            //     new Mailer(mailOptions).send()
+            //       .then(() => {
+            //         log.info(`Email Notification - User and Audit Personnel # ${transactionId}`);
+            //       })
+            //       .catch((err) => {
+            //         log.error(`Failed to send ${err}`);
+            //       });
+            //   })
               .catch(() => {});
             new Orderseller({
               order_id: orderEntry.id,
@@ -340,41 +354,14 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
   // Create notification
 });
 
-// Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, reject) => {
-//   new OrderItem({}).findAll(0, 1000, {
-//     orderkey: orderEntry.orderkey,
-//   })
-//     .then((resultList) => {
-//       let body = `
-//       <div><p>Hi,</p></div>
-//       <div><p>You have successfully confirmed and paid for your order</p></div>
-//       <div><b>Transaction # ${orderEntry.transactionId}</b></div>
-//       <h2>Shopping summary</h2>
-//       `;
-//       _.forEach(resultList, (obj) => {
-//         body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
-//       });
-//       body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
-//       resolve({
-//         from: 'info@eos.com.ph',
-//         bcc: 'raineerdelarita@gmail.com',
-//         to: orderEntry.email,
-//         subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
-//         text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
-//         html: body,
-//       });
-//     })
-//     .catch((err) => {
-//       reject(err);
-//     });
-// });
+
 Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, reject) => {
   new OrderItem({}).findAll(0, 1000, {
     orderkey: orderEntry.orderkey,
   })
     .then((resultList) => {
       let body = `
-      <div><p>Test User</p></div>
+      <div><p>Hi,</p></div>
       <div><p>You have successfully confirmed and paid for your order</p></div>
       <div><b>Transaction # ${orderEntry.transactionId}</b></div>
       <h2>Shopping summary</h2>
@@ -389,6 +376,34 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
         to: orderEntry.email,
         subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
         text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+        html: body,
+      });
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+Order.prototype.mailAuditConfirmation = orderEntry => new BluePromise((resolve, reject) => {
+  new OrderItem({}).findAll(0, 1000, {
+    orderkey: orderEntry.orderkey,
+  })
+    .then((resultList) => {
+      let body = `
+      <div><p>Email Notification - User and Audit Personnel</p></div>
+      <div><p>Send emails to user and audit personnel upon confirmation of order</p></div>
+      <div><b>Transaction # ${orderEntry.transactionId}</b></div>
+      <h2>Trigger is the Place Order Now button in Payment page</h2>
+      `;
+      _.forEach(resultList, (obj) => {
+        body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
+      });
+      body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
+      resolve({
+        from: 'info@eos.com.ph',
+        bcc: 'raineerdelarita@gmail.com',
+        to: orderEntry.email,
+        subject: `Email Notification - User and Audit Personnel ${orderEntry.transactionId}`,
+        text: `Email Notification - User and Audit Personnel # ${orderEntry.transactionId}`,
         html: body,
       });
     })
