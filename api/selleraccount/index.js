@@ -5,6 +5,8 @@ const Selleraccount = require('./selleraccount');
 
 const selleraccount = {};
 
+let selleraccountid = 0;
+
 selleraccount.connectDb = (req, res) => {
   const instSellerAccount = new Selleraccount({});
   instSellerAccount.testConnection()
@@ -21,12 +23,16 @@ selleraccount.connectDb = (req, res) => {
 * @return {Object}
 */
 selleraccount.registerAccount = (req, res) => {
-  new Log({ message: 'SELLER_ACCOUNT_CREATE', type: 'INFO' }).create();
   const instSellerAccount = new Selleraccount(req.swagger.params.body.value);
   instSellerAccount.create()
-    .then(id => res.json({ id, message: 'Saved' }))
+    .then((id) => {
+      new Log({
+        message: 'Register seller account.', action: 'SELLER_ACCOUNT_CREATE', type: 'INFO', selleraccount_id: `${id.id}`,
+      }).create();
+      res.json({ id, message: 'Saved' });
+    })
     .catch((err) => {
-      new Log({ message: `SELLER_ACCOUNT_CREATE ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_CREATE', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })
     .finally(() => {
@@ -41,14 +47,18 @@ selleraccount.registerAccount = (req, res) => {
 * @return {Object}
 */
 selleraccount.getAllSellerUsers = (req, res) => {
-  new Log({ message: 'SELLER_ACCOUNT_USER_LIST', type: 'INFO' }).create();
   const instSellerAccount = new Selleraccount({});
   instSellerAccount.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
   })
-    .then(result => res.json(result))
+    .then((result) => {
+      new Log({
+        message: 'Show all seller users', action: 'SELLER_ACCOUNT_USER_LIST', type: 'INFO', selleraccount_id: selleraccountid,
+      }).create();
+      res.json(result);
+    })
     .catch((err) => {
-      new Log({ message: `SELLER_ACCOUNT_USER_LIST ${err}`, type: 'ERROR' }).create();
+      new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_USER_LIST', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
@@ -63,10 +73,14 @@ selleraccount.getAllSellerUsers = (req, res) => {
 * @return {Object}
 */
 selleraccount.updateAccount = (req, res) => {
-  new Log({ message: 'SELLER_ACCOUNT_UPDATE', type: 'INFO' }).create();
   const instSellerAccount = new Selleraccount(req.swagger.params.body.value);
   instSellerAccount.update(query.validateParam(req.swagger.params, 'id', 0))
-    .then(status => res.json({ status, message: 'Updated' }))
+    .then((status) => {
+      new Log({
+        message: 'Updated seller account.', action: 'SELLER_ACCOUNT_UPDATE', type: 'INFO', selleraccount_id: `${status.id}`,
+      }).create();
+      res.json({ status, message: 'Updated' });
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_UPDATE', type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
@@ -84,10 +98,14 @@ selleraccount.updateAccount = (req, res) => {
 * @return {Object}
 */
 selleraccount.viewAccount = (req, res) => {
-  new Log({ message: 'View seller account', action: 'SELLER_ACCOUNT_VIEW', type: 'INFO' }).create();
   const instSellerAccount = new Selleraccount();
   instSellerAccount.getById(query.validateParam(req.swagger.params, 'id', 0))
-    .then(result => res.json(Selleraccount.cleanResponse(result, { message: 'Found' })))
+    .then((result) => {
+      new Log({
+        message: 'View seller account', action: 'SELLER_ACCOUNT_VIEW', type: 'INFO', user_id: `${result.id}`, selleraccount_id: selleraccountid,
+      }).create();
+      res.json(Selleraccount.cleanResponse(result, { message: 'Found' }));
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_VIEW', type: 'ERROR' }).create();
       return res.status(404).json({ message: 'Not found' });
@@ -110,6 +128,7 @@ selleraccount.loginAccount = (req, res) => {
     .then(instSellerAccount.authorize)
     .then((result) => {
       res.json(instSellerAccount.cleanResponse(result, { message: 'Found' }));
+      selleraccountid = result.id;
       new Log({
         message: 'Logged into Seller Account', action: 'SELLER_ACCOUNT_LOGIN', type: 'INFO', selleraccount_id: `${result.id}`,
       }).create();
