@@ -110,6 +110,15 @@ function OrderSeller(orderSeller) {
       'dateUpdated',
     ],
   });
+  this.sqlTableTimeslotOrder = sql.define({
+    name: 'timeslotorder',
+    columns: [
+      'id',
+      'order_id',
+      'timeslot_id',
+      'datetime',
+    ],
+  });
   that = this;
 }
 
@@ -240,57 +249,56 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.sellerId && filters.status && filters.minDate && filters.maxDate) {
-    query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'))
-      .from(that.sqlTable
-        .join(that.sqlTableOrder)
-        .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
-        .leftJoin(that.sqlTableSellerAccount)
-        .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
-      .and(that.sqlTable.status.equals(filters.status))
-      .and(that.sqlTable.dateCreated.between(filters.minDate, filters.maxDate))
-      .order(sortString)
-      .limit(limit)
-      .offset(skip)
-      .toQuery();
   } else if (filters.sellerId && filters.status) {
-    query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'))
-      .from(that.sqlTable
-        .join(that.sqlTableOrder)
-        .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
-        .leftJoin(that.sqlTableSellerAccount)
-        .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
-      .and(that.sqlTable.status.equals(filters.status))
-      .order(sortString)
-      .limit(limit)
-      .offset(skip)
-      .toQuery();
-  } else if (filters.sellerId && filters.minDate && filters.maxDate) {
-    query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'))
-      .from(that.sqlTable
-        .join(that.sqlTableOrder)
-        .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
-        .leftJoin(that.sqlTableSellerAccount)
-        .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
-      .and(that.sqlTable.dateCreated.between(filters.minDate, filters.maxDate))
-      .order(sortString)
-      .limit(limit)
-      .offset(skip)
-      .toQuery();
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    if (filters.status.toUpperCase() === 'ALL') {
+      query = that.sqlTable
+        .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.datetime)
+        .from(that.sqlTable
+          .join(that.sqlTableOrder)
+          .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
+          .leftJoin(that.sqlTableSellerAccount)
+          .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
+          .leftJoin(that.sqlTableTimeslotOrder)
+          .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
+        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        // .and(that.sqlTable.dateCreated.gte(today))
+        .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        .order(sortString)
+        .limit(limit)
+        .offset(skip)
+        .toQuery();
+    } else {
+      query = that.sqlTable
+        .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id)
+        .from(that.sqlTable
+          .join(that.sqlTableOrder)
+          .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
+          .leftJoin(that.sqlTableSellerAccount)
+          .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
+          .leftJoin(that.sqlTableTimeslotOrder)
+          .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
+        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .and(sql.functions.UPPER(that.sqlTable.status).equals(filters.status.toUpperCase()))
+        // .and(that.sqlTable.dateCreated.gte(today))
+        .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        .order(sortString)
+        .limit(limit)
+        .offset(skip)
+        .toQuery();
+    }
   } else if (filters.sellerId) {
     query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'))
+      .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id)
       .from(that.sqlTable
         .join(that.sqlTableOrder)
         .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
         .leftJoin(that.sqlTableSellerAccount)
-        .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id)))
+        .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
+        .leftJoin(that.sqlTableTimeslotOrder)
+        .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
       .where(that.sqlTable.seller_id.equals(filters.sellerId))
       .order(sortString)
       .limit(limit)
