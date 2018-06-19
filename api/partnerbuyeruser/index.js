@@ -35,6 +35,26 @@ partnerbuyeruser.addUser = (req, res) => {
     });
 };
 
+/**
+* Add an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+partnerbuyeruser.addUsers = (req, res) => {
+  new Log({ message: 'Add a new order', action: 'PBU_CREATE', type: 'INFO' }).create();
+  const instUser = new Partnerbuyeruser(req.swagger.params.body.value);
+  instUser.createMultiple()
+    .then(status => res.json({ status, message: 'Saved' }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'PBU_CREATE', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instUser.release();
+    });
+};
+
 
 /**
 * View user profile

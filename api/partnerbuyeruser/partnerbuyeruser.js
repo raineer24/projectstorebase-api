@@ -170,6 +170,57 @@ Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
+/**
+  * Save User account
+  * @param {string} useraccount_id
+  * @return {object}
+*/
+Partnerbuyeruser.prototype.createMultiple = () => new BluePromise((resolve, reject) => {
+  let str = [];
+  str = that.model;
+  _.forEach(str, (key) => {
+    const id = key.useraccount_id;
+    that.getById(id, 'useraccount_id')
+      .then((results) => {
+        log.info(results.length);
+        if (results.length === 0 && id !== undefined) {
+          const query = that.sqlTable.insert(key).toQuery();
+          that.dbConn.queryAsync(query.text, query.values)
+            .then((response) => {
+              log.info(response);
+              that.getById(id)
+                .then((resultList) => {
+                  if (!resultList[0].id) {
+                    reject('Not found');
+                  } else {
+                    new Mailer(that.mailConfirmation(resultList[0])).send()
+                      .then(() => {
+                        log.info(`Successfully registered with e-mail ${resultList[0].email}`);
+                      })
+                      .catch((err) => {
+                        log.error(`Failed to send ${err}`);
+                      });
+
+                    resolve(resultList[0]);
+                  }
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          reject('Found');
+        }
+      });
+  })
+    .catch((err) => {
+      reject(err);
+    });
+});
+
 Partnerbuyeruser.prototype.mailConfirmation = (userAccount) => {
   const body = `
   <div><p>Hi,</p></div>

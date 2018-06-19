@@ -384,7 +384,7 @@ paths:
       tags:
         - user
       summary: create PB User
-      operationId: addUser
+      operationId: addUsers
       parameters:
         - name: body
           in: body
