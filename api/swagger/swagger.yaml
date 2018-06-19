@@ -933,6 +933,7 @@ paths:
         - $ref: "#/parameters/orderIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/addCategory"
       responses:
         200:
           description: Fetch all order items
@@ -1866,6 +1867,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /timeslots/all:
+    x-swagger-router-controller: timeslots
+    put:
+      tags:
+        - timeslot
+      summary: Update all timeslots
+      operationId: updateAllTimeslots
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/Timeslots"
+      responses:
+        200:
+          description: Successful updated
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /ordersellers:
     x-swagger-router-controller: ordersellers
     get:
@@ -1877,6 +1909,9 @@ paths:
         - $ref: "#/parameters/sellerIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/minDate"
+        - $ref: "#/parameters/maxDate"
+        - $ref: "#/parameters/orderStatus"
       responses:
         200:
           description: Fetch all order items
@@ -1932,6 +1967,60 @@ paths:
       operationId: getOrderseller
       parameters:
         - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 123445
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      tags:
+        - orderseller
+      summary: Update orderseller
+      operationId: updateOrderseller
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: put contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderSellerEntry"
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 123445
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /ordersellers/takeOrder/{id}:
+    x-swagger-router-controller: ordersellers
+    put:
+      tags:
+        - orderseller
+      summary: Take order action
+      operationId: takeOrder
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: put contents
+          required: true
+          schema:
+            $ref: "#/definitions/OrderSellerEntry"
       responses:
         200:
           description: Success
@@ -2373,6 +2462,13 @@ definitions:
       order_id:
         type: number
         description: order id
+  OrderSellerEntry:
+    title: OrderSellerEntry
+    type: object
+    properties:
+      id:
+        type: number
+        description: orderseller id
   RatingCreate:
     title: RatingCreate
     type: object
@@ -2408,6 +2504,11 @@ definitions:
       date:
         type: string
         description: date of time slot
+  Timeslots:
+    title: timeslots
+    type: array
+    items:
+      type: object
   OrderEntry:
     title: OrderEntry
     type: object
@@ -2463,6 +2564,11 @@ definitions:
         type: number
         description: category level
 parameters:
+  addCategory:
+    in: query
+    name: addCategory
+    type: string
+    required: false  
   selleraccountid:
     in: path
     name: selleraccountid
@@ -2638,3 +2744,18 @@ parameters:
     name: email
     type: string
     required: true
+  orderStatus:
+    in: query
+    name: orderStatus
+    type: string
+    required: false
+  maxDate:
+    in: query
+    name: maxDate
+    type: number
+    required: false
+  minDate:
+    in: query
+    name: minDate
+    type: number
+    required: false

@@ -106,4 +106,29 @@ timeSlot.updateTimeslot = (req, res) => {
     });
 };
 
+/**
+* Update a record
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+timeSlot.updateAllTimeslots = (req, res) => {
+  new Log({ message: 'Updating the all timeslots', action: 'TIMESLOTS_UPDATE_ALL', type: 'INFO' }).create();
+  // const instTimeslotOrder = new TimeslotOrder(req.swagger.params.body.value);
+  const instTimeslot = new Timeslot({});
+  instTimeslot.updateAllTimeSlots(req.swagger.params.body.value)
+  // instTimeslotOrder.updateTimeslotOrder(query.validateParam(req.swagger.params, 'orderId', 0))
+    .then(msg => res.json({ message: `Updated ${msg}` }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'TIMESLOTS_UPDATE_ALL', type: 'ERROR' }).create();
+      if (err === 'Not found') {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.status(500).json({ message: 'Failed' });
+    })
+    .finally(() => {
+      instTimeslot.release();
+    });
+};
+
 module.exports = timeSlot;
