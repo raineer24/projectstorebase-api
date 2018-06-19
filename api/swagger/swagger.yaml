@@ -345,7 +345,7 @@ paths:
                 example: Unauthorized
   /user/account/partnerbuyeruser/{id}/save:
     x-swagger-router-controller: partnerbuyeruser
-    put:
+    post:
       tags:
         - user
       summary: update partnerbuyeruser
@@ -380,7 +380,7 @@ paths:
                 example: Unauthorized
   /user/account/partnerbuyerusers:
     x-swagger-router-controller: partnerbuyeruser
-    post:
+    put:
       tags:
         - user
       summary: create PB User

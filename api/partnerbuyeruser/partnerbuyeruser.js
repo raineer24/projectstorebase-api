@@ -306,7 +306,7 @@ Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
 
 Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
-  that.getByValue(id, 'id')
+  that.getByValue(id, 'useraccount_id')
     .then((resultList) => {
       if (!resultList[0].id) {
         reject('Not foundssss');
@@ -319,11 +319,13 @@ Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
             resolve(response.message);
           })
           .catch((err) => {
+            log.info(err);
             reject(err);
           });
       }
     })
     .catch((err) => {
+      log.info(err);
       reject(err);
     });
 });
