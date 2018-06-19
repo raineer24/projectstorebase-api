@@ -280,12 +280,10 @@ Order.prototype.getByValue = (value, field) => {
 
 Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject) => {
   const instTrans = new Transaction({});
-  const instUser = new User({});
   const transactionId = instTrans.getTransaction();
   const instGc = new Gc({});
   let transType = '';
   log.info('GC LIST:');
-  log.info(instUser);
   if (gcList) {
     for (let ctr = 0; ctr < gcList.length; ctr += 1) {
       instGc.getByValue(gcList[ctr], 'code').then((resultList) => {
