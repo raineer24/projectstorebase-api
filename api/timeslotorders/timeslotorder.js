@@ -82,6 +82,9 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
         if (that.model.id) {
           delete that.model.id;
         }
+        const date = new Date(that.model.datetime);
+        date.setHours(5 + (that.model.timeslot_id * 3));
+        that.model.datetime = date.getTime();
         const query = that.sqlTable.insert(that.model).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
@@ -124,6 +127,9 @@ TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolv
                   if (tsoResultList.length >= timeslotResultList[0][dMax]) {
                     reject('Full');
                   } else {
+                    const date = new Date(that.model.datetime);
+                    date.setHours(5 + (that.model.timeslot_id * 3));
+                    that.model.datetime = date.getTime();
                     that.model = _.merge(resultList[0], that.model);
                     const query = that.sqlTable.update(that.model)
                       .where(that.sqlTable.id.equals(resultList[0].id)).toQuery();
