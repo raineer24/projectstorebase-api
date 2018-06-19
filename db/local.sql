@@ -366,7 +366,8 @@ CREATE TABLE `partnerbuyeruser` (
 `email` CHAR(100) NOT NULL,
 `name` VARCHAR(250) NOT NULL,
 `credit` DECIMAL(20,2) NOT NULL,
-`balance` DECIMAL(20,2) NOT NULL,
+`availablebalance` DECIMAL(20,2) NOT NULL,
+`outstandingbalance` DECIMAL(20,2) NOT NULL,
 `status` VARCHAR(250) NOT NULL,
 `dateCreated` BIGINT(50) NOT NULL,
 `dateUpdated` BIGINT(50) NOT NULL,
@@ -382,7 +383,7 @@ PRIMARY KEY (`id`)
 
 LOCK TABLES `partnerbuyeruser` WRITE;
 /*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
-INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500.00,2500.00,'enabled',1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500.00,2500.00,'enabled',1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500.00,2500.00,'enabled',1522637372669,1522637372669,7,1);
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,7,1);
 /*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
 UNLOCK TABLES;
 

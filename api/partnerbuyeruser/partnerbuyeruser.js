@@ -31,7 +31,8 @@ function Partnerbuyeruser(user) {
       'email',
       'name',
       'credit',
-      'balance',
+      'availablebalance',
+      'outstandingbalance',
       'status',
       'dateCreated',
       'dateUpdated',
@@ -215,10 +216,8 @@ Partnerbuyeruser.prototype.createMultiple = () => new BluePromise((resolve, reje
           reject('Found');
         }
       });
-  })
-    .catch((err) => {
-      reject(err);
-    });
+  });
+  resolve();
 });
 
 Partnerbuyeruser.prototype.mailConfirmation = (userAccount) => {
