@@ -163,6 +163,7 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 User.prototype.mailConfirmation = (userAccount) => {
+  log.info(userAccount);
   const body = `
   <div><p>Hi,</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>

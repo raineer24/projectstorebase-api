@@ -11,7 +11,6 @@ const Transaction = require('../transactions/transaction');
 const OrderItem = require('../orderItems/orderItem');
 const Orderseller = require('../ordersellers/orderseller');
 const Gc = require('../gc/gc');
-const User = require('../users/user');
 
 let that;
 
@@ -283,7 +282,6 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
   const transactionId = instTrans.getTransaction();
   const instGc = new Gc({});
   let transType = '';
-  log.info('GC LIST:');
   if (gcList) {
     for (let ctr = 0; ctr < gcList.length; ctr += 1) {
       instGc.getByValue(gcList[ctr], 'code').then((resultList) => {
@@ -310,22 +308,12 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
         .then((resultList) => {
           if (resultList.length > 0) {
             const orderEntry = resultList[0];
+            log.info(orderEntry);
             that.mailConfirmation(_.merge(orderEntry, { transactionId }))
               .then((mailOptions) => {
-                log.info(orderEntry);
                 new Mailer(mailOptions).send()
                   .then(() => {
                     log.info(`Successfully sent order with transaction # ${transactionId}`);
-                  })
-                  .catch((err) => {
-                    log.error(`Failed to send ${err}`);
-                  });
-              });
-            that.mailAuditConfirmation(_.merge(orderEntry, { transactionId }))
-              .then((mailOptions) => {
-                new Mailer(mailOptions).send()
-                  .then(() => {
-                    log.info(`Email Notification - User and Audit Personnel # ${transactionId}`);
                   })
                   .catch((err) => {
                     log.error(`Failed to send ${err}`);
