@@ -291,6 +291,32 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /user/account/partnerbuyerusers/{partnerbuyer_id}:
+    x-swagger-router-controller: partnerbuyeruser
+    get:
+      tags:
+        - users
+      summary: check if user is in partnerbuyeruser table
+      operationId: getUsers
+      parameters:
+        - $ref: "#/parameters/partnerbuyer_id"
+      responses:
+        200:
+          description: Get all partner buyer users
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /user/account/partnerbuyeruser/{useraccount_id}:
     x-swagger-router-controller: partnerbuyeruser
     get:
@@ -317,15 +343,15 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /user/account/partnerbuyeruser/{useraccount_id}/save:
+  /user/account/partnerbuyeruser/{id}/save:
     x-swagger-router-controller: partnerbuyeruser
-    put:
+    post:
       tags:
         - user
       summary: update partnerbuyeruser
       operationId: updateAccount
       parameters:
-        - $ref: "#/parameters/useraccount_id"
+        - $ref: "#/parameters/id"
         - name: body
           in: body
           description: post contents
@@ -346,6 +372,37 @@ paths:
                 example: 2000
         403:
           description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /user/account/partnerbuyerusers:
+    x-swagger-router-controller: partnerbuyeruser
+    put:
+      tags:
+        - user
+      summary: create PB User
+      operationId: addUsers
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/partnerbuyerusers"
+      responses:
+        200:
+          description: Successful registration
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
           schema:
             type: object
             properties:
@@ -2379,12 +2436,43 @@ definitions:
       useraccount_id:
         type: number
         description: user id
+      partnerbuyer_id:
+        type: number
+        description: partner buyer id
       balance:
         type: number
         description: PBU balance
       doc:
         type: object
         description: "Address object"
+  partnerbuyerusers:
+    title: create PBU
+    type: object
+    properties:
+      username:
+        type: string
+        description: user name
+      email:
+        type: string
+        description: user e-mail
+      name:
+        type: string
+        description: user name
+      balance:
+        type: number
+        description: PBU balance
+      credit:
+        type: number
+        description: PBU credit
+      partnerBuyer_id:
+        type: number
+        description: partner buyer id
+      useraccount_id:
+        type: number
+        description: user id
+      status:
+        type: string
+        description: user account status
   ItemCreate:
     title: ItemCreate
     type: object
@@ -2533,6 +2621,11 @@ parameters:
     in: path
     name: useraccount_id
     type: string
+    required: true
+  partnerbuyer_id:
+    in: path
+    name: partnerbuyer_id
+    type: number
     required: true
   useraccount_Id:
     in: path
