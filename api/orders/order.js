@@ -189,6 +189,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+    log.info(query);
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())

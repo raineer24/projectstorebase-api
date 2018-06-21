@@ -1,6 +1,7 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
+const User = require('../users/user');
 
 const Conn = require('../../service/connection');
 const log = require('color-logs')(true, true, 'Rating');
@@ -35,6 +36,76 @@ function Rating(orderSeller) {
       'dateUpdated',
     ],
   });
+  this.sqlTableOrder = sql.define({
+    name: 'order',
+    columns: [
+      'id',
+      'orderkey',
+      'number',
+      'itemTotal',
+      'finalItemTotal',
+      'total',
+      'discount',
+      'shipmentTotal',
+      'adjustmentTotal',
+      'paymentTotal',
+      'discountTotal',
+      'dateCompleted',
+      'shipmentStatus',
+      'paymentStatus',
+      'status',
+      'email',
+      'specialInstructions',
+      'includedTaxTotal',
+      'additionalTaxTotal',
+      'displayIncludedTaxTotal',
+      'displayAdditionalTaxTotal',
+      'taxTotal',
+      'currency',
+      'totalQuantity',
+      'finalTotalQuantity',
+      'firstname',
+      'lastname',
+      'phone',
+      'landline',
+      'billingAddress01',
+      'billingAddress02',
+      'billCity',
+      'billPostalcode',
+      'billCountry',
+      'billCountry_id',
+      'shippingAddress01',
+      'shippingAddress02',
+      'city',
+      'postalcode',
+      'country',
+      'country_id',
+      'paymentMode',
+      'paymentInstructions',
+      'dateCreated',
+      'dateUpdated',
+      'useraccount_id',
+      'address_id',
+      'referenceId',
+      'seller_id',
+    ],
+  });
+  this.sqlTableUser = sql.define({
+    name: 'useraccount',
+    columns: [
+      'id',
+      'username',
+      'password',
+      'email',
+      'firstName',
+      'lastName',
+      'uiid',
+      'gender',
+      'mobileNumber',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
   that = this;
 }
 
@@ -44,6 +115,7 @@ function Rating(orderSeller) {
 */
 Rating.prototype.create = () => new BluePromise((resolve, reject) => {
   const query = that.sqlTable.insert(that.model).toQuery();
+  log.info(query);
   that.dbConn.queryAsync(query.text, query.values)
     .then((response) => {
       that.getById(response.insertId)
