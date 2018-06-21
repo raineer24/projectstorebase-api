@@ -127,14 +127,15 @@ selleraccount.loginAccount = (req, res) => {
     .then(userAuth => userAuth)
     .then(instSellerAccount.authorize)
     .then((result) => {
+      new Selleraccount({ id: result.id, lastLogin: result.dateAuthenticated }).update(result.id);
       res.json(instSellerAccount.cleanResponse(result, { message: 'Found' }));
       selleraccountid = result.id;
       new Log({
         message: 'Logged into Seller Account', action: 'SELLER_ACCOUNT_LOGIN', type: 'INFO', selleraccount_id: `${result.id}`,
       }).create();
     })
-    .catch(() => res.status(404).json({
-      message: 'Not found',
+    .catch(err => res.status(404).json({
+      message: err,
     }))
     .finally(() => {
       instSellerAccount.release();
