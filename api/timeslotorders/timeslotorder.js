@@ -73,6 +73,9 @@ function getMax(day) {
   * @return {object/number}
 */
 TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
+  const date = new Date(that.model.datetime);
+  date.setHours(5 + (that.model.timeslot_id * 3));
+  that.model.datetime = date.getTime();
   that.findAll(0, 1, {
     orderId: that.model.order_id,
     timeslotId: that.model.timeslot_id,
@@ -82,10 +85,35 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
         if (that.model.id) {
           delete that.model.id;
         }
-        const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConn.queryAsync(query.text, query.values)
-          .then((response) => {
-            resolve(response.insertId);
+        const dMax = getMax(moment(that.model.date).format('ddd'));
+        new Timeslot({}).getById(that.model.timeslot_id)
+          .then((timeslotResultList) => {
+            if (timeslotResultList.length === 0) {
+              reject('Not found');
+            } else {
+              that.findAll(0, 100, {
+                timeslotId: that.model.timeslot_id,
+                date: that.model.date,
+                confirmed: 1,
+              })
+                .then((tsoResultList) => {
+                  if (tsoResultList.length >= timeslotResultList[0][dMax]) {
+                    reject('Full');
+                  } else {
+                    const query = that.sqlTable.insert(that.model).toQuery();
+                    that.dbConn.queryAsync(query.text, query.values)
+                      .then((response) => {
+                        resolve(response.insertId);
+                      })
+                      .catch((err) => {
+                        reject(err);
+                      });
+                  }
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            }
           })
           .catch((err) => {
             reject(err);
@@ -100,6 +128,9 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolve, reject) => {
+  const date = new Date(that.model.datetime);
+  date.setHours(5 + (that.model.timeslot_id * 3));
+  that.model.datetime = date.getTime();
   that.model.dateUpdated = new Date().getTime();
   that.findAll(0, 1, {
     orderId,
@@ -169,7 +200,7 @@ TimeslotOrder.prototype.formatTimeslots = tsoResult => new BluePromise((resolve,
   new Timeslot({}).findAll(0, 100, {})
     .then((results) => {
       /*eslint-disable */
-      for (let n = 0; n <= 7; n++) {
+      for (let n = 0; n < 7; n++) {
         const currDate = moment().add(n, 'days').format('YYYY-MM-DD');
         const maxValue = getMax(moment().add(n, 'days').format('ddd'));
         formatted.push({

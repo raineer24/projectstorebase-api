@@ -20,7 +20,14 @@ timeslotOrder.addTimeslotOrder = (req, res) => {
     .then(id => res.json({ id, message: 'Saved' }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'TIMESLOT_ORDER_CREATE', type: 'ERROR' }).create();
-      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+      if (err === 'Found') {
+        return res.status(201).json({ message: 'Existing' });
+      } else if (err === 'Not found') {
+        return res.status(404).json({ message: 'Timeslot not found' });
+      } else if (err === 'Full') {
+        return res.status(409).json({ message: 'Slot is full' });
+      }
+      return res.status(500).json({ message: 'Failed' });
     })
     .finally(() => {
       instTimeslotOrder.release();
