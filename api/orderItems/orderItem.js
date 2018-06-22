@@ -33,6 +33,8 @@ function OrderItem(orderItem) {
       'item_id',
       'order_id',
       'quantity',
+      'finalQuantity',
+      'finalPrice',
       'status',
       'processed',
       'specialInstructions',
@@ -67,6 +69,19 @@ function OrderItem(orderItem) {
       'dateUpdated',
     ],
   });
+  this.sqlTableCategory = sql.define({
+    name: 'category',
+    columns: [
+      'id',
+      'name',
+      'level',
+      'category_id',
+      'enabled',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
+
   that = this;
 }
 
@@ -93,6 +108,23 @@ OrderItem.prototype.findAll = (skip, limit, filters) => {
       .from(that.sqlTable.join(that.sqlTableItem)
         .on(that.sqlTable.item_id.equals(that.sqlTableItem.id)))
       .where(that.sqlTable.orderkey.equals(filters.orderkey))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.orderId && filters.addCategory) {
+    const category1 = that.sqlTableCategory.as('category1');
+    const category2 = that.sqlTableCategory.as('category2');
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('orderItem_id'), that.sqlTable.star(), that.sqlTableItem.star(), category1.name.as('category1Name'), category2.name.as('category2Name'))
+      .from(that.sqlTable
+        .join(that.sqlTableItem)
+        .on(that.sqlTable.item_id.equals(that.sqlTableItem.id))
+        .leftJoin(category1)
+        .on(category1.id.equals(that.sqlTableItem.category1))
+        .leftJoin(category2)
+        .on(category2.id.equals(that.sqlTableItem.category2)))
+      .where(that.sqlTable.order_id.equals(filters.orderId))
+      .order(that.sqlTableItem.category1, that.sqlTableItem.category2)
       .limit(limit)
       .offset(skip)
       .toQuery();

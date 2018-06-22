@@ -1,3 +1,4 @@
+const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Timeslot');
@@ -92,6 +93,53 @@ Timeslot.prototype.findAll = (skip, limit, filters) => {
 
   return that.dbConn.queryAsync(query.text, query.values);
 };
+
+/**
+  * updateAllTimeSlots
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Timeslot.prototype.updateAllTimeSlots = data => new BluePromise((resolve, reject) => {
+  let d1max = '';
+  let d2max = '';
+  let d3max = '';
+  let d4max = '';
+  let d5max = '';
+  let d6max = '';
+  let d7max = '';
+  const ids = [];
+  _.forEach(data, (obj) => {
+    d1max += `WHEN id = ${obj.id} THEN '${obj.d1max}' `;
+    d2max += `WHEN id = ${obj.id} THEN '${obj.d2max}' `;
+    d3max += `WHEN id = ${obj.id} THEN '${obj.d3max}' `;
+    d4max += `WHEN id = ${obj.id} THEN '${obj.d4max}' `;
+    d5max += `WHEN id = ${obj.id} THEN '${obj.d5max}' `;
+    d6max += `WHEN id = ${obj.id} THEN '${obj.d6max}' `;
+    d7max += `WHEN id = ${obj.id} THEN '${obj.d7max}' `;
+    ids.push(obj.id);
+  });
+  const strSql = `
+  UPDATE timeslot
+  SET d1max = CASE ${d1max} END,
+      d2max = CASE ${d2max} END,
+      d3max = CASE ${d3max} END,
+      d4max = CASE ${d4max} END,
+      d5max = CASE ${d5max} END,
+      d6max = CASE ${d6max} END,
+      d7max = CASE ${d7max} END,
+      dateUpdated = '${new Date().getTime()}'
+  WHERE id IN (${ids.join(',')})`;
+  log.info(strSql);
+  that.dbConn.queryAsync(strSql)
+    .then((response) => {
+      log.info(response.message);
+      resolve(response.message);
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
 
 /**
   * Release connection

@@ -160,12 +160,16 @@ order.confirmOrder = (req, res) => {
 * @return {Object}
 */
 order.getAllSellerOrders = (req, res) => {
-  new Log({ message: 'Show all orders by seller account', action: 'SELLER_ORDER_LIST', type: 'INFO' }).create();
   const instOrder = new Order({});
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
   })
-    .then(result => res.json(result))
+    .then((result) => {
+      res.json(result);
+      new Log({
+        message: 'Show all orders by seller account', action: 'SELLER_ORDER_LIST', type: 'INFO', user_id: `${result.id}`, selleraccount_id: `${result.selleraccound_id}`,
+      }).create();
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'SELLER_ORDER_LIST', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });

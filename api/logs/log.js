@@ -30,6 +30,7 @@ function Log(log) {
       'selleraccount_id',
       'seller_id',
       'dateCreated',
+      'dateUpdated',
     ],
   });
 
