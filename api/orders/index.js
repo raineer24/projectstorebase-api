@@ -2,7 +2,6 @@ const query = require('../../service/query');
 const Log = require('../logs/log');
 const log = require('color-logs')(true, true, 'User Account');
 const Util = require('../helpers/util');
-const log = require('color-logs')(true, true, 'Order');
 const Order = require('./order');
 
 const order = {};
