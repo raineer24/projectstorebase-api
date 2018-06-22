@@ -1,5 +1,6 @@
 const query = require('../../service/query');
 const Log = require('../logs/log');
+const log = require('color-logs')(true, true, 'User Account');
 const Util = require('../helpers/util');
 const log = require('color-logs')(true, true, 'Order');
 const Order = require('./order');
@@ -36,6 +37,7 @@ order.getAllOrders = (req, res) => {
 */
 order.addOrder = (req, res) => {
   new Log({ message: 'Add a new order', action: 'ORDER_CREATE', type: 'INFO' }).create();
+  log.info(req.swagger.params.body.value);
   const instOrder = new Order(req.swagger.params.body.value);
   instOrder.create()
     .then(id => res.json({ id, message: 'Saved' }))

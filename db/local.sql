@@ -363,10 +363,12 @@ DROP TABLE IF EXISTS `partnerbuyeruser`;
 CREATE TABLE `partnerbuyeruser` (
 `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
 `username` CHAR(60) NOT NULL,
-`email` CHAR(100),
+`email` CHAR(100) NOT NULL,
 `name` VARCHAR(250) NOT NULL,
-`credit` BIGINT(20) NOT NULL,
-`balance` BIGINT(20),
+`credit` DECIMAL(20,2) NOT NULL,
+`availablebalance` DECIMAL(20,2) NOT NULL,
+`outstandingbalance` DECIMAL(20,2) NOT NULL,
+`status` VARCHAR(250) NOT NULL,
 `dateCreated` BIGINT(50) NOT NULL,
 `dateUpdated` BIGINT(50) NOT NULL,
 `useraccount_id` BIGINT(10) NOT NULL,
@@ -381,7 +383,7 @@ PRIMARY KEY (`id`)
 
 LOCK TABLES `partnerbuyeruser` WRITE;
 /*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
-INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500,2500,1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500,2500,1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500,2500,1522637372669,1522637372669,7,1);
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,7,1);
 /*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -640,7 +642,8 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'Admin Personnel',1521072000000,1521072000000),(2,'Assembly Personnel',1521072000000,1521072000000),(3,'Finance Personnel',1521072000000,1521072000000),(4,'Management Personnel',1521072000000,1521072000000),(5,'EOS Internal',1521072000000,1521072000000);
+INSERT INTO `role` VALUES
+(1,'EOS Dev',1521072000000,1521072000000),(2,'EOS Admin',1521072000000,1521072000000),(3,'PS Admin',1521072000000,1521072000000),(4,'PS Assembly',1521072000000,1521072000000),(5,'PS Finance',1521072000000,1521072000000),(6,'PS Management',1521072000000,1521072000000),(7,'PB Admin',1521072000000,1521072000000),(8,'PB Finance',1521072000000,1521072000000),(9,'Partner Seller - Shopper',1521072000000,1521072000000),(10,'Partner Seller - Delivery',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -667,7 +670,7 @@ CREATE TABLE `seller` (
 
 LOCK TABLES `seller` WRITE;
 /*!40000 ALTER TABLE `seller` DISABLE KEYS */;
-INSERT INTO `seller` VALUES (1,'EOS Test Seller','eos',1521072000000,1521072000000);
+INSERT INTO `seller` VALUES (1,'EOS Internal','eos',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `seller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -733,8 +736,10 @@ CREATE TABLE `selleraccount` (
   `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
+  `enabled` bit(1) DEFAULT b'1',
   `seller_id` bigint(50) DEFAULT 0,
   `role_id` bigint(50) DEFAULT 0,
+  `lastLogin` bigint(50) DEFAULT 0,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -748,17 +753,17 @@ CREATE TABLE `selleraccount` (
 LOCK TABLES `selleraccount` WRITE;
 /*!40000 ALTER TABLE `selleraccount` DISABLE KEYS */;
 INSERT INTO `selleraccount` VALUES
-(1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',1,1,1512763935519,1512763935531),(3,'admin.personnel','password','admin.personnel@mailinator.com','Admin Personel',1,1,1525937317483,1525937317483),(4,'assembly.personnel','password','assembly.personnel@mailinator.com','assembly Personel',1,2,1525937317483,1525937317483),(5,'finance.personnel','password','finance.personnel@mailinator.com','finance Personel',1,3,1525937317483,1525937317483),(6,'managment.personnel','password','managment.personnel@mailinator.com','managment Personel',1,4,1525937317483,1525937317483),(7,'eos.internal','password','eos.internal@mailinator.com','eos internal',1,5,1525937317483,1525937317483),(8,'shopper1','password','shopper1@mailinator.com','shopper one',1,2,1525937317483,1525937317483),(9,'shopper2','password','shopper2@mailinator.com','shopper two',1,2,1525937317483,1525937317483);
+(1,'norbs@gmail.com','password','norbs@gmail.com','Norberts',1,1,1,0,1512763935519,1512763935531),(2,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor Queja',1,1,1,0,1512763935519,1512763935531),(3,'ps.admin','password','admin.personnel@mailinator.com','Admin Personel',1,1,3,0,1525937317483,1525937317483),(4,'ps.assembly','password','assembly.personnel@mailinator.com','assembly Personel',1,1,4,0,1525937317483,1525937317483),(5,'ps.finance','password','finance.personnel@mailinator.com','finance Personel',1,1,5,0,1525937317483,1525937317483),(6,'ps.management','password','managment.personnel@mailinator.com','managment Personel',1,1,6,0,1525937317483,1525937317483),(7,'eos.dev','password','eos.internal@mailinator.com','eos developer',1,1,1,0,1525937317483,1525937317483),(8,'eos.internal','password','eos.internal@mailinator.com','eos internal',1,1,2,0,1525937317483,1525937317483),(9,'pb.admin','password','pb.admin@mailinator.com','partner buyer admin',1,1,7,0,1525937317483,1525937317483),(10,'pb.finance','password','pb.finance@mailinator.com','partner buyer finance',1,1,8,0,1525937317483,1525937317483),(11,'disabled.test','password','disabled.test@mailinator.com','juan dela cruz',0,1,1,0,1512763935519,1512763935531),(12,'shopper1','password','shopper1@mailinator.com','shopper one',1,1,9,0,1525937317483,1525937317483),(13,'shopper2','password','shopper2@mailinator.com','shopper two',1,1,9,0,1525937317483,1525937317483),(14,'delivery1','password','shopper2@mailinator.com','shopper two',1,1,10,0,1525937317483,1525937317483);
 /*!40000 ALTER TABLE `selleraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `setting`;
+DROP TABLE IF EXISTS `settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `setting` (
+CREATE TABLE `settings` (
 `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
 `name` CHAR(60) NOT NULL,
-`value` VARCHAR(250) NOT NULL,
+`value` BIGINT(50) NOT NULL,
 `dateCreated` BIGINT(50) NOT NULL,
 `reference` VARCHAR(50) NOT NULL,
 `reference_id` BIGINT(10) NOT NULL,
@@ -769,41 +774,11 @@ PRIMARY KEY (`id`)
 -- Dumping data for table `setting`
 --
 
-LOCK TABLES `setting` WRITE;
-/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
-INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
-/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
+LOCK TABLES `settings` WRITE;
+/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
+INSERT INTO `settings` VALUES (1,'delivery fee',49,1512763935519,'user',1),(2,'service fee',99,1512763935519,'user',2),(3,'VAT',0.12,1512763935519,'user',3);
+/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `setting`
---
-
-DROP TABLE IF EXISTS `setting`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `setting` (
-`id` BIGINT(50) NOT NULL AUTO_INCREMENT,
-`name` CHAR(60) NOT NULL,
-`value` VARCHAR(250) NOT NULL,
-`dateCreated` BIGINT(50) NOT NULL,
-`reference` VARCHAR(50) NOT NULL,
-`reference_id` BIGINT(10) NOT NULL,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
---
--- Dumping data for table `setting`
---
-
-LOCK TABLES `setting` WRITE;
-/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
-INSERT INTO `setting` VALUES (1,'maxCredit','8000',1512763935519,'user',5);
-/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
-UNLOCK TABLES;
-
 
 --
 -- Table structure for table `timeslot`

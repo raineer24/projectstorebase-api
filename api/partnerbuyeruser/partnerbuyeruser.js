@@ -31,7 +31,9 @@ function Partnerbuyeruser(user) {
       'email',
       'name',
       'credit',
-      'balance',
+      'availablebalance',
+      'outstandingbalance',
+      'status',
       'dateCreated',
       'dateUpdated',
       'useraccount_id',
@@ -125,22 +127,15 @@ Partnerbuyeruser.prototype.authorize = userAuth => new BluePromise((resolve, rej
 
 /**
   * Save User account
-  * @param {string} username
-  * @param {string} password
-  * @param {string} email
-  * @param {string} uiid
+  * @param {string} useraccount_id
   * @return {object}
 */
 Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
-  that.getByValue(that.model.username, 'username')
+  const id = that.model.useraccount_id;
+  that.getById(that.model.useraccount_id, 'useraccount_id')
     .then((results) => {
-      if (that.model.password === undefined) {
-        that.model.password = '';
-      }
-      if (that.model.uiid === undefined) {
-        that.model.uiid = '';
-      }
       if (results.length === 0) {
+        log.info(id);
         const query = that.sqlTable.insert(that.model).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
@@ -174,6 +169,55 @@ Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
     .catch((err) => {
       reject(err);
     });
+});
+
+/**
+  * Save User account
+  * @param {string} useraccount_id
+  * @return {object}
+*/
+Partnerbuyeruser.prototype.createMultiple = () => new BluePromise((resolve, reject) => {
+  let str = [];
+  str = that.model;
+  _.forEach(str, (key) => {
+    const id = key.useraccount_id;
+    that.getById(id, 'useraccount_id')
+      .then((results) => {
+        log.info(results.length);
+        if (results.length === 0 && id !== undefined) {
+          const query = that.sqlTable.insert(key).toQuery();
+          that.dbConn.queryAsync(query.text, query.values)
+            .then((response) => {
+              log.info(response);
+              that.getById(id)
+                .then((resultList) => {
+                  if (!resultList[0].id) {
+                    reject('Not found');
+                  } else {
+                    new Mailer(that.mailConfirmation(resultList[0])).send()
+                      .then(() => {
+                        log.info(`Successfully registered with e-mail ${resultList[0].email}`);
+                      })
+                      .catch((err) => {
+                        log.error(`Failed to send ${err}`);
+                      });
+
+                    resolve(resultList[0]);
+                  }
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          reject('Found');
+        }
+      });
+  });
+  resolve();
 });
 
 Partnerbuyeruser.prototype.mailConfirmation = (userAccount) => {
@@ -275,11 +319,13 @@ Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
             resolve(response.message);
           })
           .catch((err) => {
+            log.info(err);
             reject(err);
           });
       }
     })
     .catch((err) => {
+      log.info(err);
       reject(err);
     });
 });
@@ -326,12 +372,11 @@ Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.username && filters.uiid) {
+  } else if (filters.partnerBuyer_id) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
-      .where(that.sqlTable.username.equals(filters.username)
-        .and(that.sqlTable.uiid.equals(filters.uiid)))
+      .where(that.sqlTable.partnerBuyer_id.equals(filters.partnerBuyer_id))
       .limit(limit)
       .offset(skip)
       .toQuery();
