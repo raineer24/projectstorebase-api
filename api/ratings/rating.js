@@ -1,7 +1,6 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
-const Order = require('../orders/order');
 
 const Conn = require('../../service/connection');
 const log = require('color-logs')(true, true, 'Rating');
