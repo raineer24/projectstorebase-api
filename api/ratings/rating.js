@@ -1,7 +1,7 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
-const User = require('../users/user');
+const Order = require('../orders/order');
 
 const Conn = require('../../service/connection');
 const log = require('color-logs')(true, true, 'Rating');
@@ -127,7 +127,7 @@ Rating.prototype.create = () => new BluePromise((resolve, reject) => {
           } else {
             new Mailer(that.mailConfirmation(ratingEntry)).send()
               .then(() => {
-                log.info(`Email feedback notification ${resultList[0].email}`);
+                log.info('sent!');
               })
               .catch((err) => {
                 log.error(`Failed to send ${err}`);
@@ -142,22 +142,82 @@ Rating.prototype.create = () => new BluePromise((resolve, reject) => {
     });
 });
 
-Rating.prototype.mailConfirmation = (ratingEntry) => {
-  const body = `
-  <div><p>Hi,</p></div>
-  <div><b>Feedback: ${ratingEntry.feedback}</b></div>
-  <div><b>Date Created: ${ratingEntry.dateCreated}</b></div>
-  <div><p><a href="hutcake.com">EMAIL FEEDBACK NOTIFICATION</a></p></div>
-  <div><p>Thank you!</p></div>
-  `;
-  return {
-    from: 'info@eos.com.ph',
-    to: 'raineerdelarita@gmail.com',
-    subject: 'OMG - Feedback Email ',
-    text: `Successfully sent feedback with e-mail ${ratingEntry.email}`,
-    html: body,
-  };
+/**
+  * findAll
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+Rating.prototype.findAll = (skip, limit, filters) => {
+  let query = null;
+  if (filters.Id && filters.orderkey) {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.id.equals(filters.Id)
+        .and(that.sqlTable.orderkey.equals(filters.orderkey)))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.orderkey) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('Id'), that.sqlTable.star(), that.sqlTableOrder.star())
+      .from(that.sqlTable.join(that.sqlTableOrder)
+        .on(that.sqlTable.id.equals(that.sqlTableOrder.id)))
+      .where(that.sqlTable.orderkey.equals(filters.orderkey))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else if (filters.accountId) {
+    query = that.sqlTable
+      .select(that.sqlTable.id.as('Id'), that.sqlTable.star(), that.sqlTableItem.star())
+      .from(that.sqlTable.join(that.sqlTableOrder)
+        .on(that.sqlTable.id.equals(that.sqlTableOrder.id)))
+      .where(that.sqlTable.useraccount_id.equals(filters.accountId))
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  } else {
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
+  }
+  log.info(query.text);
+  return that.dbConn.queryAsync(query.text, query.values);
 };
+
+Rating.prototype.mailConfirmation = ratingEntry => new BluePromise((resolve, reject) => {
+  new Rating({}).findAll(0, 1000, {
+    orderkey: ratingEntry.orderkey,
+  })
+    .then((resultList) => {
+      log.info(resultList);
+      let body = `
+      <div><p>Email Notification - User and Audit Personnel</p></div>
+      <div><p>Send emails to user and audit personnel upon confirmation of order</p></div>
+      <div><b>Transaction # ${ratingEntry.feedback}</b></div>
+      <h2>Trigger is the Place Order Now button in Payment page</h2>
+      `;
+      _.forEach(resultList, (obj) => {
+        log.info(obj);
+        body += `<div>${obj} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
+      });
+      body += `<h1>Total: PHP ${ratingEntry.total}</h1>`;
+      resolve({
+        from: 'info@eos.com.ph',
+        to: ratingEntry.email,
+        subject: 'OMG - Feedback Email ',
+        text: `Successfully sent feedback with e-mail ${ratingEntry.email}`,
+        html: body,
+      });
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
 
 /**
   * findById

@@ -199,7 +199,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .toQuery();
   }
   log.info(query.text);
-
+  log.info('findall');
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
