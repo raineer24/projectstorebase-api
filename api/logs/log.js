@@ -14,6 +14,7 @@ function Log(log) {
 
   this.model = _.extend(log, {
     dateCreated: new Date().getTime(),
+    dateUpdated: new Date().getTime(),
   });
   this.table = 'log';
   this.dbConn = Conn;

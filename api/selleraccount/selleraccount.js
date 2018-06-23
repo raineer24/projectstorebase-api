@@ -61,19 +61,30 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (results.length === 0) {
-        if (that.model.id) {
-          delete that.model.id;
-        }
-        const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConn.queryAsync(query.text, query.values)
-          .then((response) => {
-            resolve(response.insertId);
+        that.getByValue(that.model.email, 'email')
+          .then((resultsEmail) => {
+            if (resultsEmail.length === 0) {
+              if (that.model.id) {
+                delete that.model.id;
+              }
+              that.model.password = Math.random().toString(36).slice(2);
+              const query = that.sqlTable.insert(that.model).toQuery();
+              that.dbConn.queryAsync(query.text, query.values)
+                .then((response) => {
+                  resolve(response.insertId);
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            } else {
+              reject('Email Found');
+            }
           })
           .catch((err) => {
             reject(err);
           });
       } else {
-        reject('Found');
+        reject('Username Found');
       }
     })
     .catch((err) => {
@@ -98,12 +109,22 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
       if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        that.model = _.merge(resultList[0], that.model);
-        const query = that.sqlTable.update(that.model)
-          .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConn.queryAsync(query.text, query.values)
-          .then((response) => {
-            resolve(response.message);
+        that.getByValue(that.model.email, 'email')
+          .then((resultEmail) => {
+            if (resultEmail.length && resultEmail[0].id !== resultList[0].id) {
+              reject('Email Found');
+            } else {
+              that.model = _.merge(resultList[0], that.model);
+              const query = that.sqlTable.update(that.model)
+                .where(that.sqlTable.id.equals(id)).toQuery();
+              that.dbConn.queryAsync(query.text, query.values)
+                .then((response) => {
+                  resolve(response.message);
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            }
           })
           .catch((err) => {
             reject(err);
@@ -237,10 +258,21 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .offset(skip)
       .toQuery();
   }
-
   log.info(query.text);
 
   return that.dbConn.queryAsync(query.text, query.values);
+};
+
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Selleraccount.prototype.getRoles = () => {
+  const strSql = 'SELECT * FROM role ORDER BY name;';
+
+  return that.dbConn.queryAsync(strSql);
 };
 
 /**

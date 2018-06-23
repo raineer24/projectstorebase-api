@@ -295,7 +295,7 @@ paths:
     x-swagger-router-controller: partnerbuyeruser
     get:
       tags:
-        - users
+        - partnerbuyeruser
       summary: check if user is in partnerbuyeruser table
       operationId: getUsers
       parameters:
@@ -382,7 +382,7 @@ paths:
     x-swagger-router-controller: partnerbuyeruser
     put:
       tags:
-        - user
+        - partnerbuyeruser
       summary: create PB User
       operationId: addUsers
       parameters:
@@ -788,6 +788,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /selleraccount/save:
+    x-swagger-router-controller: selleraccount
+    post:
+      tags:
+        - selleraccount
+      summary: Create new selleraccount
+      operationId: registerAccount
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/sellerAccountRegister"
+      responses:
+        200:
+          description: Successful create
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /selleraccount/{id}/view:
     x-swagger-router-controller: selleraccount
     get:
@@ -837,6 +868,29 @@ paths:
               username:
                 type: string
                 example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/roles:
+    x-swagger-router-controller: selleraccount
+    get:
+      tags:
+        - selleraccount
+      summary: Return selleraccount roles
+      operationId: getRoles
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
         403:
           description: Unauthorized
           schema:
@@ -2325,6 +2379,23 @@ definitions:
       value:
         type: number
         description: transaction value
+  sellerAccountRegister:
+    title: sellerAccountRegister
+    type: object
+    required:
+      - username
+      - email
+      - role_id
+    properties:
+      username:
+        type: string
+        description: username
+      email:
+        type: string
+        description: user e-mail
+      role_id:
+        type: integer
+        description: role ID
   selleraccount:
     title: ""
     type: object
