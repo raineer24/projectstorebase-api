@@ -15,6 +15,9 @@ orderseller.getAllOrderSellers = (req, res) => {
   const x = req.swagger.params.sellerId.value;
   log.info(x);
   const instOrder = new OrderSeller({});
+  new Log({
+    message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', seller_id: `${res.id}`,
+  }).create();
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 25), {
     sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
     sellerAccount: true,
