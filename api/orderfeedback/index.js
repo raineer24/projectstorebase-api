@@ -11,7 +11,8 @@ const orderfb = {};
 * @return {Object}
 */
 orderfb.createFeedBack = (req, res) => {
-  new Log({ message: 'Saving user rating for order', action: 'FEEDBACK_CREATE', type: 'INFO' }).create();
+  // new Log({ message: 'Saving user rating for order', action:
+  // 'FEEDBACK_CREATE', type: 'INFO' }).create();
   const instOrderfb = new Orderfb(req.swagger.params.body.value);
   instOrderfb.create()
     .then(result => res.json({ message: result }))
