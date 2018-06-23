@@ -700,38 +700,6 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /selleraccount/{id}/update:
-    x-swagger-router-controller: selleraccount
-    put:
-      tags:
-        - selleraccount
-      summary: Update selleraccount
-      operationId: updateAccount
-      parameters:
-        - $ref: "#/parameters/id"
-        - name: body
-          in: body
-          description: put contents
-          required: true
-          schema:
-            $ref: "#/definitions/selleraccount"
-      responses:
-        200:
-          description: Successful update
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-                example: norbert@hutcake.com
-        403:
-          description: Unauthorized
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
   /selleraccount/login:
     x-swagger-router-controller: selleraccount
     post:
@@ -749,6 +717,63 @@ paths:
       responses:
         200:
           description: Successful login
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{id}/view:
+    x-swagger-router-controller: selleraccount
+    get:
+      tags:
+        - selleraccount
+      summary: Return seller account profile
+      operationId: viewAccount
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{id}/save:
+    x-swagger-router-controller: selleraccount
+    put:
+      tags:
+        - selleraccount
+      summary: Update selleraccount profile
+      operationId: updateAccount
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/selleraccount"
+      responses:
+        200:
+          description: Successful update
           schema:
             type: object
             properties:
@@ -797,7 +822,7 @@ paths:
     x-swagger-router-controller: sellers
     get:
       tags:
-        - profile
+        - sellers
       summary: Return seller profile
       operationId: viewAccount
       parameters:
@@ -2246,12 +2271,11 @@ definitions:
   selleraccount:
     title: ""
     type: object
-    required:
-      - id
     properties:
       id:
-        type: number
-        description: selleraccount id
+        type: string
+      value:
+        type: string
       doc:
         type: object
         description: "selleraccount object"
@@ -2513,7 +2537,7 @@ parameters:
     in: query
     name: addCategory
     type: string
-    required: false  
+    required: false
   selleraccountid:
     in: path
     name: selleraccountid
