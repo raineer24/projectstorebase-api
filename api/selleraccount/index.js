@@ -78,7 +78,7 @@ selleraccount.updateAccount = (req, res) => {
       new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_UPDATE', type: 'ERROR' }).create();
       switch (err) {
         case 'Not Found':
-          return res.status(400).json({ message: 'Not Found' });
+          return res.status(404).json({ message: 'Not Found' });
         case 'Email Found':
           return res.status(409).json({ message: 'Email Already Taken' });
         default:
@@ -128,13 +128,41 @@ selleraccount.loginAccount = (req, res) => {
     .then(userAuth => userAuth)
     .then(instSellerAccount.authorize)
     .then((result) => {
+      new Selleraccount({ id: result.id, lastLogin: result.dateAuthenticated }).update(result.id);
       res.json(instSellerAccount.cleanResponse(result, { message: 'Found' }));
       new Log({
         message: 'Logged into Seller Account', action: 'SELLER_ACCOUNT_LOGIN', type: 'INFO', selleraccount_id: `${result.id}`,
       }).create();
     })
-    .catch(() => res.status(404).json({
-      message: 'Not found',
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_LOGIN', type: 'ERROR' }).create();
+      switch (err) {
+        case 'Not Found':
+          return res.status(404).json({ message: 'Not Found' });
+        case 'Disabled':
+          return res.status(403).json({ message: 'Disabled' });
+        default:
+          return res.status(500).json({ message: 'Failed' });
+      }
+    })
+    .finally(() => {
+      instSellerAccount.release();
+    });
+};
+
+/**
+* Change password
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+selleraccount.changePassword = (req, res) => {
+  new Log({ message: 'Change password.', action: 'SELLER_ACCOUNT_CHANGE_PASSWORD', type: 'INFO' }).create();
+  const instSellerAccount = new Selleraccount(req.swagger.params.body.value);
+  instSellerAccount.update(query.validateParam(req.swagger.params, 'id', 0), true)
+    .then(status => res.json({ status, message: 'Updated' }))
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
+      message: err === 'Not Found' ? 'Not found' : err,
     }))
     .finally(() => {
       instSellerAccount.release();
@@ -142,7 +170,27 @@ selleraccount.loginAccount = (req, res) => {
 };
 
 /**
-* View user profile
+* Reset password
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+selleraccount.resetPassword = (req, res) => {
+  new Log({ message: 'Reset password.', action: 'SELLER_ACCOUNT_RESET_PASSWORD', type: 'INFO' }).create();
+  const instSellerAccount = new Selleraccount();
+  instSellerAccount.resetPassword(req.swagger.params.body.value)
+    .then(status => res.json({ status, message: 'Success' }))
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
+      message: err === 'Not Found' ? 'Not found' : err,
+    }))
+    .finally(() => {
+      instSellerAccount.release();
+    });
+};
+
+
+/**
+* Get user roles
 * @param {Object} req
 * @param {Object} res
 * @return {Object}

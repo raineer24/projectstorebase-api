@@ -736,7 +736,7 @@ CREATE TABLE `selleraccount` (
   `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
-  `enabled` bit(1) DEFAULT b'1',
+  `enabled` tinyint(1) DEFAULT 1,
   `seller_id` bigint(50) DEFAULT 0,
   `role_id` bigint(50) DEFAULT 0,
   `lastLogin` bigint(50) DEFAULT 0,
@@ -951,7 +951,8 @@ CREATE TABLE `useraccounttoken` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `valid` char(1) DEFAULT '1',
   `token_id` varchar(50) NOT NULL,
-  `useraccount_id` varchar(50) NOT NULL,
+  `selleraccount_id` varchar(50) DEFAULT NULL,
+  `useraccount_id` varchar(50) DEFAULT NULL,
   `dateCreated` bigint(20) NOT NULL,
   `dateUpdated` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
