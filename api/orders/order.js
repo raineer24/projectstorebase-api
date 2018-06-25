@@ -41,6 +41,8 @@ function Order(order) {
       'adjustmentTotal',
       'paymentTotal',
       'discountTotal',
+      'serviceFee',
+      'deliveryFee',
       'dateCompleted',
       'shipmentStatus',
       'paymentStatus',

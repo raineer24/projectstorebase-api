@@ -17,7 +17,7 @@ Util.signToken = (username) => {
 
 Util.signSellerToken = (seller) => {
   const exp = moment().add(2, 'hours').unix();
-  const token = jwt.sign({ username: seller.username, role: seller.role_id, exp }, cert, { algorithm: 'RH256' });
+  const token = jwt.sign({ username: seller.username, role: seller.role_id, exp }, cert, { algorithm: 'RS256' });
 
   return token;
 };
@@ -26,6 +26,7 @@ Util.decodeToken = (token) => {
   let authorize = false;
   jwt.verify(token, cert, (err, result) => {
     if (err) {
+      log.info(err);
       authorize = false;
     } else {
       log.info(result);

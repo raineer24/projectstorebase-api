@@ -2289,6 +2289,30 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /settings:
+    x-swagger-router-controller: settings
+    get:
+      tags:
+        - settings
+      summary: get a rating entry
+      operationId: getSettings
+      responses:
+       200:
+         description: Success
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 123445
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
