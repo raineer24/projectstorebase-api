@@ -32,8 +32,19 @@ function Selleraccount(selleraccount) {
       'password',
       'email',
       'name',
+      'enabled',
       'seller_id',
       'role_id',
+      'lastLogin',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
+  this.sqlTableRole = sql.define({
+    name: 'role',
+    columns: [
+      'id',
+      'name',
       'dateCreated',
       'dateUpdated',
     ],
@@ -123,6 +134,9 @@ Selleraccount.prototype.authenticate = () => new BluePromise((resolve, reject) =
       if (results.length === 0) {
         reject('Not found');
         return;
+      } else if (!results[0].enabled) {
+        reject('Disabled');
+        return;
       }
 
       resolve(_.merge({
@@ -194,8 +208,10 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
 
   if (filters.sellerId) {
     query = that.sqlTable
-      .select(that.sqlTable.star())
-      .from(that.sqlTable)
+      .select(that.sqlTable.star(), that.sqlTableRole.name.as('role'))
+      .from(that.sqlTable
+        .join(that.sqlTableRole)
+        .on(that.sqlTableRole.id.equals(that.sqlTable.role_id)))
       .where(that.sqlTable.seller_id.equals(filters.sellerId))
       .order(sortString)
       .limit(limit)
@@ -212,8 +228,10 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .toQuery();
   } else {
     query = that.sqlTable
-      .select(that.sqlTable.star())
-      .from(that.sqlTable)
+      .select(that.sqlTable.star(), that.sqlTableRole.name.as('role'))
+      .from(that.sqlTable
+        .join(that.sqlTableRole)
+        .on(that.sqlTableRole.id.equals(that.sqlTable.role_id)))
       .order(sortString)
       .limit(limit)
       .offset(skip)
