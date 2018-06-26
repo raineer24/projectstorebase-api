@@ -148,9 +148,11 @@ order.generateOrderKey = (req, res) => {
 order.confirmOrder = (req, res) => {
   let gcList = [];
   [gcList] = [req.swagger.params.body.value.gcList];
+  const transType = req.swagger.params.body.value.paymentType;
   delete req.swagger.params.body.value.gcList;
+  delete req.swagger.params.body.value.paymentType;
   const instOrder = new Order(req.swagger.params.body.value);
-  instOrder.processOrder(query.validateParam(req.swagger.params, 'id', 0), gcList)
+  instOrder.processOrder(query.validateParam(req.swagger.params, 'id', 0), gcList, transType)
     .then((msg) => {
       res.json({ message: `Processed order ${msg}`, transaction: msg });
       new Log({ message: 'Order confirmation', action: 'ORDER_CONFIRM', type: 'INFO' }).create();
