@@ -390,6 +390,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                           <p>Hi John,</p>
                                           <p>Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
                                           <p>Check below for your order details.</p>
+                                          <p>Total: PHP ${orderEntry.total}</p>
                                           <p>Until next time,</p>
                                           <p><a href="/">Omg team</a></p>
                                         </td>
