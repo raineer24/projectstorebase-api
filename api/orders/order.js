@@ -300,9 +300,7 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
   }
   that.setTransactionNumber(transactionId);
   that.update(id, true) // update(order_id, confirmOrder)
-    .then(new Timeslotorder({
-      confirmed: 1
-    }).confirmOrder) // Update timeslotorder
+    .then(new Timeslotorder({ confirmed: 1 }).confirmOrder) // Update timeslotorder
     .then(new Transaction({
       order_id: id,
       number: transactionId,
@@ -354,7 +352,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
   })
     .then((resultList) => {
       let body = `
-       <div>
+      <div>
     <table style="width: 100%;">
         <tr>
             <td style="background-color:#f5f5f5;">
@@ -377,7 +375,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background:url(http://hutcake.com/assets/main-01.jpg) no-repeat center; height: 220px;">
                                         <tr>
                                             <td class="subhead" style="padding: 0 0 0 3px;">
-                                                CREATING
+                                               
                                             </td>
                                         </tr>
                                         <tr>
