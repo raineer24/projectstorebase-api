@@ -15,10 +15,10 @@ const Gc = require('../gc/gc');
 let that;
 
 /**
-  * Order constructor
-  * @param {object} order
-  * @return {object}
-*/
+ * Order constructor
+ * @param {object} order
+ * @return {object}
+ */
 function Order(order) {
   sql.setDialect('mysql');
 
@@ -129,9 +129,9 @@ Order.prototype.setTransactionNumber = (number) => {
 };
 
 /**
-  * create
-  * @return {object/number}
-*/
+ * create
+ * @return {object/number}
+ */
 Order.prototype.create = () => new BluePromise((resolve, reject) => {
   that.model.number = 0;
   that.getByValue(that.model.orderkey, 'orderkey')
@@ -158,11 +158,11 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * findAll
-  * @param {string} limit
-  * @param {string} offset
-  * @return {object}
-*/
+ * findAll
+ * @param {string} limit
+ * @param {string} offset
+ * @return {object}
+ */
 Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   let query = null;
   let sortString = `${that.table}.dateUpdated DESC`;
@@ -207,18 +207,18 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
 };
 
 /**
-  * findById
-  * @param {string} limit
-  * @param {string} offset
-  * @return {object}
-*/
+ * findById
+ * @param {string} limit
+ * @param {string} offset
+ * @return {object}
+ */
 Order.prototype.findById = id => that.getByValue(id, 'id');
 Order.prototype.getById = id => that.getByValue(id, 'id');
 
 /**
-  * update
-  * @return {object/number}
-*/
+ * update
+ * @return {object/number}
+ */
 Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
@@ -268,11 +268,11 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
 });
 
 /**
-  * Get by value
-  * @param {any} value
-  * @param {string} field
-  * @return {object<Promise>}
-*/
+ * Get by value
+ * @param {any} value
+ * @param {string} field
+ * @return {object<Promise>}
+ */
 Order.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
@@ -300,7 +300,9 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
   }
   that.setTransactionNumber(transactionId);
   that.update(id, true) // update(order_id, confirmOrder)
-    .then(new Timeslotorder({ confirmed: 1 }).confirmOrder) // Update timeslotorder
+    .then(new Timeslotorder({
+      confirmed: 1
+    }).confirmOrder) // Update timeslotorder
     .then(new Transaction({
       order_id: id,
       number: transactionId,
@@ -426,11 +428,11 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 
 
 /**
-  * Release connection
-  * @param {any} value
-  * @param {string} field
-  * @return {object<Promise>}
-*/
+ * Release connection
+ * @param {any} value
+ * @param {string} field
+ * @return {object<Promise>}
+ */
 Order.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Order;
