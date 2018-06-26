@@ -15,10 +15,10 @@ const Gc = require('../gc/gc');
 let that;
 
 /**
-  * Order constructor
-  * @param {object} order
-  * @return {object}
-*/
+ * Order constructor
+ * @param {object} order
+ * @return {object}
+ */
 function Order(order) {
   sql.setDialect('mysql');
 
@@ -129,9 +129,9 @@ Order.prototype.setTransactionNumber = (number) => {
 };
 
 /**
-  * create
-  * @return {object/number}
-*/
+ * create
+ * @return {object/number}
+ */
 Order.prototype.create = () => new BluePromise((resolve, reject) => {
   that.model.number = 0;
   that.getByValue(that.model.orderkey, 'orderkey')
@@ -158,11 +158,11 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * findAll
-  * @param {string} limit
-  * @param {string} offset
-  * @return {object}
-*/
+ * findAll
+ * @param {string} limit
+ * @param {string} offset
+ * @return {object}
+ */
 Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   let query = null;
   let sortString = `${that.table}.dateUpdated DESC`;
@@ -207,18 +207,18 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
 };
 
 /**
-  * findById
-  * @param {string} limit
-  * @param {string} offset
-  * @return {object}
-*/
+ * findById
+ * @param {string} limit
+ * @param {string} offset
+ * @return {object}
+ */
 Order.prototype.findById = id => that.getByValue(id, 'id');
 Order.prototype.getById = id => that.getByValue(id, 'id');
 
 /**
-  * update
-  * @return {object/number}
-*/
+ * update
+ * @return {object/number}
+ */
 Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
@@ -268,11 +268,11 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
 });
 
 /**
-  * Get by value
-  * @param {any} value
-  * @param {string} field
-  * @return {object<Promise>}
-*/
+ * Get by value
+ * @param {any} value
+ * @param {string} field
+ * @return {object<Promise>}
+ */
 Order.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
@@ -300,7 +300,9 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
   }
   that.setTransactionNumber(transactionId);
   that.update(id, true) // update(order_id, confirmOrder)
-    .then(new Timeslotorder({ confirmed: 1 }).confirmOrder) // Update timeslotorder
+    .then(new Timeslotorder({
+      confirmed: 1
+    }).confirmOrder) // Update timeslotorder
     .then(new Transaction({
       order_id: id,
       number: transactionId,
@@ -314,7 +316,9 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
           if (resultList.length > 0) {
             const orderEntry = resultList[0];
             log.info(orderEntry);
-            that.mailConfirmation(_.merge(orderEntry, { transactionId }))
+            that.mailConfirmation(_.merge(orderEntry, {
+                transactionId
+              }))
               .then((mailOptions) => {
                 new Mailer(mailOptions).send()
                   .then(() => {
@@ -352,10 +356,58 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
   })
     .then((resultList) => {
       let body = `
-      <div><p>Hi,</p></div>
-      <div><p>You have successfully confirmed and paid for your order</p></div>
-      <div><b>Transaction # ${orderEntry.transactionId}</b></div>
-      <h2>Shopping summary</h2>
+       <div>
+    <table style="width: 100%;">
+        <tr>
+            <td style="background-color:#f5f5f5;">
+                <div style="padding: 15px;max-width: 600px;margin: 0 auto; display: block;">
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <div>
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td rowspan="2">
+                                                <span style="float: left;">Is this e-mail? not displayed correctly?
+                                                    <b style="display: block;">View it online</b>
+                                                </span>
+                                                <img src="http://hutcake.com/assets/google-play-badge.png" alt="" style="float:left;width: 20%;">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background:url(http://hutcake.com/assets/main-01.jpg) no-repeat center; height: 220px;">
+                                        <tr>
+                                            <td class="subhead" style="padding: 0 0 0 3px;">
+                                                CREATING
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="h1" style="padding: 5px 0 0 0;">
+                                                Responsive Email Magic
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table style="padding: 10px;font-size:14px; width:100%;">
+                                      <tr>
+                                        <td>
+                                          <p>Hi John,</p>
+                                          <p>Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
+                                          <p>Check below for your order details.</p>
+                                          <p>Until next time,</p>
+                                          <p><a href="/">Omg team</a></p>
+                                        </td>
+                                      </tr>
+                                  </table>    
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
       `;
       _.forEach(resultList, (obj) => {
         body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
@@ -374,41 +426,14 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
       reject(err);
     });
 });
-Order.prototype.mailAuditConfirmation = orderEntry => new BluePromise((resolve, reject) => {
-  new OrderItem({}).findAll(0, 1000, {
-    orderkey: orderEntry.orderkey,
-  })
-    .then((resultList) => {
-      let body = `
-      <div><p>Email Notification - User and Audit Personnel</p></div>
-      <div><p>Send emails to user and audit personnel upon confirmation of order</p></div>
-      <div><b>Transaction # ${orderEntry.transactionId}</b></div>
-      <h2>Trigger is the Place Order Now button in Payment page</h2>
-      `;
-      _.forEach(resultList, (obj) => {
-        body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
-      });
-      body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
-      resolve({
-        from: 'info@eos.com.ph',
-        bcc: 'raineerdelarita@gmail.com',
-        to: orderEntry.email,
-        subject: `Email Notification - User and Audit Personnel ${orderEntry.transactionId}`,
-        text: `Email Notification - User and Audit Personnel # ${orderEntry.transactionId}`,
-        html: body,
-      });
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
+
 
 /**
-  * Release connection
-  * @param {any} value
-  * @param {string} field
-  * @return {object<Promise>}
-*/
+ * Release connection
+ * @param {any} value
+ * @param {string} field
+ * @return {object<Promise>}
+ */
 Order.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Order;
