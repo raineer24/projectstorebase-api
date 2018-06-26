@@ -352,10 +352,58 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
   })
     .then((resultList) => {
       let body = `
-      <div><p>Hi,</p></div>
-      <div><p>You have successfully confirmed and paid for your order</p></div>
-      <div><b>Transaction # ${orderEntry.transactionId}</b></div>
-      <h2>Shopping summary</h2>
+       <div>
+    <table style="width: 100%;">
+        <tr>
+            <td style="background-color:#f5f5f5;">
+                <div style="padding: 15px;max-width: 600px;margin: 0 auto; display: block;">
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <div>
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td rowspan="2">
+                                                <span style="float: left;">Is this e-mail? not displayed correctly?
+                                                    <b style="display: block;">View it online</b>
+                                                </span>
+                                                <img src="http://hutcake.com/assets/google-play-badge.png" alt="" style="float:left;width: 20%;">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background:url(http://hutcake.com/assets/main-01.jpg) no-repeat center; height: 220px;">
+                                        <tr>
+                                            <td class="subhead" style="padding: 0 0 0 3px;">
+                                                CREATING
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="h1" style="padding: 5px 0 0 0;">
+                                                Responsive Email Magic
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table style="padding: 10px;font-size:14px; width:100%;">
+                                      <tr>
+                                        <td>
+                                          <p>Hi John,</p>
+                                          <p>Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
+                                          <p>Check below for your order details.</p>
+                                          <p>Until next time,</p>
+                                          <p><a href="/">Omg team</a></p>
+                                        </td>
+                                      </tr>
+                                  </table>    
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
       `;
       _.forEach(resultList, (obj) => {
         body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
@@ -374,34 +422,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
       reject(err);
     });
 });
-Order.prototype.mailAuditConfirmation = orderEntry => new BluePromise((resolve, reject) => {
-  new OrderItem({}).findAll(0, 1000, {
-    orderkey: orderEntry.orderkey,
-  })
-    .then((resultList) => {
-      let body = `
-      <div><p>Email Notification - User and Audit Personnel</p></div>
-      <div><p>Send emails to user and audit personnel upon confirmation of order</p></div>
-      <div><b>Transaction # ${orderEntry.transactionId}</b></div>
-      <h2>Trigger is the Place Order Now button in Payment page</h2>
-      `;
-      _.forEach(resultList, (obj) => {
-        body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
-      });
-      body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
-      resolve({
-        from: 'info@eos.com.ph',
-        bcc: 'raineerdelarita@gmail.com',
-        to: orderEntry.email,
-        subject: `Email Notification - User and Audit Personnel ${orderEntry.transactionId}`,
-        text: `Email Notification - User and Audit Personnel # ${orderEntry.transactionId}`,
-        html: body,
-      });
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
+
 
 /**
   * Release connection
