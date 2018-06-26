@@ -391,7 +391,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                           <p>Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
                                           <p>Check below for your order details.</p>
                                           <p>Total: PHP ${orderEntry.total}</p>
-                                          <p>Until next time,</p>
+                                          <p></p>
                                           <p><a href="/">Omg team</a></p>
                                         </td>
                                       </tr>
@@ -408,6 +408,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
       `;
       _.forEach(resultList, (obj) => {
         body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
+        log.info(obj);
       });
       body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
       resolve({
