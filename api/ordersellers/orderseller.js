@@ -274,7 +274,6 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       whereString += ` AND timeslotorder.timeslot_id = ${filters.timeslotId}`;
     }
 
-    log.info(whereString);
     query = that.sqlTable
       .select(that.sqlTableTimeslotOrder.star(), that.sqlTableOrder.id.as('order_id'), that.sqlTableOrder.star(), that.sqlTable.star())
       .from(that.sqlTable
@@ -287,11 +286,11 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.sellerId && filters.status) {
+  } else if (filters.sellerId && filters.mode === 'assembly') {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
-    if (filters.status.toUpperCase() === 'ALL') {
+    if (filters.orderStatus.toUpperCase() === 'ALL') {
       query = that.sqlTable
         .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.datetime)
         .from(that.sqlTable
@@ -319,7 +318,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
           .leftJoin(that.sqlTableTimeslotOrder)
           .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
         .where(that.sqlTable.seller_id.equals(filters.sellerId))
-        .and(sql.functions.UPPER(that.sqlTable.status).equals(filters.status.toUpperCase()))
+        .and(sql.functions.UPPER(that.sqlTable.status).equals(filters.orderStatus.toUpperCase()))
         // .and(that.sqlTable.dateCreated.gte(today))
         .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
         .order(sortString)
