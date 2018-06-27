@@ -356,60 +356,137 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
         _.forEach(resultList, (obj) => {
           log.info(`${obj}`);
           const body = `
-       <div>
-    <table style="width: 100%;">
-        <tr>
-            <td style="background-color:#f5f5f5;">
-                <div style="padding: 15px;max-width: 600px;margin: 0 auto; display: block;">
-                    <table>
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A responsive two column example</title>
+    <style>
+        /* A simple css reset */
+        body,table,thead,tbody,tr,td,img {
+            padding: 0;
+            margin: 0;
+            border: none;
+            border-spacing: 0px;
+            border-collapse: collapse;
+            vertical-align: top;
+        }
+
+        /* Add some padding for small screens */
+        .wrapper {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        h1,h2,h3,h4,h5,h6,p {
+            margin: 0;
+            padding: 0;
+            padding-bottom: 20px;
+            line-height: 1.6;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+        }
+
+        p,a,li {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+        }
+
+        img {
+            width: 100%;
+            display: block;
+        }
+
+        @media only screen and (max-width: 620px) {
+
+            .wrapper .section {
+                width: 100%;
+            }
+
+            .wrapper .column {
+                width: 100%;
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td class="wrapper" width="600" align="center">
+                    <!-- Header image -->
+                    <table class="section header" cellpadding="0" cellspacing="0" width="600">
                         <tr>
-                            <td></td>
-                            <td>
-                                <div>
-                                    <table style="width: 100%;">
+                            <td class="column">
+                                <table>
+                                    <tbody>
                                         <tr>
-                                            <td rowspan="2">
-                                                <span style="float: left;">Is this e-mail? not displayed correctly?
-                                                    <b style="display: block;">View it online</b>
-                                                </span>
-                                                <img src="http://hutcake.com/assets/google-play-badge.png" alt="" style="float:left;width: 20%;">
+                                            <td align="left">
+                                                <img src="http://hutcake.com/assets/main-01.jpg" alt="picsum" width="600" />
+                                                <h1>Your order has been placed</h1>
+                                                <h2>Hi, ${orderEntry.firstname}  ${orderEntry.lastname}!</h2>
+                                                <p style="text-align:justify;">Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
+                                                <p style="text-align:justify;">Check below for your order details.. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id estlaborum. Ut enim ad minim veniam.
+                                                </p>
                                             </td>
                                         </tr>
-                                    </table>
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background:url(http://hutcake.com/assets/main-01.jpg) no-repeat center; height: 220px;">
-                                        <tr>
-                                            <td class="subhead" style="padding: 0 0 0 3px;">
-                                                CREATING
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="h1" style="padding: 5px 0 0 0;">
-                                                Responsive Email Magic
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <table style="padding: 10px;font-size:14px; width:100%;">
-                                      <tr>
-                                        <td>
-                                          <p>Hi John,</p>
-                                          <p>Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
-                                          <p>Check below for your order details.</p>
-                                          <p>Total: PHP ${orderEntry.total}</p>
-                                          <p>Until next time,</p>
-                                          <p><a href="/">${obj.displayPrice}</a></p>
-                                          <p>${obj.displayPrice} x ${obj.quantity}</p>
-                                        </td>
-                                      </tr>
-                                  </table>    
-                                </div>
+                                    </tbody>
+                                </table>
                             </td>
                         </tr>
                     </table>
-                </div>
-            </td>
-        </tr>
+                    <!-- Two columns -->
+                    <table class="section" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="column" width="290" valign="top">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td align="left">
+                                                <img src="http://hutcake.com/assets/sub-01.jpg" alt="picsum" width="300" />
+                                                <h2>Track your order</h2>
+                                                <p style="text-align:justify;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea consequat.</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td class="column" width="20" valign="top">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td> &nbsp; </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td class="column" width="290" valign="top">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td align="left">
+                                                <img src="http://hutcake.com/assets/sub-03.jpg" alt="picsum" width="300" />
+                                                <h2>Delivery Address: </h2>
+                                                <p style="text-align:justify;">${orderEntry.firstname}  ${orderEntry.lastname}</p>
+                                                <p>Address: ${orderEntry.shippingAddress01}</p>
+                                                <p><span>Order details: ${orderEntry.number}</span></p>
+                                                <p><span>Items ordered: ${obj.name} | ${obj.displayPrice} x ${obj.quantity}</span></p>
+                                                <p><span>Total: PHP ${orderEntry.total}</span></p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
     </table>
-</div>
+</body>
+</html>
       `;
           resolve({
             from: 'info@eos.com.ph',
