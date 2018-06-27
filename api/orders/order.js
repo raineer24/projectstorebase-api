@@ -354,7 +354,8 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
       if (resultList.length > 0) {
         log.info(resultList.length);
         _.forEach(resultList, (obj) => {
-          log.info(`${obj}`);
+          log.info(obj);
+          log.info(_.map(resultList, test => test.displayPrice));
           const body = `
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -474,7 +475,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                                 <p><span>Order details: ${orderEntry.number}</span></p>
                                                 <p><span>Items ordered: ${obj.name} | ${obj.displayPrice} x ${obj.quantity}</span></p>
                                                 <p><span>Total: PHP ${orderEntry.total}</span></p>
-                                            </td>
+                                                ${_.map(resultList, item => `<p>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</p>`).join('')}
                                         </tr>
                                     </tbody>
                                 </table>
