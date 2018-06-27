@@ -117,6 +117,10 @@ function OrderSeller(orderSeller) {
       'order_id',
       'timeslot_id',
       'datetime',
+      'date',
+      'confirmed',
+      'dateCreated',
+      'dateUpdated',
     ],
   });
   that = this;
@@ -249,6 +253,40 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.sellerId && filters.mode === 'orderlist') {
+    let whereString = null;
+    whereString = `${that.table}.seller_id = ${filters.sellerId}`;
+    if (filters.orderStatus) {
+      whereString += ` AND UPPER(${that.table}.status) = UPPER('${filters.orderStatus}')`;
+    }
+    if (filters.orderNumber) {
+      whereString += ` AND ${that.table}.orderNumber = ${filters.orderNumber}`;
+    }
+    if (filters.orderDate) {
+      const orderDates = filters.orderDate.split('|');
+      whereString += ` AND (${that.table}.dateCreated BETWEEN ${orderDates[0]} AND ${orderDates[1]})`;
+    }
+    if (filters.deliverDate) {
+      const deliverDates = filters.deliverDate.split('|');
+      whereString += ` AND (timeslotorder.datetime BETWEEN ${deliverDates[0]} AND ${deliverDates[1]})`;
+    }
+    if (filters.timeslotId) {
+      whereString += ` AND timeslotorder.timeslot_id = ${filters.timeslotId}`;
+    }
+
+    log.info(whereString);
+    query = that.sqlTable
+      .select(that.sqlTableTimeslotOrder.star(), that.sqlTableOrder.id.as('order_id'), that.sqlTableOrder.star(), that.sqlTable.star())
+      .from(that.sqlTable
+        .join(that.sqlTableOrder)
+        .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
+        .leftJoin(that.sqlTableTimeslotOrder)
+        .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
+      .where(whereString)
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else if (filters.sellerId && filters.status) {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -347,11 +385,21 @@ OrderSeller.prototype.getByValue = (value, field) => {
   * @return {object<Promise>}
 */
 OrderSeller.prototype.getByIdJoinOrder = (value) => {
+  const order = that.sqlTableOrder.as('order');
+  const tso = that.sqlTableTimeslotOrder.as('tso');
+  const u1 = that.sqlTableSellerAccount.as('u1');
+  const u2 = that.sqlTableSellerAccount.as('u2');
   const query = that.sqlTable
-    .select(that.sqlTableOrder.id.as('order_id'), that.sqlTableOrder.star(), that.sqlTable.star())
+    .select(tso.star(), u1.name.as('assembledByName'), u2.name.as('deliveredByName'), order.id.as('order_id'), order.star(), that.sqlTable.star())
     .from(that.sqlTable
-      .join(that.sqlTableOrder)
-      .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id)))
+      .join(order)
+      .on(order.id.equals(that.sqlTable.order_id))
+      .leftJoin(tso)
+      .on(tso.order_id.equals(that.sqlTable.order_id))
+      .leftJoin(u1)
+      .on(u1.id.equals(that.sqlTable.assembledBy))
+      .leftJoin(u2)
+      .on(u2.id.equals(that.sqlTable.deliveredBy)))
     .where(that.sqlTable.id.equals(value)).toQuery();
   return that.dbConn.queryAsync(query.text, query.values);
 };

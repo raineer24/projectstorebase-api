@@ -1941,9 +1941,12 @@ paths:
         - $ref: "#/parameters/sellerIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
-        - $ref: "#/parameters/minDate"
-        - $ref: "#/parameters/maxDate"
+        - $ref: "#/parameters/mode"
         - $ref: "#/parameters/orderStatus"
+        - $ref: "#/parameters/orderNumber"
+        - $ref: "#/parameters/orderDate"
+        - $ref: "#/parameters/deliverDate"
+        - $ref: "#/parameters/timeslotId"
       responses:
         200:
           description: Fetch all order items
@@ -2601,7 +2604,7 @@ parameters:
     in: query
     name: addCategory
     type: string
-    required: false  
+    required: false
   selleraccountid:
     in: path
     name: selleraccountid
@@ -2777,18 +2780,33 @@ parameters:
     name: email
     type: string
     required: true
+  mode:
+    in: query
+    name: mode
+    type: string
+    required: false
   orderStatus:
     in: query
     name: orderStatus
     type: string
     required: false
-  maxDate:
+  orderNumber:
     in: query
-    name: maxDate
+    name: orderNumber
     type: number
     required: false
-  minDate:
+  orderDate:
     in: query
-    name: minDate
+    name: orderDate
+    type: string
+    required: false
+  deliverDate:
+    in: query
+    name: deliverDate
+    type: string
+    required: false
+  timeslotId:
+    in: query
+    name: timeslotId
     type: number
     required: false
