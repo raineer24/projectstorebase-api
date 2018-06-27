@@ -351,8 +351,12 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     orderkey: orderEntry.orderkey,
   })
     .then((resultList) => {
-      let body = `
-      <div>
+      if (resultList.length > 0) {
+        log.info(resultList.length);
+        _.forEach(resultList, (obj) => {
+          log.info(`${obj}`);
+          const body = `
+       <div>
     <table style="width: 100%;">
         <tr>
             <td style="background-color:#f5f5f5;">
@@ -375,7 +379,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background:url(http://hutcake.com/assets/main-01.jpg) no-repeat center; height: 220px;">
                                         <tr>
                                             <td class="subhead" style="padding: 0 0 0 3px;">
-                                               
+                                                CREATING
                                             </td>
                                         </tr>
                                         <tr>
@@ -391,8 +395,9 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                           <p>Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
                                           <p>Check below for your order details.</p>
                                           <p>Total: PHP ${orderEntry.total}</p>
-                                          <p></p>
-                                          <p><a href="/">Omg team</a></p>
+                                          <p>Until next time,</p>
+                                          <p><a href="/">${obj.displayPrice}</a></p>
+                                          <p>${obj.displayPrice} x ${obj.quantity}</p>
                                         </td>
                                       </tr>
                                   </table>    
@@ -406,19 +411,16 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     </table>
 </div>
       `;
-      _.forEach(resultList, (obj) => {
-        body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
-        log.info(obj);
-      });
-      body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
-      resolve({
-        from: 'info@eos.com.ph',
-        bcc: 'raineerdelarita@gmail.com',
-        to: orderEntry.email,
-        subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
-        text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
-        html: body,
-      });
+          resolve({
+            from: 'info@eos.com.ph',
+            bcc: 'raineerdelarita@gmail.com',
+            to: orderEntry.email,
+            subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
+            text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+            html: body,
+          });
+        });
+      }
     })
     .catch((err) => {
       reject(err);
