@@ -17,6 +17,13 @@ consumes:
 # format of the responses to the client (Accepts)
 produces:
   - application/json
+# x-globalParameters: &GLOB_HEADER
+#   - $ref: '#/parameters/authHeader'
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
   /:
     x-swagger-router-controller: users
@@ -1176,7 +1183,10 @@ paths:
                 example: Unauthorized
   /transactions:
     x-swagger-router-controller: transactions
+    # parameters: *GLOB_HEADER
     get:
+      security:
+      - Bearer: []
       tags:
       - transactions
       summary: Get all transaction record
@@ -2279,6 +2289,30 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /settings:
+    x-swagger-router-controller: settings
+    get:
+      tags:
+        - settings
+      summary: get a rating entry
+      operationId: getSettings
+      responses:
+       200:
+         description: Success
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 123445
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -2597,11 +2631,16 @@ definitions:
         type: number
         description: category level
 parameters:
+  # authHeader:
+  #   name: auth
+  #   in: header
+  #   description: an authorization header
+  #   required: true
   addCategory:
     in: query
     name: addCategory
     type: string
-    required: false  
+    required: false
   selleraccountid:
     in: path
     name: selleraccountid

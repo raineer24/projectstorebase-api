@@ -407,6 +407,8 @@ CREATE TABLE `order` (
   `adjustmentTotal` char(30) DEFAULT NULL,
   `paymentTotal` char(30) DEFAULT NULL,
   `discountTotal` char(30) DEFAULT NULL,
+  `serviceFee` decimal(20,2) DEFAULT 0,
+  `deliveryFee` decimal(20,2) DEFAULT 0,
   `dateCompleted` bigint(50) DEFAULT NULL,
   `shipmentStatus` char(20) DEFAULT NULL,
   `paymentStatus` char(20) DEFAULT NULL,
@@ -455,7 +457,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','1524040718929','71','0','271','0',NULL,'271','0','0',NULL,NULL,NULL,'Pending','victor.queja@yahoo.com','',NULL,NULL,NULL,NULL,NULL,NULL,'3',NULL,'Victor','Queja','+63 9223234451','','','','','','Philippines','0','Cabancalan','','Mandaue','6014','Philippines',0,NULL,NULL,1524040716797,1524040716799,5,0,NULL,0);
+INSERT INTO `order` VALUES (1,'YGgL16acaY2Kz3LGQVEA15240468306016tqb4hSNvZmKXWVipm4l','1524040718929','71','0','271','0',NULL,'271','0','0',99.00,99.00,NULL,NULL,NULL,'Pending','victor.queja@yahoo.com','',NULL,NULL,NULL,NULL,NULL,NULL,'3',NULL,'Victor','Queja','+63 9223234451','','','','','','Philippines','0','Cabancalan','','Mandaue','6014','Philippines',0,NULL,NULL,1524040716797,1524040716799,5,0,NULL,0);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -763,7 +765,7 @@ DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
 `id` BIGINT(50) NOT NULL AUTO_INCREMENT,
 `name` CHAR(60) NOT NULL,
-`value` BIGINT(50) NOT NULL,
+`value` DECIMAL(20,2) NOT NULL,
 `dateCreated` BIGINT(50) NOT NULL,
 `reference` VARCHAR(50) NOT NULL,
 `reference_id` BIGINT(10) NOT NULL,
@@ -776,7 +778,7 @@ PRIMARY KEY (`id`)
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,'delivery fee',49,1512763935519,'user',1),(2,'service fee',99,1512763935519,'user',2),(3,'VAT',0.12,1512763935519,'user',3);
+INSERT INTO `settings` VALUES (1,'delivery fee',99.00,1512763935519,'user',1),(2,'service fee',99.00,1512763935519,'user',2),(3,'VAT',0.12,1512763935519,'user',3);
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -886,7 +888,7 @@ CREATE TABLE `transaction` (
   `comments` varchar(500) NOT NULL,
   `action` char(50) NOT NULL,
   `type` char(20) NOT NULL DEFAULT '',
-  `value` bigint(50) NOT NULL,
+  `value` decimal(20,2) NOT NULL,
   `dateCreated` bigint(50) NOT NULL,
   `dateUpdated` bigint(50) NOT NULL,
   `order_id` varchar(50) NOT NULL,
@@ -900,7 +902,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','','CONFIRM_PAYMENT',1200,1518409422524,1518409422524,'1');
+INSERT INTO `transaction` VALUES (1,'tKoPYt3m9uKzYsiztrdGQ6dQ69E1on1518409422524','','','CONFIRM_PAYMENT',1200.00,1518409422524,1518409422524,'1');
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
