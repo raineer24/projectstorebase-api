@@ -17,6 +17,13 @@ consumes:
 # format of the responses to the client (Accepts)
 produces:
   - application/json
+# x-globalParameters: &GLOB_HEADER
+#   - $ref: '#/parameters/authHeader'
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
   /:
     x-swagger-router-controller: users
@@ -1287,7 +1294,10 @@ paths:
                 example: Unauthorized
   /transactions:
     x-swagger-router-controller: transactions
+    # parameters: *GLOB_HEADER
     get:
+      security:
+      - Bearer: []
       tags:
       - transactions
       summary: Get all transaction record
@@ -1520,6 +1530,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /items/create:
+    x-swagger-router-controller: items
+    put:
+      tags:
+        - item
+      summary: create items
+      operationId: addItems
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/ItemsCreate"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /item/{id}:
     x-swagger-router-controller: items
     get:
@@ -1543,6 +1584,35 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  # /items/count: FOR FUTURE IMPLEMENTATION
+  #   x-swagger-router-controller: items
+  #   get:
+  #     tags:
+  #       - item
+  #     summary: Returns count of items
+  #     # used as the method name of the controller
+  #     operationId: countItems
+  #     responses:
+  #       200:
+  #         description: Success
+  #         schema:
+  #           type: object
+  #           properties:
+  #             bookmark:
+  #               type: string
+  #               example: asdfasdfasdf213sadfasdf123
+  #             total:
+  #               type: number
+  #               example: 100
+  #             data:
+  #               type: array
+  #               items:
+  #                 - $ref: "#/definitions/ItemList"
+  #       # responses may fall through to errors
+  #       default:
+  #         description: Error
+  #         schema:
+  #           $ref: "#/definitions/ErrorResponse"
   /item/{id}/suggestions:
     x-swagger-router-controller: items
     get:
@@ -2052,9 +2122,12 @@ paths:
         - $ref: "#/parameters/sellerIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
-        - $ref: "#/parameters/minDate"
-        - $ref: "#/parameters/maxDate"
+        - $ref: "#/parameters/mode"
         - $ref: "#/parameters/orderStatus"
+        - $ref: "#/parameters/orderNumber"
+        - $ref: "#/parameters/orderDate"
+        - $ref: "#/parameters/deliverDate"
+        - $ref: "#/parameters/timeslotId"
       responses:
         200:
           description: Fetch all order items
@@ -2390,6 +2463,30 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /settings:
+    x-swagger-router-controller: settings
+    get:
+      tags:
+        - settings
+      summary: get a rating entry
+      operationId: getSettings
+      responses:
+       200:
+         description: Success
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 123445
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -2613,6 +2710,31 @@ definitions:
       code:
         type: number
         description: item specific code
+  ItemsCreate:
+    title: ItemCreate
+    type: object
+    properties:
+      name:
+        type: string
+        description: item name
+      code:
+        type: string
+        description: item code
+      brandName:
+        type: string
+        description: item brand
+      price:
+        type: number
+        description: item price
+      category1:
+        type: string
+        description: item cat1
+      category2:
+        type: string
+        description: item cat2
+      category3:
+        type: string
+        description: item cat3
   OrderSellerCreate:
     title: OrderSellerCreate
     type: object
@@ -2724,6 +2846,11 @@ definitions:
         type: number
         description: category level
 parameters:
+  # authHeader:
+  #   name: auth
+  #   in: header
+  #   description: an authorization header
+  #   required: true
   addCategory:
     in: query
     name: addCategory
@@ -2904,18 +3031,33 @@ parameters:
     name: email
     type: string
     required: true
+  mode:
+    in: query
+    name: mode
+    type: string
+    required: false
   orderStatus:
     in: query
     name: orderStatus
     type: string
     required: false
-  maxDate:
+  orderNumber:
     in: query
-    name: maxDate
+    name: orderNumber
     type: number
     required: false
-  minDate:
+  orderDate:
     in: query
-    name: minDate
+    name: orderDate
+    type: string
+    required: false
+  deliverDate:
+    in: query
+    name: deliverDate
+    type: string
+    required: false
+  timeslotId:
+    in: query
+    name: timeslotId
     type: number
     required: false

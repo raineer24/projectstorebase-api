@@ -1,6 +1,7 @@
 const moment = require('moment');
 // const query = require('../../service/query');
 const Log = require('../logs/log');
+const log = require('color-logs')(true, true, 'User Account');
 const query = require('../../service/query');
 const Transaction = require('./transaction');
 
@@ -14,11 +15,11 @@ const transactions = {};
 */
 
 transactions.getTransaction = (req, res) => {
-  new Log({ message: 'Show current order details', action: 'ORDER_GET', type: 'INFO' }).create();
   const instTransactions = new Transaction({});
   instTransactions.getByValue(query.validateParam(req.swagger.params, 'orderId', 0), 'order_id')
     .then((resultList) => {
       if (resultList.length === 0) {
+        new Log({ message: `Viewing details of transaction id ${resultList.id}.`, action: 'ORDER_GET', type: 'INFO' }).create();
         return res.status(404).json({ message: 'Not found' });
       }
       return res.json(resultList[0]);
@@ -40,6 +41,7 @@ transactions.getTransaction = (req, res) => {
 */
 transactions.getTransactions = (req, res) => {
   const instTransactions = new Transaction({});
+  log.info(req.swagger.params.header);
   instTransactions.findAll(0, 100, {
     current: moment().format('YYYY-MM-DD'),
   })
@@ -50,7 +52,7 @@ transactions.getTransactions = (req, res) => {
         return res.status(404).json({ message: 'Not found' });
       }
       new Log({
-        message: 'Show all transactions', action: 'GET_ALL_TRANSACTIONS', type: 'INFO', selleraccount_id: `${resOrder.id}`,
+        message: 'Successfully retrieved all transactions.', action: 'GET_ALL_TRANSACTIONS', type: 'INFO', selleraccount_id: `${resOrder.id}`,
       }).create();
       return res.json(resOrder);
     })
@@ -70,10 +72,12 @@ transactions.getTransactions = (req, res) => {
 * @return {Object}
 */
 transactions.recordTransaction = (req, res) => {
-  new Log({ message: 'Add a new transaction', action: 'TRANSACTION_CREATE', type: 'INFO' }).create();
   const instTrans = new Transaction(req.swagger.params.body.value);
   instTrans.create()
-    .then(id => res.json({ id, message: 'Saved' }))
+    .then((id) => {
+      res.json({ id, message: 'Saved' });
+      new Log({ message: `Add a new transaction: transaction id - ${id}.`, action: 'TRANSACTION_CREATE', type: 'INFO' }).create();
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'TRANSACTION_CREATE', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
@@ -90,10 +94,12 @@ transactions.recordTransaction = (req, res) => {
 * @return {Object}
 */
 transactions.updateTransaction = (req, res) => {
-  new Log({ message: 'Update a transaction', action: 'TRANSACTION_UPDATE', type: 'INFO' }).create();
   const instTrans = new Transaction(req.swagger.params.body.value);
   instTrans.updateByOrderId(query.validateParam(req.swagger.params, 'order_id', 'order_id'))
-    .then(id => res.json({ id, message: 'Saved' }))
+    .then((id) => {
+      res.json({ id, message: 'Saved' });
+      new Log({ message: `Updated transaction ${id} successfully.`, action: 'TRANSACTION_UPDATE', type: 'INFO' }).create();
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'TRANSACTION_UPDATE', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
@@ -110,9 +116,11 @@ transactions.updateTransaction = (req, res) => {
 * @return {Object}
 */
 transactions.getGrandTotal = (req, res) => {
-  new Log({ message: 'Show totals of all transactions', action: 'TRANSACTIONS_GRANDTOTAL', type: 'INFO' }).create();
   const instTransactions = new Transaction({});
-  instTransactions.grandTotal().then(results => results).catch((err) => {
+  instTransactions.grandTotal().then((results) => {
+    res.json(results);
+    new Log({ message: 'Show totals of all transactions', action: 'TRANSACTIONS_GRANDTOTAL', type: 'INFO' }).create();
+  }).catch((err) => {
     new Log({ message: `${err}`, action: 'TRANSACTIONS_GRANDTOTAL', type: 'ERROR' }).create();
     return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
   })

@@ -5,7 +5,7 @@ const Log = require('../logs/log');
 const item = {};
 
 item.listItems = (req, res) => {
-  new Log({ message: 'Show list of items', action: 'ITEM_LIST', type: 'INFO' }).create();
+  // new Log({ message: 'Show list of items', action: 'ITEM_LIST', type: 'INFO' }).create();
   const instItem = new Item({});
   instItem.searchAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     keyword: query.validateParam(req.swagger.params, 'keyword', ''),
@@ -52,6 +52,26 @@ item.addItem = (req, res) => {
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ITEM_ADD', type: 'ERROR' }).create();
       return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
+    })
+    .finally(() => {
+      instItem.release();
+    });
+};
+
+/**
+* Add items
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+item.addItems = (req, res) => {
+  new Log({ message: 'Add new items', action: 'ADD_ITEMS', type: 'INFO' }).create();
+  const instItem = new Item(req.swagger.params.body.value);
+  instItem.createMultiple()
+    .then(status => res.json({ status, message: 'Saved' }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'ADD_ITEMS', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
     })
     .finally(() => {
       instItem.release();
