@@ -481,7 +481,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                                 <p><span style="color: #ff005d;"><strong>Order details: (Order number:${orderEntry.number})</strong></span></p>
                                                 <table style="background-color: rgb(239, 239, 239);width: 100%;">
                                                 <p><span style="font-size: 18px;">Items ordered: </span></p>
-                                                ${_.map(resultList, item => `<p>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</p>`).join('')}
+                                                ${_.map(resultList, item => `<p><strong>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</strong></p>`).join('')}
                                                 <hr>
                                                 <p><span style="font-size: 18px;">Total: PHP ${orderEntry.total}</span></p>
                                                 <table>
