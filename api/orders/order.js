@@ -426,13 +426,14 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                         <tr>
                                             <td align="left">
                                                 <img src="http://hutcake.com/assets/main-01.jpg" alt="picsum" width="600" />
-                                                 <table width="640" border="0" cellspacing="0" cellpadding="20" bgcolor="#ff5847" class="100p">
-                <tr>
-                    <td align="center" style="font-size:24px; color:#FFFFFF;"><font face="'Roboto', Arial, sans-serif">Your order has been placed</font></td>
-                </tr>
-            </table>
+                                                <table width="640" border="0" cellspacing="0" cellpadding="20" bgcolor="#ff5847" class="100p">
+                                                    <tr>
+                                                      <td align="center" style="font-size:24px; color:#FFFFFF;"><font face="'Roboto', Arial, sans-serif">Your order has been placed</font></td>
+                                                    </tr>
+                                                </table>
                                                 <h2>Hi, ${orderEntry.firstname}  ${orderEntry.lastname}!</h2>
                                                 <p style="text-align:justify;">Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
+                                                <p>We hope that you enjoy your purchase on OMG grocery and continue to shop with us a loyal customer.</p>
                                                 <p style="text-align:justify;">Check below for your order details.</p>
                                                 <p style="text-align:justify;">Until next time,</p>
                                                 <p style="text-align:justify;">Your OMG team</p>
@@ -453,7 +454,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                             <td align="left">
                                                 <img src="http://hutcake.com/assets/sub-01.jpg" alt="picsum" width="300" />
                                                 <h2>Track your order</h2>
-                                                <p style="text-align:justify;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea consequat.</p>
+                                                <p style="text-align:justify;">Hi ${orderEntry.firstname}, We're getting your order ready to be shipped. We will notify you when it has been send. Please take this time to revivew your order details.</p>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -477,11 +478,14 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                                 <h2>Delivery Address: </h2>
                                                 <p style="text-align:justify;">${orderEntry.firstname}  ${orderEntry.lastname}</p>
                                                 <p>Address: ${orderEntry.shippingAddress01}</p>
-                                                <p><span>Order details: (${orderEntry.number})</span></p>
+                                                <p><span style="color: #ff005d;"><strong>Order details: (Order number:${orderEntry.number})</strong></span></p>
+                                                <table style="background-color: rgb(239, 239, 239);">
                                                 <p><span>Items ordered: </span></p>
                                                 ${_.map(resultList, item => `<p>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</p>`).join('')}
                                                 <hr>
                                                 <p><span>Total: PHP ${orderEntry.total}</span></p>
+                                                <table>
+                                                
                                         </tr>
                                     </tbody>
                                 </table>
@@ -496,7 +500,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 </html>
       `;
           resolve({
-            from: 'info@eos.com.ph',
+            from: 'eostest12345@gmail.com',
             bcc: 'raineerdelarita@gmail.com',
             to: orderEntry.email,
             subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
