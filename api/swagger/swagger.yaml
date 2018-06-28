@@ -1419,6 +1419,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /items/create:
+    x-swagger-router-controller: items
+    put:
+      tags:
+        - item
+      summary: create items
+      operationId: addItems
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/ItemsCreate"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /item/{id}:
     x-swagger-router-controller: items
     get:
@@ -1442,6 +1473,35 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  # /items/count: FOR FUTURE IMPLEMENTATION
+  #   x-swagger-router-controller: items
+  #   get:
+  #     tags:
+  #       - item
+  #     summary: Returns count of items
+  #     # used as the method name of the controller
+  #     operationId: countItems
+  #     responses:
+  #       200:
+  #         description: Success
+  #         schema:
+  #           type: object
+  #           properties:
+  #             bookmark:
+  #               type: string
+  #               example: asdfasdfasdf213sadfasdf123
+  #             total:
+  #               type: number
+  #               example: 100
+  #             data:
+  #               type: array
+  #               items:
+  #                 - $ref: "#/definitions/ItemList"
+  #       # responses may fall through to errors
+  #       default:
+  #         description: Error
+  #         schema:
+  #           $ref: "#/definitions/ErrorResponse"
   /item/{id}/suggestions:
     x-swagger-router-controller: items
     get:
@@ -2523,6 +2583,31 @@ definitions:
       code:
         type: number
         description: item specific code
+  ItemsCreate:
+    title: ItemCreate
+    type: object
+    properties:
+      name:
+        type: string
+        description: item name
+      code:
+        type: string
+        description: item code
+      brandName:
+        type: string
+        description: item brand
+      price:
+        type: number
+        description: item price
+      category1:
+        type: string
+        description: item cat1
+      category2:
+        type: string
+        description: item cat2
+      category3:
+        type: string
+        description: item cat3
   OrderSellerCreate:
     title: OrderSellerCreate
     type: object

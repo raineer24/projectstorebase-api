@@ -58,6 +58,26 @@ item.addItem = (req, res) => {
     });
 };
 
+/**
+* Add items
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+item.addItems = (req, res) => {
+  new Log({ message: 'Add new items', action: 'ADD_ITEMS', type: 'INFO' }).create();
+  const instItem = new Item(req.swagger.params.body.value);
+  instItem.createMultiple()
+    .then(status => res.json({ status, message: 'Saved' }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'ADD_ITEMS', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instItem.release();
+    });
+};
+
 item.getItemSuggestions = (req, res) => {
   new Log({ message: 'Show suggested items', action: 'ITEM_GET_SUGGESTIONS', type: 'INFO' }).create();
   const instItem = new Item();
