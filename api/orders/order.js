@@ -426,11 +426,16 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                         <tr>
                                             <td align="left">
                                                 <img src="http://hutcake.com/assets/main-01.jpg" alt="picsum" width="600" />
-                                                <h1>Your order has been placed</h1>
+                                                 <table width="640" border="0" cellspacing="0" cellpadding="20" bgcolor="#ff5847" class="100p">
+                <tr>
+                    <td align="center" style="font-size:24px; color:#FFFFFF;"><font face="'Roboto', Arial, sans-serif">Your order has been placed</font></td>
+                </tr>
+            </table>
                                                 <h2>Hi, ${orderEntry.firstname}  ${orderEntry.lastname}!</h2>
                                                 <p style="text-align:justify;">Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
-                                                <p style="text-align:justify;">Check below for your order details.. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id estlaborum. Ut enim ad minim veniam.
-                                                </p>
+                                                <p style="text-align:justify;">Check below for your order details.</p>
+                                                <p style="text-align:justify;">Until next time,</p>
+                                                <p style="text-align:justify;">Your OMG team</p>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -472,10 +477,11 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                                 <h2>Delivery Address: </h2>
                                                 <p style="text-align:justify;">${orderEntry.firstname}  ${orderEntry.lastname}</p>
                                                 <p>Address: ${orderEntry.shippingAddress01}</p>
-                                                <p><span>Order details: ${orderEntry.number}</span></p>
-                                                <p><span>Items ordered: ${obj.name} | ${obj.displayPrice} x ${obj.quantity}</span></p>
-                                                <p><span>Total: PHP ${orderEntry.total}</span></p>
+                                                <p><span>Order details: (${orderEntry.number})</span></p>
+                                                <p><span>Items ordered: </span></p>
                                                 ${_.map(resultList, item => `<p>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</p>`).join('')}
+                                                <hr>
+                                                <p><span>Total: PHP ${orderEntry.total}</span></p>
                                         </tr>
                                     </tbody>
                                 </table>
