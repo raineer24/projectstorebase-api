@@ -21,9 +21,12 @@ orderseller.getAllOrderSellers = (req, res) => {
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 25), {
     sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
     sellerAccount: true,
-    status: query.validateParam(req.swagger.params, 'orderStatus', ''),
-    minDate: query.validateParam(req.swagger.params, 'minDate', 0),
-    maxDate: query.validateParam(req.swagger.params, 'maxDate', 0),
+    orderStatus: query.validateParam(req.swagger.params, 'orderStatus', ''),
+    orderNumber: query.validateParam(req.swagger.params, 'orderNumber', ''),
+    orderDate: query.validateParam(req.swagger.params, 'orderDate', ''),
+    deliverDate: query.validateParam(req.swagger.params, 'deliverDate', ''),
+    timeslotId: query.validateParam(req.swagger.params, 'timeslotId', ''),
+    mode: query.validateParam(req.swagger.params, 'mode', ''),
   })
     .then((result) => {
       res.json(result);
