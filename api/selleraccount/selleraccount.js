@@ -3,6 +3,7 @@ const sql = require('sql');
 const _ = require('lodash');
 const log = require('color-logs')(true, true, 'Seller Account');
 const moment = require('moment');
+const config = require('../../config/config');
 
 const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
@@ -200,11 +201,12 @@ Selleraccount.prototype.resetPassword = obj => new BluePromise((resolve, reject)
   * @return {object<Promise>}
 */
 Selleraccount.prototype.passwordResetEmail = (userAccount) => {
+  const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
   const body = `
   <div><p>Hi ${userAccount.firstName},</p></div>
   <div><p>Your <b>OMG!</b> Dashboard password has been reset.</p></div>
   <div><p>Please provide a new password by clicking on this link within the next 24 hours:
-  <a href="http://hutcake.com/admin/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
+  <a href="https://${hostname}/admin/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
   <div><p>Thank you!</p></div>

@@ -37,6 +37,7 @@ function Token(token) {
       'id',
       'token_id',
       'useraccount_id',
+      'selleraccount_id',
       'valid',
       'dateCreated',
       'dateUpdated',

@@ -152,9 +152,10 @@ user.forgotPassword = (req, res) => {
   const instUser = new User();
   instUser.sendPasswordResetEmail(req.swagger.params.body.value)
     .then(status => res.json({ status, message: 'Success' }))
-    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
-      message: err === 'Not Found' ? 'Not found' : err,
-    }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'USER_SEND_PASSWORD_RESET_EMAIL', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+    })
     .finally(() => {
       instUser.release();
     });
