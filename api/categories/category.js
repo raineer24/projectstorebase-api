@@ -160,6 +160,47 @@ Category.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
+  * Save User account
+  * @param {string} id
+  * @return {object}
+*/
+Category.prototype.createMultiple = () => new BluePromise((resolve, reject) => {
+  let str = [];
+  str = that.model;
+  _.forEach(str, (key) => {
+    const Id = key.id;
+    that.getByValue(Id, 'id')
+      .then((results) => {
+        log.info(results.length);
+        if (results.length === 0 && Id !== undefined) {
+          const query = that.sqlTable.insert(key).toQuery();
+          that.dbConn.queryAsync(query.text, query.values)
+            .then((response) => {
+              log.info(response);
+              that.getByValue(response.id, 'id')
+                .then((resultList) => {
+                  if (!resultList[0].id) {
+                    reject('Not found');
+                  } else {
+                    resolve(resultList[0]);
+                  }
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          reject('Found');
+        }
+      });
+  });
+  resolve();
+});
+
+/**
   * Get by value
   * @param {any} value
   * @param {string} field
