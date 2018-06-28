@@ -454,7 +454,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                             <td align="left">
                                                 <img src="http://hutcake.com/assets/sub-01.jpg" alt="picsum" width="300" />
                                                 <h2>Track your order</h2>
-                                                <p style="text-align:justify;">Hi ${orderEntry.firstname}, We're getting your order ready to be shipped. We will notify you when it has been send. Please take this time to revivew your order details.</p>
+                                                <p style="text-align:justify;">Hi ${orderEntry.firstname}, We're getting your order ready to be deliver. We will notify you when it has been delivered. Please take this time to review your order details.</p>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -476,14 +476,14 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                             <td align="left">
                                                 <img src="http://hutcake.com/assets/sub-03.jpg" alt="picsum" width="300" />
                                                 <h2>Delivery Address: </h2>
-                                                <p style="text-align:justify;">${orderEntry.firstname}  ${orderEntry.lastname}</p>
-                                                <p>Address: ${orderEntry.shippingAddress01}</p>
+                                                <p style="text-align:center;"><strong>${orderEntry.firstname}  ${orderEntry.lastname}</strong></p>
+                                                <p style="text-align:center;"><strong>${orderEntry.shippingAddress01}</strong></p>
                                                 <p><span style="color: #ff005d;"><strong>Order details: (Order number:${orderEntry.number})</strong></span></p>
-                                                <table style="background-color: rgb(239, 239, 239);">
-                                                <p><span>Items ordered: </span></p>
+                                                <table style="background-color: rgb(239, 239, 239);width: 100%;">
+                                                <p><span style="font-size: 18px;">Items ordered: </span></p>
                                                 ${_.map(resultList, item => `<p>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</p>`).join('')}
                                                 <hr>
-                                                <p><span>Total: PHP ${orderEntry.total}</span></p>
+                                                <p><span style="font-size: 18px;">Total: PHP ${orderEntry.total}</span></p>
                                                 <table>
                                                 
                                         </tr>
@@ -500,7 +500,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 </html>
       `;
           resolve({
-            from: 'eostest12345@gmail.com',
+            from: 'info@eos.com.ph',
             bcc: 'raineerdelarita@gmail.com',
             to: orderEntry.email,
             subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
