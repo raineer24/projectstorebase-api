@@ -150,18 +150,19 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Selleraccount.prototype.resetPassword = obj => new BluePromise((resolve, reject) => {
-  that.getByValue(obj.email, 'email')
+Selleraccount.prototype.resetPassword = email => new BluePromise((resolve, reject) => {
+  that.getByValue(email, 'email')
     .then((resultList) => {
       if (resultList[0].id) {
-        new Token().invalidate(resultList[0].id);
+        new Token().invalidate(resultList[0].id, 'PARTNER_USER');
         new Token({
           dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
           type: 'PASSWORD_RESET',
-        }).create(resultList[0].id)
+        }).create(resultList[0].id, 'PARTNER_USER')
           .then((tokenId) => {
             new Token({}).findAll(0, 1, {
-              useraccountId: resultList[0].id,
+              accountId: resultList[0].id,
+              accountType: 'PARTNER_USER',
               tokenId,
             })
               .then((resultList2) => {
@@ -203,22 +204,22 @@ Selleraccount.prototype.resetPassword = obj => new BluePromise((resolve, reject)
   * @param {string} field
   * @return {object<Promise>}
 */
-Selleraccount.prototype.passwordResetEmail = (userAccount) => {
+Selleraccount.prototype.passwordResetEmail = (user) => {
   const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
   const body = `
-  <div><p>Hi ${userAccount.firstName},</p></div>
+  <div><p>Hi ${user.name},</p></div>
   <div><p>Your <b>OMG!</b> Dashboard password has been reset.</p></div>
-  <div><p>Please provide a new password by clicking on this link within the next 24 hours:
-  <a href="https://${hostname}/admin/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
+  <div><p>Please create a new password by clicking on this link within the next 24 hours:
+  <a href="https://${hostname}/admin/resetPassword?token=${user.token}&email=${user.email}&i=${user.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
     from: 'info@eos.com.ph',
-    to: userAccount.email,
+    to: user.email,
     subject: 'OMG - Account Password Reset',
-    text: `Password reset request for e-mail ${userAccount.email}`,
+    text: `Password reset request for e-mail ${user.email}`,
     html: body,
   };
 };

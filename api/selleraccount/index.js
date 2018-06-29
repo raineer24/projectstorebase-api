@@ -178,7 +178,7 @@ selleraccount.changePassword = (req, res) => {
 selleraccount.resetPassword = (req, res) => {
   new Log({ message: 'Reset password.', action: 'SELLER_ACCOUNT_RESET_PASSWORD', type: 'INFO' }).create();
   const instSellerAccount = new Selleraccount();
-  instSellerAccount.resetPassword(req.swagger.params.body.value)
+  instSellerAccount.resetPassword(query.validateParam(req.swagger.params, 'email', ''))
     .then(status => res.json({ status, message: 'Success' }))
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
       message: err === 'Not Found' ? 'Not found' : err,

@@ -194,13 +194,14 @@ User.prototype.update = (id, isChangePassword = false) => new BluePromise((resol
       if (!resultList[0].id) {
         reject('Not Found');
       } else {
+        log.info('TEST');
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             if (isChangePassword) {
-              new Token().invalidate(id)
+              new Token().invalidate(id, 'USER')
                 .then(() => {
                   resolve(response.message);
                 })
@@ -231,20 +232,15 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
   that.getByValue(obj.email, 'email')
     .then((resultList) => {
       if (resultList[0].id) {
-        new Token().invalidate(resultList[0].id)
-          .then(() => {
-            log.info('TEST');
-          })
-          .catch((err) => {
-            reject(err);
-          });
+        new Token().invalidate(resultList[0].id, 'USER');
         new Token({
           dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
           type: 'PASSWORD_RESET',
-        }).create(resultList[0].id)
+        }).create(resultList[0].id, 'USER')
           .then((tokenId) => {
             new Token({}).findAll(0, 1, {
-              useraccountId: resultList[0].id,
+              accountId: resultList[0].id,
+              accountType: 'USER',
               tokenId,
             })
               .then((resultList2) => {

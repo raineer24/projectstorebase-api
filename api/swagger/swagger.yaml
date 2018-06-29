@@ -916,6 +916,38 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /selleraccount/{email}/resetpassword:
+    x-swagger-router-controller: selleraccount
+    post:
+      tags:
+        - selleraccount
+      summary: request password reset
+      operationId: resetPassword
+      parameters:
+        - $ref: "#/parameters/email"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Password reset email sent
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /selleraccount/roles:
     x-swagger-router-controller: selleraccount
     get:
@@ -2553,12 +2585,12 @@ definitions:
     type: object
     required:
       - token
-      - useraccount_id
+      - accountId
     properties:
       token:
         type: string
         description: token
-      useraccount_id:
+      accountId:
         type: string
         description: user account id
   gc:
