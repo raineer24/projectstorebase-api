@@ -747,6 +747,7 @@ paths:
       parameters:
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/sellerId"
       responses:
         200:
           description: Fetch all seller account users
