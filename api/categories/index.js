@@ -31,4 +31,18 @@ category.addCategory = (req, res) => {
     });
 };
 
+category.addCategories = (req, res) => {
+  new Log({ message: 'Add new categories', action: 'CATEGORY_ADD', type: 'INFO' }).create();
+  const instCategory = new Category(req.swagger.params.body.value);
+  instCategory.createMultiple()
+    .then(status => res.json({ status, message: 'Saved' }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'CATEGORY_ADD', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
+    })
+    .finally(() => {
+      instCategory.release();
+    });
+};
+
 module.exports = category;

@@ -8,6 +8,8 @@ const Util = require('../helpers/util');
 
 let that;
 
+let tokenContainer;
+
 /**
   * Selleraccount constructor
   * @param {object} selleraccount
@@ -138,10 +140,10 @@ Selleraccount.prototype.authenticate = () => new BluePromise((resolve, reject) =
         reject('Disabled');
         return;
       }
-
+      tokenContainer = Util.signSellerToken(results[0]);
       resolve(_.merge({
         authenticated: true,
-        token: Util.signSellerToken(results[0]),
+        token: tokenContainer,
         dateTime: new Date().getTime(),
       }, results[0]));
     })
@@ -161,6 +163,7 @@ Selleraccount.prototype.authorize = userAuth => new BluePromise((resolve, reject
   }
   resolve(_.merge({
     authorize: true,
+    // authorize: Util.decodeToken(tokenContainer),
     // roles: [
     //   'customer',
     //   'limited',

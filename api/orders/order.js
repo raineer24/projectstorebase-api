@@ -42,6 +42,8 @@ function Order(order) {
       'adjustmentTotal',
       'paymentTotal',
       'discountTotal',
+      'serviceFee',
+      'deliveryFee',
       'dateCompleted',
       'shipmentStatus',
       'paymentStatus',
@@ -281,12 +283,14 @@ Order.prototype.getByValue = (value, field) => {
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
-Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject) => {
+Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, reject) => {
   const instTrans = new Transaction({});
   const transactionId = instTrans.getTransaction();
   const instGc = new Gc({});
   let transType = '';
-  if (gcList) {
+  log.info('GC LIST:');
+  log.info(gcList);
+  if (gcList && gcList.length > 0) {
     for (let ctr = 0; ctr < gcList.length; ctr += 1) {
       instGc.getByValue(gcList[ctr], 'code').then((resultList) => {
         if (resultList[0].status !== 'unused') {
@@ -296,7 +300,7 @@ Order.prototype.processOrder = (id, gcList) => new BluePromise((resolve, reject)
     }
     transType = 'GIFTCERT_PAYMENT';
   } else {
-    transType = 'ORDER';
+    transType = tType;
   }
   that.setTransactionNumber(transactionId);
   that.update(id, true) // update(order_id, confirmOrder)

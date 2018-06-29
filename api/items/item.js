@@ -308,6 +308,12 @@ Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => new Promise((re
 */
 Item.prototype.findById = id => that.getByValue(id, 'id');
 
+// Item.prototype.countItems = () => {
+//   let strSql = '';
+//   strSql = `(SELECT COUNT(*) FROM ${that.db}.${that.table})`;
+//   return that.dbConn.queryAsync(strSql);
+// };
+
 
 Item.prototype.getItemSuggestions = (id, skip, limit) => new BluePromise((resolve, reject) => {
   that.findById(id)
@@ -374,6 +380,47 @@ Item.prototype.create = () => new BluePromise((resolve, reject) => {
     .catch((err) => {
       reject(err);
     });
+});
+
+/**
+  * Save User account
+  * @param {string} id
+  * @return {object}
+*/
+Item.prototype.createMultiple = () => new BluePromise((resolve, reject) => {
+  let str = [];
+  str = that.model;
+  _.forEach(str, (key) => {
+    const itemCode = key.code;
+    that.getByValue(itemCode, 'code')
+      .then((results) => {
+        log.info(results.length);
+        if (results.length === 0 && itemCode !== undefined) {
+          const query = that.sqlTable.insert(key).toQuery();
+          that.dbConn.queryAsync(query.text, query.values)
+            .then((response) => {
+              log.info(response);
+              that.getByValue(response.id, 'id')
+                .then((resultList) => {
+                  if (!resultList[0].id) {
+                    reject('Not found');
+                  } else {
+                    resolve(resultList[0]);
+                  }
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          reject('Found');
+        }
+      });
+  });
+  resolve();
 });
 
 /**
