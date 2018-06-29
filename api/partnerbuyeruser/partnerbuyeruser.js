@@ -1,8 +1,9 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
-
+const config = require('../../config/config');
 const moment = require('moment');
+
 const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
 const Mailer = require('../../service/mail');
@@ -221,11 +222,12 @@ Partnerbuyeruser.prototype.createMultiple = () => new BluePromise((resolve, reje
 });
 
 Partnerbuyeruser.prototype.mailConfirmation = (userAccount) => {
+  const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
   const body = `
   <div><p>Hi,</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>
   <div><p>Please confirm your registration by clicking this link below</p></div>
-  <div><p><a href="hutcake.com">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
+  <div><p><a href="https://${hostname}">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
@@ -288,11 +290,12 @@ Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, 
 });
 
 Partnerbuyeruser.prototype.passwordResetEmail = (userAccount) => {
+  const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
   const body = `
   <div><p>Hi ${userAccount.firstName},</p></div>
   <div><p>You have successfully registered to <b>Oh My Grocery</b> with username ${userAccount.email}</p></div>
   <div><p>Please confirm your registration by clicking this link below:</p></div>
-  <div><p><a href="https://hutcake.com/user/guestActivation?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.useraccount_id}">${userAccount.token}</a></p></div>
+  <div><p><a href="https://${hostname}/user/guestActivation?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.useraccount_id}">${userAccount.token}</a></p></div>
   <div><p>Thank you!</p></div>
   `;
   return {

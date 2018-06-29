@@ -2,9 +2,13 @@ const BluePromise = require('bluebird');
 const sql = require('sql');
 const _ = require('lodash');
 const log = require('color-logs')(true, true, 'Seller Account');
+const moment = require('moment');
+const config = require('../../config/config');
 
 const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
+const Mailer = require('../../service/mail');
+const Token = require('../token/token');
 
 let that;
 
@@ -63,19 +67,31 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
   that.getByValue(that.model.username, 'username')
     .then((results) => {
       if (results.length === 0) {
-        if (that.model.id) {
-          delete that.model.id;
-        }
-        const query = that.sqlTable.insert(that.model).toQuery();
-        that.dbConn.queryAsync(query.text, query.values)
-          .then((response) => {
-            resolve(response.insertId);
+        that.getByValue(that.model.email, 'email')
+          .then((resultsEmail) => {
+            if (resultsEmail.length === 0) {
+              if (that.model.id) {
+                delete that.model.id;
+              }
+              // that.model.password = Math.random().toString(36).slice(2);
+              that.model.password = 'password';
+              const query = that.sqlTable.insert(that.model).toQuery();
+              that.dbConn.queryAsync(query.text, query.values)
+                .then((response) => {
+                  resolve(response.insertId);
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            } else {
+              reject('Email Found');
+            }
           })
           .catch((err) => {
             reject(err);
           });
       } else {
-        reject('Found');
+        reject('Username Found');
       }
     })
     .catch((err) => {
@@ -100,12 +116,22 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
       if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        that.model = _.merge(resultList[0], that.model);
-        const query = that.sqlTable.update(that.model)
-          .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConn.queryAsync(query.text, query.values)
-          .then((response) => {
-            resolve(response.message);
+        that.getByValue(that.model.email, 'email')
+          .then((resultEmail) => {
+            if (resultEmail.length && resultEmail[0].id !== resultList[0].id) {
+              reject('Email Found');
+            } else {
+              that.model = _.merge(resultList[0], that.model);
+              const query = that.sqlTable.update(that.model)
+                .where(that.sqlTable.id.equals(id)).toQuery();
+              that.dbConn.queryAsync(query.text, query.values)
+                .then((response) => {
+                  resolve(response.message);
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            }
           })
           .catch((err) => {
             reject(err);
@@ -116,6 +142,87 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
       reject(err);
     });
 });
+
+
+/**
+  * Reset Password
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Selleraccount.prototype.resetPassword = obj => new BluePromise((resolve, reject) => {
+  that.getByValue(obj.email, 'email')
+    .then((resultList) => {
+      if (resultList[0].id) {
+        new Token().invalidate(resultList[0].id);
+        new Token({
+          dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
+          type: 'PASSWORD_RESET',
+        }).create(resultList[0].id)
+          .then((tokenId) => {
+            new Token({}).findAll(0, 1, {
+              useraccountId: resultList[0].id,
+              tokenId,
+            })
+              .then((resultList2) => {
+                if (resultList2.length > 0) {
+                  new Mailer(that.passwordResetEmail(_.merge(resultList[0], {
+                    token: resultList2[0].key,
+                  }))).send()
+                    .then(() => {
+                      log.info(`Successfully sent password reset email to ${resultList[0].email}`);
+                      resolve('Success');
+                    })
+                    .catch((err) => {
+                      log.error(`Failed to send ${err}`);
+                      reject(err);
+                    });
+                } else {
+                  reject('Not found');
+                }
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      } else {
+        reject('Not found');
+      }
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+
+/**
+  * Password Reset Email
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Selleraccount.prototype.passwordResetEmail = (userAccount) => {
+  const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
+  const body = `
+  <div><p>Hi ${userAccount.firstName},</p></div>
+  <div><p>Your <b>OMG!</b> Dashboard password has been reset.</p></div>
+  <div><p>Please provide a new password by clicking on this link within the next 24 hours:
+  <a href="https://${hostname}/admin/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
+  </p></div>
+  <div><p>Please remember to keep your username and password confidential at all times.</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: userAccount.email,
+    subject: 'OMG - Account Password Reset',
+    text: `Password reset request for e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+
 /**
   * User authentication of username and password
   * @param {string} username
@@ -240,10 +347,21 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .offset(skip)
       .toQuery();
   }
-
   log.info(query.text);
 
   return that.dbConn.queryAsync(query.text, query.values);
+};
+
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+Selleraccount.prototype.getRoles = () => {
+  const strSql = 'SELECT * FROM role ORDER BY name;';
+
+  return that.dbConn.queryAsync(strSql);
 };
 
 /**

@@ -851,7 +851,7 @@ CREATE TABLE `role` (
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
 INSERT INTO `role` VALUES
-(1,'EOS Dev',1521072000000,1521072000000),(2,'EOS Admin',1521072000000,1521072000000),(3,'PS Admin',1521072000000,1521072000000),(4,'PS Assembly',1521072000000,1521072000000),(5,'PS Finance',1521072000000,1521072000000),(6,'PS Management',1521072000000,1521072000000),(7,'PB Admin',1521072000000,1521072000000),(8,'PB Finance',1521072000000,1521072000000),(9,'Partner Seller - Shopper',1521072000000,1521072000000),(10,'Partner Seller - Delivery',1521072000000,1521072000000);
+(1,'EOS Developer',1521072000000,1521072000000),(2,'EOS Admin',1521072000000,1521072000000),(3,'Partner Seller - Admin',1521072000000,1521072000000),(4,'Partner Seller - Coordinator',1521072000000,1521072000000),(5,'Partner Seller - Finance',1521072000000,1521072000000),(6,'Partner Seller - Management',1521072000000,1521072000000),(7,'Partner Buyer - Admin',1521072000000,1521072000000),(8,'Partner Buyer - Finance',1521072000000,1521072000000),(9,'Partner Seller - Assembly',1521072000000,1521072000000),(10,'Partner Seller - Delivery',1521072000000,1521072000000);
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -944,7 +944,7 @@ CREATE TABLE `selleraccount` (
   `password` varchar(250) NOT NULL,
   `email` char(100) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
-  `enabled` bit(1) DEFAULT b'1',
+  `enabled` tinyint(1) DEFAULT 1,
   `seller_id` bigint(50) DEFAULT 0,
   `role_id` bigint(50) DEFAULT 0,
   `lastLogin` bigint(50) DEFAULT 0,
@@ -1159,7 +1159,8 @@ CREATE TABLE `useraccounttoken` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `valid` char(1) DEFAULT 1,
   `token_id` varchar(50) NOT NULL,
-  `useraccount_id` varchar(50) NOT NULL,
+  `selleraccount_id` varchar(50) DEFAULT NULL,
+  `useraccount_id` varchar(50) DEFAULT NULL,
   `dateCreated` bigint(20) NOT NULL,
   `dateUpdated` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
