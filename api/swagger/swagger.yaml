@@ -17,6 +17,13 @@ consumes:
 # format of the responses to the client (Accepts)
 produces:
   - application/json
+# x-globalParameters: &GLOB_HEADER
+#   - $ref: '#/parameters/authHeader'
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
   /:
     x-swagger-router-controller: users
@@ -295,7 +302,7 @@ paths:
     x-swagger-router-controller: partnerbuyeruser
     get:
       tags:
-        - users
+        - partnerbuyeruser
       summary: check if user is in partnerbuyeruser table
       operationId: getUsers
       parameters:
@@ -382,7 +389,7 @@ paths:
     x-swagger-router-controller: partnerbuyeruser
     put:
       tags:
-        - user
+        - partnerbuyeruser
       summary: create PB User
       operationId: addUsers
       parameters:
@@ -740,6 +747,7 @@ paths:
       parameters:
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/sellersId"
       responses:
         200:
           description: Fetch all seller account users
@@ -749,38 +757,6 @@ paths:
               id:
                 type: number
                 example: 10012
-        403:
-          description: Unauthorized
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-  /selleraccount/{id}/update:
-    x-swagger-router-controller: selleraccount
-    put:
-      tags:
-        - selleraccount
-      summary: Update selleraccount
-      operationId: updateAccount
-      parameters:
-        - $ref: "#/parameters/id"
-        - name: body
-          in: body
-          description: put contents
-          required: true
-          schema:
-            $ref: "#/definitions/selleraccount"
-      responses:
-        200:
-          description: Successful update
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-                example: norbert@hutcake.com
         403:
           description: Unauthorized
           schema:
@@ -812,6 +788,149 @@ paths:
               username:
                 type: string
                 example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/save:
+    x-swagger-router-controller: selleraccount
+    post:
+      tags:
+        - selleraccount
+      summary: Create new selleraccount
+      operationId: registerAccount
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/sellerAccountRegister"
+      responses:
+        200:
+          description: Successful create
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{id}/view:
+    x-swagger-router-controller: selleraccount
+    get:
+      tags:
+        - selleraccount
+      summary: Return seller account profile
+      operationId: viewAccount
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{id}/save:
+    x-swagger-router-controller: selleraccount
+    put:
+      tags:
+        - selleraccount
+      summary: Update selleraccount profile
+      operationId: updateAccount
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/selleraccount"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{id}/changepassword:
+    x-swagger-router-controller: selleraccount
+    put:
+      tags:
+        - selleraccount
+      summary: selleraccount change password
+      operationId: changePassword
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: false
+          schema:
+            $ref: "#/definitions/sellerAccountRegister"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/roles:
+    x-swagger-router-controller: selleraccount
+    get:
+      tags:
+        - selleraccount
+      summary: Return selleraccount roles
+      operationId: getRoles
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
         403:
           description: Unauthorized
           schema:
@@ -854,7 +973,7 @@ paths:
     x-swagger-router-controller: sellers
     get:
       tags:
-        - profile
+        - sellers
       summary: Return seller profile
       operationId: viewAccount
       parameters:
@@ -1176,7 +1295,10 @@ paths:
                 example: Unauthorized
   /transactions:
     x-swagger-router-controller: transactions
+    # parameters: *GLOB_HEADER
     get:
+      security:
+      - Bearer: []
       tags:
       - transactions
       summary: Get all transaction record
@@ -1409,6 +1531,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /items/create:
+    x-swagger-router-controller: items
+    put:
+      tags:
+        - item
+      summary: create items
+      operationId: addItems
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/ItemsCreate"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /item/{id}:
     x-swagger-router-controller: items
     get:
@@ -1432,6 +1585,35 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  # /items/count: FOR FUTURE IMPLEMENTATION
+  #   x-swagger-router-controller: items
+  #   get:
+  #     tags:
+  #       - item
+  #     summary: Returns count of items
+  #     # used as the method name of the controller
+  #     operationId: countItems
+  #     responses:
+  #       200:
+  #         description: Success
+  #         schema:
+  #           type: object
+  #           properties:
+  #             bookmark:
+  #               type: string
+  #               example: asdfasdfasdf213sadfasdf123
+  #             total:
+  #               type: number
+  #               example: 100
+  #             data:
+  #               type: array
+  #               items:
+  #                 - $ref: "#/definitions/ItemList"
+  #       # responses may fall through to errors
+  #       default:
+  #         description: Error
+  #         schema:
+  #           $ref: "#/definitions/ErrorResponse"
   /item/{id}/suggestions:
     x-swagger-router-controller: items
     get:
@@ -1487,6 +1669,37 @@ paths:
         - category
       summary: create a category
       operationId: addCategory
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/CategoryCreate"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /category/addmany:
+    x-swagger-router-controller: categories
+    post:
+      tags:
+        - category
+      summary: create a category
+      operationId: addCategories
       parameters:
         - name: body
           in: body
@@ -1941,9 +2154,12 @@ paths:
         - $ref: "#/parameters/sellerIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
-        - $ref: "#/parameters/minDate"
-        - $ref: "#/parameters/maxDate"
+        - $ref: "#/parameters/mode"
         - $ref: "#/parameters/orderStatus"
+        - $ref: "#/parameters/orderNumber"
+        - $ref: "#/parameters/orderDate"
+        - $ref: "#/parameters/deliverDate"
+        - $ref: "#/parameters/timeslotId"
       responses:
         200:
           description: Fetch all order items
@@ -2279,6 +2495,30 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /settings:
+    x-swagger-router-controller: settings
+    get:
+      tags:
+        - settings
+      summary: get a rating entry
+      operationId: getSettings
+      responses:
+       200:
+         description: Success
+         schema:
+           type: object
+           properties:
+             id:
+               type: number
+               example: 123445
+       403:
+         description: Unauthorized
+         schema:
+           type: object
+           properties:
+             message:
+               type: string
+               example: Unauthorized
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -2300,15 +2540,31 @@ definitions:
       value:
         type: number
         description: transaction value
+  sellerAccountRegister:
+    title: sellerAccountRegister
+    type: object
+    required:
+      - username
+      - email
+      - role_id
+    properties:
+      username:
+        type: string
+        description: username
+      email:
+        type: string
+        description: user e-mail
+      role_id:
+        type: integer
+        description: role ID
   selleraccount:
     title: ""
     type: object
-    required:
-      - id
     properties:
       id:
-        type: number
-        description: selleraccount id
+        type: string
+      value:
+        type: string
       doc:
         type: object
         description: "selleraccount object"
@@ -2486,6 +2742,31 @@ definitions:
       code:
         type: number
         description: item specific code
+  ItemsCreate:
+    title: ItemCreate
+    type: object
+    properties:
+      name:
+        type: string
+        description: item name
+      code:
+        type: string
+        description: item code
+      brandName:
+        type: string
+        description: item brand
+      price:
+        type: number
+        description: item price
+      category1:
+        type: string
+        description: item cat1
+      category2:
+        type: string
+        description: item cat2
+      category3:
+        type: string
+        description: item cat3
   OrderSellerCreate:
     title: OrderSellerCreate
     type: object
@@ -2597,11 +2878,16 @@ definitions:
         type: number
         description: category level
 parameters:
+  # authHeader:
+  #   name: auth
+  #   in: header
+  #   description: an authorization header
+  #   required: true
   addCategory:
     in: query
     name: addCategory
     type: string
-    required: false  
+    required: false
   selleraccountid:
     in: path
     name: selleraccountid
@@ -2762,6 +3048,11 @@ parameters:
     name: sellerId
     type: string
     required: true
+  sellersId:
+    in: query
+    name: sellersId
+    type: string
+    required: false
   listId:
     in: path
     name: listId
@@ -2777,18 +3068,33 @@ parameters:
     name: email
     type: string
     required: true
+  mode:
+    in: query
+    name: mode
+    type: string
+    required: false
   orderStatus:
     in: query
     name: orderStatus
     type: string
     required: false
-  maxDate:
+  orderNumber:
     in: query
-    name: maxDate
+    name: orderNumber
     type: number
     required: false
-  minDate:
+  orderDate:
     in: query
-    name: minDate
+    name: orderDate
+    type: string
+    required: false
+  deliverDate:
+    in: query
+    name: deliverDate
+    type: string
+    required: false
+  timeslotId:
+    in: query
+    name: timeslotId
     type: number
     required: false

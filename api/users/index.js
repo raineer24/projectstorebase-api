@@ -22,12 +22,14 @@ user.connectDb = (req, res) => {
 * @return {Object}
 */
 user.getAllUsers = (req, res) => {
-  new Log({ message: 'Show all users', action: 'USER_LIST', type: 'INFO' }).create();
   const instUser = new User({});
   instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     // useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 0),
   })
-    .then(result => res.json(result))
+    .then((result) => {
+      res.json(result);
+      new Log({ message: 'Successfully retrieve all users', action: 'USER_LIST', type: 'INFO' }).create();
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'USER_LIST', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
@@ -152,9 +154,10 @@ user.forgotPassword = (req, res) => {
   const instUser = new User();
   instUser.sendPasswordResetEmail(req.swagger.params.body.value)
     .then(status => res.json({ status, message: 'Success' }))
-    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
-      message: err === 'Not Found' ? 'Not found' : err,
-    }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'USER_SEND_PASSWORD_RESET_EMAIL', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+    })
     .finally(() => {
       instUser.release();
     });

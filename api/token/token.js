@@ -37,6 +37,7 @@ function Token(token) {
       'id',
       'token_id',
       'useraccount_id',
+      'selleraccount_id',
       'valid',
       'dateCreated',
       'dateUpdated',
@@ -46,36 +47,38 @@ function Token(token) {
   that = this;
 }
 
-Token.prototype.create = useraccountId => new BluePromise((resolve, reject) => {
-  that.model.key = randomKeyGenerator() + randomKeyGenerator() +
-  randomKeyGenerator() + randomKeyGenerator() + randomKeyGenerator();
-  log.info(that.model.key);
-  const query = that.sqlTable.insert(that.model).toQuery();
-  that.dbConn.queryAsync(query.text, query.values)
-    .then((response) => {
-      if (useraccountId) {
-        const subQuery = that.sqlTableUseraccountToken.insert({
-          token_id: response.insertId,
-          useraccount_id: useraccountId,
-          valid: 1,
-          dateCreated: new Date().getTime(),
-          dateUpdated: new Date().getTime(),
-        }).toQuery();
-        that.dbConn.queryAsync(subQuery.text, subQuery.values)
-          .then(() => {
-            resolve(response.insertId);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      } else {
-        resolve(response.insertId);
-      }
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
+Token.prototype.create = (useraccountId, selleraccountId = null) =>
+  new BluePromise((resolve, reject) => {
+    that.model.key = randomKeyGenerator() + randomKeyGenerator() +
+    randomKeyGenerator() + randomKeyGenerator() + randomKeyGenerator();
+    log.info(that.model.key);
+    const query = that.sqlTable.insert(that.model).toQuery();
+    that.dbConn.queryAsync(query.text, query.values)
+      .then((response) => {
+        if (useraccountId || selleraccountId) {
+          const subQuery = that.sqlTableUseraccountToken.insert({
+            token_id: response.insertId,
+            useraccount_id: useraccountId,
+            selleraccount_id: selleraccountId,
+            valid: 1,
+            dateCreated: new Date().getTime(),
+            dateUpdated: new Date().getTime(),
+          }).toQuery();
+          that.dbConn.queryAsync(subQuery.text, subQuery.values)
+            .then(() => {
+              resolve(response.insertId);
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          resolve(response.insertId);
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 
 Token.prototype.invalidate = useraccountId => new BluePromise((resolve, reject) => {
   const query = that.sqlTableUseraccountToken.update({
@@ -89,6 +92,18 @@ Token.prototype.invalidate = useraccountId => new BluePromise((resolve, reject) 
     .catch((err) => {
       reject(err);
     });
+  // const query = that.sqlTableUseraccountToken.update({
+  //   valid: '0',
+  //   dateUpdated: new Date().getTime(),
+  // }).where(that.sqlTableUseraccountToken.entity_id.equals(entityId)
+  //   .and().that.sqlTableUseraccountToken.entity_table.equals(entityTable)).toQuery();
+  // that.dbConn.queryAsync(query.text, query.values)
+  //   .then(() => {
+  //     resolve();
+  //   })
+  //   .catch((err) => {
+  //     reject(err);
+  //   });
 });
 
 /**
