@@ -194,7 +194,6 @@ User.prototype.update = (id, isChangePassword = false) => new BluePromise((resol
       if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        log.info('TEST');
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();

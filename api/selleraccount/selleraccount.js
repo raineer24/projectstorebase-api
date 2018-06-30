@@ -104,6 +104,8 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
   * @return {object}
 */
 Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
+  log.info(that.model.newPassword);
+  const isInvalidate = that.model.newPassword;
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
     delete that.model.password;
@@ -126,7 +128,18 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
                 .where(that.sqlTable.id.equals(id)).toQuery();
               that.dbConn.queryAsync(query.text, query.values)
                 .then((response) => {
-                  resolve(response.message);
+                  if (isInvalidate) {
+                    new Token().invalidate(id, 'PARTNER_USER')
+                      .then(() => {
+                        log.info('TESTING');
+                        resolve(response.message);
+                      })
+                      .catch((err) => {
+                        reject(err);
+                      });
+                  } else {
+                    resolve(response.message);
+                  }
                 })
                 .catch((err) => {
                   reject(err);

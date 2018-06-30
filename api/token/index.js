@@ -45,7 +45,7 @@ token.check = (req, res) => {
 * @param {Object} res
 * @return {Object}
 */
-token.checkPartner = (req, res) => {
+token.checkPartnerUser = (req, res) => {
   new Log({ message: 'TOKEN_CHECK', type: 'INFO' }).create();
   const instToken = new Token();
   instToken.check(req.swagger.params.body.value, 'PARTNER_USER')
