@@ -73,8 +73,8 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
               if (that.model.id) {
                 delete that.model.id;
               }
-              // that.model.password = Math.random().toString(36).slice(2);
-              that.model.password = 'password';
+              that.model.password = Math.random().toString(36).slice(2);
+              // that.model.password = 'password';
               const query = that.sqlTable.insert(that.model).toQuery();
               that.dbConn.queryAsync(query.text, query.values)
                 .then((response) => {
@@ -104,7 +104,6 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
   * @return {object}
 */
 Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
-  log.info(that.model.newPassword);
   const isInvalidate = that.model.newPassword;
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
@@ -131,7 +130,6 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
                   if (isInvalidate) {
                     new Token().invalidate(id, 'PARTNER_USER')
                       .then(() => {
-                        log.info('TESTING');
                         resolve(response.message);
                       })
                       .catch((err) => {
@@ -329,18 +327,25 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   if (sortBy) {
     sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
   }
-
   if (filters.sellerId) {
-    query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTableRole.name.as('role'))
-      .from(that.sqlTable
-        .join(that.sqlTableRole)
-        .on(that.sqlTableRole.id.equals(that.sqlTable.role_id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
-      .order(sortString)
-      .limit(limit)
-      .offset(skip)
-      .toQuery();
+    if (filters.count) {
+      query = that.sqlTable
+        .select(sql.functions.COUNT(that.sqlTable.id).as('count'))
+        .from(that.sqlTable)
+        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .toQuery();
+    } else {
+      query = that.sqlTable
+        .select(that.sqlTable.star(), that.sqlTableRole.name.as('role'))
+        .from(that.sqlTable
+          .leftJoin(that.sqlTableRole)
+          .on(that.sqlTableRole.id.equals(that.sqlTable.role_id)))
+        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .order(sortString)
+        .limit(limit)
+        .offset(skip)
+        .toQuery();
+    }
   } else if (filters.username && filters.password) {
     query = that.sqlTable
       .select(that.sqlTable.star())

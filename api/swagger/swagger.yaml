@@ -748,6 +748,7 @@ paths:
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/sellersId"
+        - $ref: "#/parameters/count"
       responses:
         200:
           description: Fetch all seller account users
@@ -3083,7 +3084,7 @@ parameters:
   sellersId:
     in: query
     name: sellersId
-    type: string
+    type: number
     required: false
   listId:
     in: path
@@ -3128,5 +3129,10 @@ parameters:
   timeslotId:
     in: query
     name: timeslotId
+    type: number
+    required: false
+  count:
+    in: query
+    name: count
     type: number
     required: false
