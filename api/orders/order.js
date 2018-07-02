@@ -401,6 +401,9 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
             width: 100%;
             display: block;
         }
+        .email-container {
+          width: 100%;
+        }
 
         @media only screen and (max-width: 620px) {
 
@@ -483,7 +486,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                                 <p style="text-align:center;"><strong>${orderEntry.firstname}  ${orderEntry.lastname}</strong></p>
                                                 <p style="text-align:center;"><strong>${orderEntry.shippingAddress01}</strong></p>
                                                 <p><span style="color: #ff005d;"><strong>Order details: (Order number:${orderEntry.number})</strong></span></p>
-                                                <table style="background-color: rgb(239, 239, 239);width: 100%;">
+                                                <table style="background-color: rgb(239, 239, 239);" class="email-container">
                                                 <p><span style="font-size: 18px;">Items ordered: </span></p>
                                                 ${_.map(resultList, item => `<p><strong>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</strong></p>`).join('')}
                                                 <hr>
@@ -500,6 +503,23 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
             </tr>
         </tbody>
     </table>
+    <!-- Email Footer : BEGIN -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px;margin: 0 auto;">
+      <tr>
+        <td style="padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;">
+          <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">View as a Web Page</webversion>
+          <br>
+          <br> Eos Omg
+          <br>
+          <span class="unstyle-auto-detected-links">123 Fake Street, SpringField, OR, 97477 US
+            <br>(123) 456-7890</span>
+          <br>
+          <br>
+          <unsubscribe style="color: #888888; text-decoration: underline;">unsubscribe</unsubscribe>
+        </td>
+      </tr>
+    </table>
+    <!-- Email Footer : END -->
 </body>
 </html>
       `;
