@@ -27,6 +27,7 @@ orderseller.getAllOrderSellers = (req, res) => {
     deliverDate: query.validateParam(req.swagger.params, 'deliverDate', ''),
     timeslotId: query.validateParam(req.swagger.params, 'timeslotId', ''),
     mode: query.validateParam(req.swagger.params, 'mode', ''),
+    count: query.validateParam(req.swagger.params, 'count', ''),
   })
     .then((result) => {
       res.json(result);

@@ -2193,6 +2193,7 @@ paths:
         - $ref: "#/parameters/orderDate"
         - $ref: "#/parameters/deliverDate"
         - $ref: "#/parameters/timeslotId"
+        - $ref: "#/parameters/count"
       responses:
         200:
           description: Fetch all order items
