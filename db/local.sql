@@ -5603,7 +5603,14 @@ PRIMARY KEY (`id`)
 
 LOCK TABLES `partnerbuyeruser` WRITE;
 /*!40000 ALTER TABLE `partnerbuyeruser` DISABLE KEYS */;
-INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,5,1),(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,6,1),(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,7,1);
+INSERT INTO `partnerbuyeruser` VALUES (1,'vqueja@yahoo.com','vqueja@yahoo.com','Victor Queja',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,5,1),
+(2,'dzulai@gmail.com','dzulai@gmail.com','Mark Julio',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,6,1),
+(3,'fallenaskari_21@yahoo.com','fallenaskari_21@yahoo.com','Fallen Askari',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,7,1),
+(4,'pbu3@hotmail.com','pbu3@hotmail.com','Georel Dadula',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,10,1),
+(5,'pbu2@hotmail.com','pbu2@hotmail.com','Glenda Inoferio',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,9,1),
+(6,'pbu1@hotmail.com','pbu1@hotmail.com','Irish Gonzales',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,8,1),
+(7,'pbu4@hotmail.com','pbu4@hotmail.com','Zarra Teves',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,11,1),
+(8,'pbu5@hotmail.com','pbu5@hotmail.com','Vanessa Kesner',2500.00,2500.00,0.00,'enabled',1522637372669,1522637372669,12,1);
 /*!40000 ALTER TABLE `partnerbuyeruser` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6158,7 +6165,18 @@ CREATE TABLE `useraccount` (
 
 LOCK TABLES `useraccount` WRITE;
 /*!40000 ALTER TABLE `useraccount` DISABLE KEYS */;
-INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','+63 9087654321',468432000000,'0','0',1512763400407,1512763400407),(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',468432000000,'0','0',1512761717733,1512761717733),(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',468432000000,'0','0',1512810101593,1512810101593),(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',468432000000,'0','0',1512810359181,1512810359181),(5,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor','Queja','12345','M','+63 9087654321',460483200000,'0','0',1512763400407,1512763400407),(6,'dzulai1@gmail.com','password','dzulai1@gmail.com','Mark','Julio','12345','M','+63 9085121742',463593600000,'0',1,1512763400407,1512763400407),(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','111111','M','+63 9177433202',463593600000,'0',1,1512763400407,1512763400407);
+INSERT INTO `useraccount` VALUES (1,'norbs.knight@gmail.com','password','norbs.knight111@gmail.com','Norbs','Knight','12345','M','+63 9087654321',468432000000,'0','0',1512763400407,1512763400407),
+(2,'norbs.knight1@gmail.com','password','norbs.knight1@gmail.com','Norbs','Knight','12345','M','',468432000000,'0','0',1512761717733,1512761717733),
+(3,'norbs.knight2@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','12345','M','',468432000000,'0','0',1512810101593,1512810101593),
+(4,'norbs.knight12@gmail.com','','norbs.knight21@gmail.com','Norbs','Knight','','M','',468432000000,'0','0',1512810359181,1512810359181),
+(5,'victor.queja@yahoo.com','password','victor.queja@yahoo.com','Victor','Queja','12345','M','+63 9087654321',460483200000,'0','0',1512763400407,1512763400407),
+(6,'dzulai1@gmail.com','password','dzulai1@gmail.com','Mark','Julio','12345','M','+63 9085121742',463593600000,'0',1,1512763400407,1512763400407),
+(7,'fallenaskari_21@yahoo.com','password','fallenaskari_21@yahoo.com','Fallen','Askari','111111','M','+63 9177433202',463593600000,'0',1,1512763400407,1512763400407),
+(8,'pbu1@hotmail.com','password','pbu1@hotmail.com','Irish','Gonzales','1111','F','+63 9920029123',460483200000,'0','0',1512763400407,1512763400407),
+(9,'pbu2@hotmail.com','password','pbu2@hotmail.com','Glenda','Inoferio','1111','F','+63 9675691230',460483200000,'0','0',1512763400407,1512763400407),
+(10,'pbu3@hotmail.com','password','pbu3@hotmail.com','Georel','Dadula','1111','M','+63 9182273382',460483200000,'0','0',1512763400407,1512763400407),
+(11,'pbu4@hotmail.com','password','pbu4@hotmail.com','Zarra','Teves','1111','F','+63 9282273382',460483200000,'0','0',1512763400407,1512763400407),
+(12,'pbu5@hotmail.com','password','pbu5@hotmail.com','Vanessa','Kesner','1111','F','+63 9282273382',460483200000,'0','0',1512763400407,1512763400407);
 /*!40000 ALTER TABLE `useraccount` ENABLE KEYS */;
 UNLOCK TABLES;
 

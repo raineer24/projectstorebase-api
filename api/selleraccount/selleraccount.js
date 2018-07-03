@@ -73,8 +73,8 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
               if (that.model.id) {
                 delete that.model.id;
               }
-              that.model.password = Math.random().toString(36).slice(2);
-              // that.model.password = 'password';
+              // that.model.password = Math.random().toString(36).slice(2);
+              that.model.password = 'password';
               const query = that.sqlTable.insert(that.model).toQuery();
               that.dbConn.queryAsync(query.text, query.values)
                 .then((response) => {
