@@ -274,18 +274,28 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       whereString += ` AND timeslotorder.timeslot_id = ${filters.timeslotId}`;
     }
 
-    query = that.sqlTable
-      .select(that.sqlTableTimeslotOrder.star(), that.sqlTableOrder.id.as('order_id'), that.sqlTableOrder.star(), that.sqlTable.star())
-      .from(that.sqlTable
-        .join(that.sqlTableOrder)
-        .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
-        .leftJoin(that.sqlTableTimeslotOrder)
-        .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
-      .where(whereString)
-      .order(sortString)
-      .limit(limit)
-      .offset(skip)
-      .toQuery();
+    if (filters.count) {
+      query = that.sqlTable
+        .select(sql.functions.COUNT(that.sqlTable.id).as('count'))
+        .from(that.sqlTable
+          .join(that.sqlTableOrder)
+          .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id)))
+        .where(whereString)
+        .toQuery();
+    } else {
+      query = that.sqlTable
+        .select(that.sqlTableTimeslotOrder.star(), that.sqlTableOrder.id.as('order_id'), that.sqlTableOrder.star(), that.sqlTable.star())
+        .from(that.sqlTable
+          .join(that.sqlTableOrder)
+          .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
+          .leftJoin(that.sqlTableTimeslotOrder)
+          .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
+        .where(whereString)
+        .order(sortString)
+        .limit(limit)
+        .offset(skip)
+        .toQuery();
+    }
   } else if (filters.sellerId && filters.mode === 'assembly') {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();

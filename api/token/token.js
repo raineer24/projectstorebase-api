@@ -36,7 +36,8 @@ function Token(token) {
     columns: [
       'id',
       'token_id',
-      'useraccount_id',
+      'account_id',
+      'account_type',
       'valid',
       'dateCreated',
       'dateUpdated',
@@ -46,49 +47,51 @@ function Token(token) {
   that = this;
 }
 
-Token.prototype.create = useraccountId => new BluePromise((resolve, reject) => {
-  that.model.key = randomKeyGenerator() + randomKeyGenerator() +
-  randomKeyGenerator() + randomKeyGenerator() + randomKeyGenerator();
-  log.info(that.model.key);
-  const query = that.sqlTable.insert(that.model).toQuery();
-  that.dbConn.queryAsync(query.text, query.values)
-    .then((response) => {
-      if (useraccountId) {
-        const subQuery = that.sqlTableUseraccountToken.insert({
-          token_id: response.insertId,
-          useraccount_id: useraccountId,
-          valid: 1,
-          dateCreated: new Date().getTime(),
-          dateUpdated: new Date().getTime(),
-        }).toQuery();
-        that.dbConn.queryAsync(subQuery.text, subQuery.values)
-          .then(() => {
-            resolve(response.insertId);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      } else {
-        resolve(response.insertId);
-      }
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
+Token.prototype.create = (accountId, accountType) =>
+  new BluePromise((resolve, reject) => {
+    that.model.key = randomKeyGenerator() + randomKeyGenerator() +
+    randomKeyGenerator() + randomKeyGenerator() + randomKeyGenerator();
+    log.info(that.model.key);
+    const query = that.sqlTable.insert(that.model).toQuery();
+    that.dbConn.queryAsync(query.text, query.values)
+      .then((response) => {
+        if (accountId) {
+          const subQuery = that.sqlTableUseraccountToken.insert({
+            token_id: response.insertId,
+            account_id: accountId,
+            account_type: accountType,
+            valid: 1,
+            dateCreated: new Date().getTime(),
+            dateUpdated: new Date().getTime(),
+          }).toQuery();
+          that.dbConn.queryAsync(subQuery.text, subQuery.values)
+            .then(() => {
+              resolve(response.insertId);
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          resolve(response.insertId);
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 
-Token.prototype.invalidate = useraccountId => new BluePromise((resolve, reject) => {
-  const query = that.sqlTableUseraccountToken.update({
-    valid: '0',
-    dateUpdated: new Date().getTime(),
-  }).where(that.sqlTableUseraccountToken.useraccount_id.equals(useraccountId)).toQuery();
-  that.dbConn.queryAsync(query.text, query.values)
-    .then(() => {
-      resolve();
+Token.prototype.invalidate = (accountId, accountType) => new BluePromise((resolve, reject) => {
+  const query = that.sqlTableUseraccountToken
+    .update({
+      valid: '0',
+      dateUpdated: new Date().getTime(),
     })
-    .catch((err) => {
-      reject(err);
-    });
+    .where(that.sqlTableUseraccountToken.account_id.equals(accountId)
+      .and(that.sqlTableUseraccountToken.account_type.equals(accountType)))
+    .toQuery();
+  that.dbConn.queryAsync(query.text, query.values)
+    .then(() => resolve())
+    .catch(err => reject(err));
 });
 
 /**
@@ -99,33 +102,36 @@ Token.prototype.invalidate = useraccountId => new BluePromise((resolve, reject) 
 */
 Token.prototype.findAll = (skip, limit, filters) => {
   let query = null;
-  if (filters.key && filters.type && filters.useraccountId) {
+  if (filters.key && filters.type && filters.accountId) {
     query = that.sqlTable
       .select(that.sqlTable.star(), that.sqlTableUseraccountToken.star(), that.sqlTableUseraccountToken.id.as('userAccountToken_id'))
       .from(that.sqlTable.join(that.sqlTableUseraccountToken)
         .on(that.sqlTableUseraccountToken.token_id.equals(that.sqlTable.id)))
       .where(that.sqlTable.key.equals(filters.key)
         .and(that.sqlTable.type.equals(filters.type))
-        .and(that.sqlTableUseraccountToken.useraccount_id.equals(filters.useraccountId)))
+        .and(that.sqlTableUseraccountToken.account_id.equals(filters.accountId))
+        .and(that.sqlTableUseraccountToken.account_type.equals(filters.accountType)))
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.useraccountId && filters.tokenId) {
+  } else if (filters.accountId && filters.tokenId) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable.join(that.sqlTableUseraccountToken)
         .on(that.sqlTableUseraccountToken.token_id.equals(that.sqlTable.id)))
-      .where(that.sqlTableUseraccountToken.useraccount_id.equals(filters.useraccountId)
+      .where(that.sqlTableUseraccountToken.account_id.equals(filters.accountId)
+        .and(that.sqlTableUseraccountToken.account_type.equals(filters.accountType))
         .and(that.sqlTableUseraccountToken.token_id.equals(filters.tokenId)))
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.useraccountId) {
+  } else if (filters.accountId) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable.join(that.sqlTableUseraccountToken)
         .on(that.sqlTableUseraccountToken.token_id.equals(that.sqlTable.id)))
-      .where(that.sqlTableUseraccountToken.useraccount_id.equals(filters.useraccountId))
+      .where(that.sqlTableUseraccountToken.account_id.equals(filters.accountId)
+        .and(that.sqlTableUseraccountToken.account_type.equals(filters.accountType)))
       .limit(limit)
       .offset(skip)
       .toQuery();
@@ -165,32 +171,27 @@ Token.prototype.getByValue = (value, field) => {
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
-Token.prototype.check = obj => new BluePromise((resolve, reject) => {
+Token.prototype.check = (obj, accountType) => new BluePromise((resolve, reject) => {
   log.info('Checking.....');
   that.findAll(0, 1, {
-    useraccountId: obj.useraccount_id,
+    accountId: obj.accountId,
+    accountType,
     key: obj.token,
-    type: obj.type,
+    type: 'PASSWORD_RESET',
   })
     .then((result) => {
-      log.info(result);
       if (result.length > 0) {
-        // const query = that.sqlTable.insert(that.model).toQuery();
-        // that.dbConn.queryAsync(query.text, query.values)
-        //   .then((response) => {
-        //     resolve(response.insertId);
-        //   })
-        //   .catch((err) => {
-        //     reject(err);
-        //   });
-        resolve(result);
+        if (result[0].dateExpiration >= Date.now() && result[0].valid === '1') {
+          resolve('Valid');
+        } else {
+          reject('Invalid');
+        }
       } else {
-        reject(403);
+        reject('Not Found');
       }
     })
     .catch((err) => {
-      log.error('Not found', err);
-      reject(403);
+      reject(err);
     });
 });
 

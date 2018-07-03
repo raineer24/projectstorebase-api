@@ -302,7 +302,7 @@ paths:
     x-swagger-router-controller: partnerbuyeruser
     get:
       tags:
-        - users
+        - partnerbuyeruser
       summary: check if user is in partnerbuyeruser table
       operationId: getUsers
       parameters:
@@ -389,7 +389,7 @@ paths:
     x-swagger-router-controller: partnerbuyeruser
     put:
       tags:
-        - user
+        - partnerbuyeruser
       summary: create PB User
       operationId: addUsers
       parameters:
@@ -747,6 +747,8 @@ paths:
       parameters:
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/sellersId"
+        - $ref: "#/parameters/count"
       responses:
         200:
           description: Fetch all seller account users
@@ -756,38 +758,6 @@ paths:
               id:
                 type: number
                 example: 10012
-        403:
-          description: Unauthorized
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
-  /selleraccount/{id}/update:
-    x-swagger-router-controller: selleraccount
-    put:
-      tags:
-        - selleraccount
-      summary: Update selleraccount
-      operationId: updateAccount
-      parameters:
-        - $ref: "#/parameters/id"
-        - name: body
-          in: body
-          description: put contents
-          required: true
-          schema:
-            $ref: "#/definitions/selleraccount"
-      responses:
-        200:
-          description: Successful update
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-                example: norbert@hutcake.com
         403:
           description: Unauthorized
           schema:
@@ -819,6 +789,212 @@ paths:
               username:
                 type: string
                 example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/save:
+    x-swagger-router-controller: selleraccount
+    post:
+      tags:
+        - selleraccount
+      summary: Create new selleraccount
+      operationId: registerAccount
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/sellerAccountRegister"
+      responses:
+        200:
+          description: Successful create
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{id}/view:
+    x-swagger-router-controller: selleraccount
+    get:
+      tags:
+        - selleraccount
+      summary: Return seller account profile
+      operationId: viewAccount
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{id}/save:
+    x-swagger-router-controller: selleraccount
+    put:
+      tags:
+        - selleraccount
+      summary: Update selleraccount profile
+      operationId: updateAccount
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/selleraccount"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{id}/changepassword:
+    x-swagger-router-controller: selleraccount
+    put:
+      tags:
+        - selleraccount
+      summary: selleraccount change password
+      operationId: changePassword
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: false
+          schema:
+            $ref: "#/definitions/selleraccount"
+      responses:
+        200:
+          description: Successful update
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/token:
+    x-swagger-router-controller: token
+    post:
+      tags:
+        - selleracount
+      summary: check if token is valid
+      operationId: checkPartnerUser
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/token"
+      responses:
+        200:
+          description: Token exist
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{email}/resetpassword:
+    x-swagger-router-controller: selleraccount
+    post:
+      tags:
+        - selleraccount
+      summary: request password reset
+      operationId: resetPassword
+      parameters:
+        - $ref: "#/parameters/email"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Password reset email sent
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/roles:
+    x-swagger-router-controller: selleraccount
+    get:
+      tags:
+        - selleraccount
+      summary: Return selleraccount roles
+      operationId: getRoles
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
         403:
           description: Unauthorized
           schema:
@@ -861,7 +1037,7 @@ paths:
     x-swagger-router-controller: sellers
     get:
       tags:
-        - profile
+        - sellers
       summary: Return seller profile
       operationId: viewAccount
       parameters:
@@ -1581,6 +1757,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /category/addmany:
+    x-swagger-router-controller: categories
+    post:
+      tags:
+        - category
+      summary: create a category
+      operationId: addCategories
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/CategoryCreate"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /list/{useraccountId}/user:
     x-swagger-router-controller: list
     get:
@@ -2017,6 +2224,7 @@ paths:
         - $ref: "#/parameters/orderDate"
         - $ref: "#/parameters/deliverDate"
         - $ref: "#/parameters/timeslotId"
+        - $ref: "#/parameters/count"
       responses:
         200:
           description: Fetch all order items
@@ -2397,15 +2605,31 @@ definitions:
       value:
         type: number
         description: transaction value
+  sellerAccountRegister:
+    title: sellerAccountRegister
+    type: object
+    required:
+      - username
+      - email
+      - role_id
+    properties:
+      username:
+        type: string
+        description: username
+      email:
+        type: string
+        description: user e-mail
+      role_id:
+        type: integer
+        description: role ID
   selleraccount:
     title: ""
     type: object
-    required:
-      - id
     properties:
       id:
-        type: number
-        description: selleraccount id
+        type: string
+      value:
+        type: string
       doc:
         type: object
         description: "selleraccount object"
@@ -2425,12 +2649,12 @@ definitions:
     type: object
     required:
       - token
-      - useraccount_id
+      - accountId
     properties:
       token:
         type: string
         description: token
-      useraccount_id:
+      accountId:
         type: string
         description: user account id
   gc:
@@ -2889,6 +3113,11 @@ parameters:
     name: sellerId
     type: string
     required: true
+  sellersId:
+    in: query
+    name: sellersId
+    type: number
+    required: false
   listId:
     in: path
     name: listId
@@ -2932,5 +3161,10 @@ parameters:
   timeslotId:
     in: query
     name: timeslotId
+    type: number
+    required: false
+  count:
+    in: query
+    name: count
     type: number
     required: false

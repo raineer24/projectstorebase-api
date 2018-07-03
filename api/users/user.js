@@ -2,6 +2,7 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 const moment = require('moment');
+const config = require('../../config/config');
 
 const Conn = require('../../service/connection');
 const Util = require('../helpers/util');
@@ -163,12 +164,12 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 User.prototype.mailConfirmation = (userAccount) => {
-  log.info(userAccount);
+  const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
   const body = `
   <div><p>Hi,</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>
   <div><p>Please confirm your registration by clicking this link below</p></div>
-  <div><p><a href="hutcake.com">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
+  <div><p><a href="https://${hostname}">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
@@ -199,7 +200,7 @@ User.prototype.update = (id, isChangePassword = false) => new BluePromise((resol
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             if (isChangePassword) {
-              new Token().invalidate(id)
+              new Token().invalidate(id, 'USER')
                 .then(() => {
                   resolve(response.message);
                 })
@@ -230,14 +231,15 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
   that.getByValue(obj.email, 'email')
     .then((resultList) => {
       if (resultList[0].id) {
-        new Token().invalidate(resultList[0].id);
+        new Token().invalidate(resultList[0].id, 'USER');
         new Token({
           dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
           type: 'PASSWORD_RESET',
-        }).create(resultList[0].id)
+        }).create(resultList[0].id, 'USER')
           .then((tokenId) => {
             new Token({}).findAll(0, 1, {
-              useraccountId: resultList[0].id,
+              accountId: resultList[0].id,
+              accountType: 'USER',
               tokenId,
             })
               .then((resultList2) => {
@@ -280,11 +282,12 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
   * @return {object<Promise>}
 */
 User.prototype.passwordResetEmail = (userAccount) => {
+  const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
   const body = `
   <div><p>Hi ${userAccount.firstName},</p></div>
   <div><p>Your <b>Oh My Grocery</b> password has been reset.</p></div>
   <div><p>Please provide a new password by clicking on this link within the next 24 hours:
-  <a href="http://hutcake.com/user/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
+  <a href="https://${hostname}/user/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
   <div><p>Thank you!</p></div>

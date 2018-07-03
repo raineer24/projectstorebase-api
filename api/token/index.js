@@ -23,19 +23,42 @@ token.connectDb = (req, res) => {
 token.check = (req, res) => {
   new Log({ message: 'TOKEN_CHECK', type: 'INFO' }).create();
   const instToken = new Token();
-  instToken.check(req.swagger.params.body.value)
-    .then((resultList) => {
-      let response;
-      if (resultList[0].dateExpiration >= Date.now() && resultList[0].valid === '1') {
-        response = res.json({ message: 'Valid' });
-      } else {
-        response = res.json({ message: 'Invalid' });
+  instToken.check(req.swagger.params.body.value, 'USER')
+    .then(result => res.json({ message: result }))
+    .catch((err) => {
+      switch (err) {
+        case 'Not Found':
+        case 'Invalid':
+          return res.status(404).json({ message: 'Invalid' });
+        default:
+          return res.status(500).json({ message: 'Failed' });
       }
-      return response;
     })
-    .catch(() => res.status(404).json({
-      message: 'Not found',
-    }))
+    .finally(() => {
+      instToken.release();
+    });
+};
+
+/**
+* View user profile
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+token.checkPartnerUser = (req, res) => {
+  new Log({ message: 'TOKEN_CHECK', type: 'INFO' }).create();
+  const instToken = new Token();
+  instToken.check(req.swagger.params.body.value, 'PARTNER_USER')
+    .then(result => res.json({ message: result }))
+    .catch((err) => {
+      switch (err) {
+        case 'Not Found':
+        case 'Invalid':
+          return res.status(404).json({ message: 'Invalid' });
+        default:
+          return res.status(500).json({ message: 'Failed' });
+      }
+    })
     .finally(() => {
       instToken.release();
     });
