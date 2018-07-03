@@ -488,7 +488,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                                 <p><span style="color: #ff005d;"><strong>Order details: (Order number:${orderEntry.number})</strong></span></p>
                                                 <table style="background-color: rgb(239, 239, 239);" class="email-container">
                                                 <p><span style="font-size: 18px;">Items ordered: </span></p>
-                                                ${_.map(resultList, item => `<p><strong>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</strong></p>`).join('')}
+                                                ${_.map(resultList, item => `<p style="font-size: 12px;"><strong>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</strong></p>`).join('')}
                                                 <hr>
                                                 <p><span style="font-size: 18px;">Total: PHP ${orderEntry.total}</span></p>
                                                 <table>
@@ -507,25 +507,80 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px;margin: 0 auto;">
       <tr>
         <td style="padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;">
-          <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">View as a Web Page</webversion>
           <br>
-          <br> Eos Omg
+          <br> Oh My Grocery!
           <br>
-          <span class="unstyle-auto-detected-links">123 Fake Street, SpringField, OR, 97477 US
-            <br>(123) 456-7890</span>
-          <br>
-          <br>
-          <unsubscribe style="color: #888888; text-decoration: underline;">unsubscribe</unsubscribe>
-        </td>
+          <span class="unstyle-auto-detected-links">©2018 OMG All Rights Reserved
+          </td>
       </tr>
     </table>
     <!-- Email Footer : END -->
+     <table border="0" cellpadding="0" cellspacing="0" align="center" width="600" style="border-collapse: collapse; border-spacing: 0; padding: 0; width: inherit;max-width: 600px;margin: 0 auto;" class="wrapper">
+
+          <!-- SOCIAL NETWORKS -->
+          <!-- Image text color should be opposite to background color. Set your url, image src, alt and title. Alt text should fit the image size. Real image size should be x2 -->
+          <tr>
+            <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 6.25%; padding-right: 6.25%; width: 87.5%;padding-top: 25px;" class="social-icons">
+              <table width="256" border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; padding: 0;">
+                <tr>
+
+                  <!-- ICON 1 -->
+                  <td align="center" valign="middle" style="margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
+                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="text-decoration: none;">
+                      <img border="0" vspace="0" hspace="0" style="padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block;color: #000000;" alt="F" title="Facebook" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/facebook.png">
+                    </a>
+                  </td>
+
+                  <!-- ICON 2 -->
+                  <td align="center" valign="middle" style="margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
+                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="text-decoration: none;">
+                      <img border="0" vspace="0" hspace="0" style="padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block;color: #000000;" alt="T" title="Twitter" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/twitter.png">
+                    </a>
+                  </td>
+
+                  <!-- ICON 3 -->
+                  <td align="center" valign="middle" style="margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
+                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="text-decoration: none;">
+                      <img border="0" vspace="0" hspace="0" style="padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block;color: #000000;" alt="G" title="Google Plus" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/googleplus.png">
+                    </a>
+                  </td>
+
+                  <!-- ICON 4 -->
+                  <td align="center" valign="middle" style="margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
+                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="text-decoration: none;">
+                      <img border="0" vspace="0" hspace="0" style="padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block;color: #000000;" alt="I" title="Instagram" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/instagram.png">
+                    </a>
+                  </td>
+
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <!-- Set text color and font family ("sans-serif" or "Georgia, serif"). Duplicate all text styles in links, including line-height -->
+          <tr>
+            <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 6.25%; padding-right: 6.25%; width: 87.5%; font-size: 13px; font-weight: 400; line-height: 150%;padding-top: 20px;padding-bottom: 20px;color: #999999;font-family: sans-serif;" class="footer">
+
+              <br/> You&nbsp;could change your
+              <a href="https://github.com/konsav/email-templates/" target="_blank" style="text-decoration: underline; color: #999999; font-family: sans-serif; font-size: 13px; font-weight: 400; line-height: 150%;">subscription settings</a> anytime.
+
+              <!-- ANALYTICS -->
+              <!-- http://www.google-analytics.com/collect?v=1&tid={{UA-Tracking-ID}}&cid={{Client-ID}}&t=event&ec=email&ea=open&cs={{Campaign-Source}}&cm=email&cn={{Campaign-Name}} -->
+              <img width="1" height="1" border="0" vspace="0" hspace="0" style="margin: 0; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: block;"
+                src="https://raw.githubusercontent.com/konsav/email-templates/master/images/tracker.png" />
+
+            </td>
+          </tr>
+
+          <!-- End of WRAPPER -->
+        </table>
 </body>
 </html>
       `;
           resolve({
             from: 'info@eos.com.ph',
-            bcc: 'raineerdelarita@gmail.com',
+            bcc: 'info@eos.com.ph',
             to: orderEntry.email,
             subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
             text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
