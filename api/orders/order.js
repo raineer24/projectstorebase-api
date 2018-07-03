@@ -490,7 +490,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                                 <p><span style="font-size: 18px;">Items ordered: </span></p>
                                                 ${_.map(resultList, item => `<p style="font-size: 12px;"><strong>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</strong></p>`).join('')}
                                                 <hr>
-                                                <p><span style="font-size: 18px;">Total: PHP ${orderEntry.total}</span></p>
+                                                <p><span style="font-size: 18px;">Total: PHP ${parseFloat(orderEntry.total).toFixed(2)}</span></p>
                                                 <table>
                                                 
                                         </tr>
@@ -580,7 +580,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
       `;
           resolve({
             from: 'info@eos.com.ph',
-            bcc: 'info@eos.com.ph',
+            bcc: 'raineerdelarita@gmail.com',
             to: orderEntry.email,
             subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
             text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
