@@ -73,8 +73,8 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
               if (that.model.id) {
                 delete that.model.id;
               }
-              // that.model.password = Math.random().toString(36).slice(2);
-              that.model.password = 'password';
+              that.model.password = Math.random().toString(36).slice(2);
+              // that.model.password = 'password';
               const query = that.sqlTable.insert(that.model).toQuery();
               that.dbConn.queryAsync(query.text, query.values)
                 .then((response) => {
@@ -104,6 +104,7 @@ Selleraccount.prototype.create = () => new BluePromise((resolve, reject) => {
   * @return {object}
 */
 Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
+  const isInvalidate = that.model.newPassword;
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
     delete that.model.password;
@@ -126,7 +127,17 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
                 .where(that.sqlTable.id.equals(id)).toQuery();
               that.dbConn.queryAsync(query.text, query.values)
                 .then((response) => {
-                  resolve(response.message);
+                  if (isInvalidate) {
+                    new Token().invalidate(id, 'PARTNER_USER')
+                      .then(() => {
+                        resolve(response.message);
+                      })
+                      .catch((err) => {
+                        reject(err);
+                      });
+                  } else {
+                    resolve(response.message);
+                  }
                 })
                 .catch((err) => {
                   reject(err);
@@ -150,18 +161,19 @@ Selleraccount.prototype.update = id => new BluePromise((resolve, reject) => {
   * @param {string} field
   * @return {object<Promise>}
 */
-Selleraccount.prototype.resetPassword = obj => new BluePromise((resolve, reject) => {
-  that.getByValue(obj.email, 'email')
+Selleraccount.prototype.resetPassword = email => new BluePromise((resolve, reject) => {
+  that.getByValue(email, 'email')
     .then((resultList) => {
       if (resultList[0].id) {
-        new Token().invalidate(resultList[0].id);
+        new Token().invalidate(resultList[0].id, 'PARTNER_USER');
         new Token({
           dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
           type: 'PASSWORD_RESET',
-        }).create(resultList[0].id)
+        }).create(resultList[0].id, 'PARTNER_USER')
           .then((tokenId) => {
             new Token({}).findAll(0, 1, {
-              useraccountId: resultList[0].id,
+              accountId: resultList[0].id,
+              accountType: 'PARTNER_USER',
               tokenId,
             })
               .then((resultList2) => {
@@ -203,22 +215,22 @@ Selleraccount.prototype.resetPassword = obj => new BluePromise((resolve, reject)
   * @param {string} field
   * @return {object<Promise>}
 */
-Selleraccount.prototype.passwordResetEmail = (userAccount) => {
+Selleraccount.prototype.passwordResetEmail = (user) => {
   const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
   const body = `
-  <div><p>Hi ${userAccount.firstName},</p></div>
+  <div><p>Hi ${user.name},</p></div>
   <div><p>Your <b>OMG!</b> Dashboard password has been reset.</p></div>
-  <div><p>Please provide a new password by clicking on this link within the next 24 hours:
-  <a href="https://${hostname}/admin/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
+  <div><p>Please create a new password by clicking on this link within the next 24 hours:
+  <a href="https://${hostname}/admin/resetPassword?token=${user.token}&email=${user.email}&i=${user.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
     from: 'info@eos.com.ph',
-    to: userAccount.email,
+    to: user.email,
     subject: 'OMG - Account Password Reset',
-    text: `Password reset request for e-mail ${userAccount.email}`,
+    text: `Password reset request for e-mail ${user.email}`,
     html: body,
   };
 };
@@ -315,18 +327,25 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   if (sortBy) {
     sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
   }
-
   if (filters.sellerId) {
-    query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTableRole.name.as('role'))
-      .from(that.sqlTable
-        .join(that.sqlTableRole)
-        .on(that.sqlTableRole.id.equals(that.sqlTable.role_id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
-      .order(sortString)
-      .limit(limit)
-      .offset(skip)
-      .toQuery();
+    if (filters.count) {
+      query = that.sqlTable
+        .select(sql.functions.COUNT(that.sqlTable.id).as('count'))
+        .from(that.sqlTable)
+        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .toQuery();
+    } else {
+      query = that.sqlTable
+        .select(that.sqlTable.star(), that.sqlTableRole.name.as('role'))
+        .from(that.sqlTable
+          .leftJoin(that.sqlTableRole)
+          .on(that.sqlTableRole.id.equals(that.sqlTable.role_id)))
+        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .order(sortString)
+        .limit(limit)
+        .offset(skip)
+        .toQuery();
+    }
   } else if (filters.username && filters.password) {
     query = that.sqlTable
       .select(that.sqlTable.star())

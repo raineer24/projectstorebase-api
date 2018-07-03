@@ -748,6 +748,7 @@ paths:
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/sellersId"
+        - $ref: "#/parameters/count"
       responses:
         200:
           description: Fetch all seller account users
@@ -898,7 +899,7 @@ paths:
           description: post contents
           required: false
           schema:
-            $ref: "#/definitions/sellerAccountRegister"
+            $ref: "#/definitions/selleraccount"
       responses:
         200:
           description: Successful update
@@ -910,6 +911,69 @@ paths:
                 example: norbert@hutcake.com
         403:
           description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/token:
+    x-swagger-router-controller: token
+    post:
+      tags:
+        - selleracount
+      summary: check if token is valid
+      operationId: checkPartnerUser
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/token"
+      responses:
+        200:
+          description: Token exist
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /selleraccount/{email}/resetpassword:
+    x-swagger-router-controller: selleraccount
+    post:
+      tags:
+        - selleraccount
+      summary: request password reset
+      operationId: resetPassword
+      parameters:
+        - $ref: "#/parameters/email"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Password reset email sent
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
           schema:
             type: object
             properties:
@@ -2160,6 +2224,7 @@ paths:
         - $ref: "#/parameters/orderDate"
         - $ref: "#/parameters/deliverDate"
         - $ref: "#/parameters/timeslotId"
+        - $ref: "#/parameters/count"
       responses:
         200:
           description: Fetch all order items
@@ -2584,12 +2649,12 @@ definitions:
     type: object
     required:
       - token
-      - useraccount_id
+      - accountId
     properties:
       token:
         type: string
         description: token
-      useraccount_id:
+      accountId:
         type: string
         description: user account id
   gc:
@@ -3051,7 +3116,7 @@ parameters:
   sellersId:
     in: query
     name: sellersId
-    type: string
+    type: number
     required: false
   listId:
     in: path
@@ -3096,5 +3161,10 @@ parameters:
   timeslotId:
     in: query
     name: timeslotId
+    type: number
+    required: false
+  count:
+    in: query
+    name: count
     type: number
     required: false
