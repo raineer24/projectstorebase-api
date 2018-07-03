@@ -10,7 +10,7 @@ function Mailer(options) {
   this.transporter = nodemailer.createTransport({
     host: config.mail.host,
     port: config.mail.port,
-    secure: true,
+    secure: false,
     auth: {
       user: config.mail.username,
       pass: config.mail.password,

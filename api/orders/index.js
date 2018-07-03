@@ -2,7 +2,6 @@ const query = require('../../service/query');
 const Log = require('../logs/log');
 const log = require('color-logs')(true, true, 'User Account');
 const Util = require('../helpers/util');
-
 const Order = require('./order');
 
 const order = {};
@@ -164,6 +163,7 @@ order.confirmOrder = (req, res) => {
     .finally(() => {
       instOrder.release();
     });
+  log.info('confirmOrder');
 };
 
 /**
