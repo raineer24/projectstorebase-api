@@ -249,10 +249,11 @@ Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, 
           new Token({
             dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
             type: 'PASSWORD_RESET',
-          }).create(obj.useraccount_id)
+          }).create(obj.useraccount_id, 'USER')
             .then(() => {
               new Token({}).findAll(0, 1, {
-                useraccountId: obj.useraccount_id,
+                accountId: obj.useraccount_id,
+                accountType: 'USER',
               })
                 .then((result) => {
                   new Mailer(that.passwordResetEmail(_.merge(obj, { token: result[0].key }))).send()
