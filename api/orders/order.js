@@ -3,6 +3,7 @@ const sql = require('sql');
 const _ = require('lodash');
 const log = require('color-logs')(true, true, 'Order');
 
+
 const Conn = require('../../service/connection');
 const Mailer = require('../../service/mail');
 const Timeslotorder = require('../timeslotorders/timeslotorder');
@@ -14,10 +15,10 @@ const Gc = require('../gc/gc');
 let that;
 
 /**
-  * Order constructor
-  * @param {object} order
-  * @return {object}
-*/
+ * Order constructor
+ * @param {object} order
+ * @return {object}
+ */
 function Order(order) {
   sql.setDialect('mysql');
 
@@ -130,9 +131,9 @@ Order.prototype.setTransactionNumber = (number) => {
 };
 
 /**
-  * create
-  * @return {object/number}
-*/
+ * create
+ * @return {object/number}
+ */
 Order.prototype.create = () => new BluePromise((resolve, reject) => {
   that.model.number = 0;
   that.getByValue(that.model.orderkey, 'orderkey')
@@ -159,11 +160,11 @@ Order.prototype.create = () => new BluePromise((resolve, reject) => {
 });
 
 /**
-  * findAll
-  * @param {string} limit
-  * @param {string} offset
-  * @return {object}
-*/
+ * findAll
+ * @param {string} limit
+ * @param {string} offset
+ * @return {object}
+ */
 Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   let query = null;
   let sortString = `${that.table}.dateUpdated DESC`;
@@ -193,6 +194,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+    log.info(query);
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
@@ -202,23 +204,23 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .toQuery();
   }
   log.info(query.text);
-
+  log.info('findall');
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
 /**
-  * findById
-  * @param {string} limit
-  * @param {string} offset
-  * @return {object}
-*/
+ * findById
+ * @param {string} limit
+ * @param {string} offset
+ * @return {object}
+ */
 Order.prototype.findById = id => that.getByValue(id, 'id');
 Order.prototype.getById = id => that.getByValue(id, 'id');
 
 /**
-  * update
-  * @return {object/number}
-*/
+ * update
+ * @return {object/number}
+ */
 Order.prototype.update = (id, confirmOrder) => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
   that.getById(id)
@@ -268,11 +270,11 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
 });
 
 /**
-  * Get by value
-  * @param {any} value
-  * @param {string} field
-  * @return {object<Promise>}
-*/
+ * Get by value
+ * @param {any} value
+ * @param {string} field
+ * @return {object<Promise>}
+ */
 Order.prototype.getByValue = (value, field) => {
   const query = that.sqlTable
     .select(that.sqlTable.star())
@@ -315,6 +317,7 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
         .then((resultList) => {
           if (resultList.length > 0) {
             const orderEntry = resultList[0];
+            log.info(orderEntry);
             that.mailConfirmation(_.merge(orderEntry, { transactionId }))
               .then((mailOptions) => {
                 new Mailer(mailOptions).send()
@@ -346,40 +349,258 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
   // Create notification
 });
 
+
 Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, reject) => {
   new OrderItem({}).findAll(0, 1000, {
     orderkey: orderEntry.orderkey,
   })
     .then((resultList) => {
-      let body = `
-      <div><p>Hi,</p></div>
-      <div><p>You have successfully confirmed and paid for your order</p></div>
-      <div><b>Transaction # ${orderEntry.transactionId}</b></div>
-      <h2>Shopping summary</h2>
+      if (resultList.length > 0) {
+        log.info(resultList.length);
+        _.forEach(resultList, (obj) => {
+          log.info(obj);
+          log.info(_.map(resultList, test => test.displayPrice));
+          const body = `
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A responsive two column example</title>
+    <style>
+        /* A simple css reset */
+        body,table,thead,tbody,tr,td,img {
+            padding: 0;
+            margin: 0;
+            border: none;
+            border-spacing: 0px;
+            border-collapse: collapse;
+            vertical-align: top;
+        }
+
+        /* Add some padding for small screens */
+        .wrapper {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        h1,h2,h3,h4,h5,h6,p {
+            margin: 0;
+            padding: 0;
+            padding-bottom: 20px;
+            line-height: 1.6;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+        }
+
+        p,a,li {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+        }
+
+        img {
+            width: 100%;
+            display: block;
+        }
+        .email-container {
+          width: 100%;
+        }
+
+        @media only screen and (max-width: 620px) {
+
+            .wrapper .section {
+                width: 100%;
+            }
+
+            .wrapper .column {
+                width: 100%;
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td class="wrapper" width="600" align="center">
+                    <!-- Header image -->
+                    <table class="section header" cellpadding="0" cellspacing="0" width="600">
+                        <tr>
+                            <td class="column">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td align="left">
+                                                <img src="http://hutcake.com/assets/main-01.jpg" alt="picsum" width="600" />
+                                                <table width="640" border="0" cellspacing="0" cellpadding="20" bgcolor="#ff5847" class="100p">
+                                                    <tr>
+                                                      <td align="center" style="font-size:24px; color:#FFFFFF;"><font face="'Roboto', Arial, sans-serif">Your order has been placed</font></td>
+                                                    </tr>
+                                                </table>
+                                                <h2>Hi, ${orderEntry.firstname}  ${orderEntry.lastname}!</h2>
+                                                <p style="text-align:justify;">Great choice. Awesome groceries from <a href="/">OMG</a>  is on its way</p>
+                                                <p>We hope that you enjoy your purchase on OMG grocery and continue to shop with us a loyal customer.</p>
+                                                <p style="text-align:justify;">Check below for your order details.</p>
+                                                <p style="text-align:justify;">Until next time,</p>
+                                                <p style="text-align:justify;">Your OMG team</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- Two columns -->
+                    <table class="section" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="column" width="290" valign="top">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td align="left">
+                                                <img src="http://hutcake.com/assets/sub-01.jpg" alt="picsum" width="300" />
+                                                <h2>Track your order</h2>
+                                                <p style="text-align:justify;">Hi ${orderEntry.firstname}, We're getting your order ready to be deliver. We will notify you when it has been delivered. Please take this time to review your order details.</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td class="column" width="20" valign="top">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td> &nbsp; </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td class="column" width="290" valign="top">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td align="left">
+                                                <img src="http://hutcake.com/assets/sub-03.jpg" alt="picsum" width="300" />
+                                                <h2>Delivery Address: </h2>
+                                                <p style="text-align:center;"><strong>${orderEntry.firstname}  ${orderEntry.lastname}</strong></p>
+                                                <p style="text-align:center;"><strong>${orderEntry.shippingAddress01}</strong></p>
+                                                <p><span style="color: #ff005d;"><strong>Order details: (Order number:${orderEntry.number})</strong></span></p>
+                                                <table style="background-color: rgb(239, 239, 239);" class="email-container">
+                                                <p><span style="font-size: 18px;">Items ordered: </span></p>
+                                                ${_.map(resultList, item => `<p style="font-size: 12px;"><strong>${item.name} &nbsp; (${item.displayPrice} x ${item.quantity})</strong></p>`).join('')}
+                                                <hr>
+                                                <p><span style="font-size: 18px;">Total: PHP ${orderEntry.total}</span></p>
+                                                <table>
+                                                
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Email Footer : BEGIN -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px;margin: 0 auto;">
+      <tr>
+        <td style="padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;">
+          <br>
+          <br> Oh My Grocery!
+          <br>
+          <span class="unstyle-auto-detected-links">©2018 OMG All Rights Reserved
+          </td>
+      </tr>
+    </table>
+    <!-- Email Footer : END -->
+     <table border="0" cellpadding="0" cellspacing="0" align="center" width="600" style="border-collapse: collapse; border-spacing: 0; padding: 0; width: inherit;max-width: 600px;margin: 0 auto;" class="wrapper">
+
+          <!-- SOCIAL NETWORKS -->
+          <!-- Image text color should be opposite to background color. Set your url, image src, alt and title. Alt text should fit the image size. Real image size should be x2 -->
+          <tr>
+            <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 6.25%; padding-right: 6.25%; width: 87.5%;padding-top: 25px;" class="social-icons">
+              <table width="256" border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; padding: 0;">
+                <tr>
+
+                  <!-- ICON 1 -->
+                  <td align="center" valign="middle" style="margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
+                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="text-decoration: none;">
+                      <img border="0" vspace="0" hspace="0" style="padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block;color: #000000;" alt="F" title="Facebook" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/facebook.png">
+                    </a>
+                  </td>
+
+                  <!-- ICON 2 -->
+                  <td align="center" valign="middle" style="margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
+                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="text-decoration: none;">
+                      <img border="0" vspace="0" hspace="0" style="padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block;color: #000000;" alt="T" title="Twitter" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/twitter.png">
+                    </a>
+                  </td>
+
+                  <!-- ICON 3 -->
+                  <td align="center" valign="middle" style="margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
+                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="text-decoration: none;">
+                      <img border="0" vspace="0" hspace="0" style="padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block;color: #000000;" alt="G" title="Google Plus" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/googleplus.png">
+                    </a>
+                  </td>
+
+                  <!-- ICON 4 -->
+                  <td align="center" valign="middle" style="margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
+                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="text-decoration: none;">
+                      <img border="0" vspace="0" hspace="0" style="padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block;color: #000000;" alt="I" title="Instagram" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/instagram.png">
+                    </a>
+                  </td>
+
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <!-- Set text color and font family ("sans-serif" or "Georgia, serif"). Duplicate all text styles in links, including line-height -->
+          <tr>
+            <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 6.25%; padding-right: 6.25%; width: 87.5%; font-size: 13px; font-weight: 400; line-height: 150%;padding-top: 20px;padding-bottom: 20px;color: #999999;font-family: sans-serif;" class="footer">
+
+              <br/> You&nbsp;could change your
+              <a href="https://github.com/konsav/email-templates/" target="_blank" style="text-decoration: underline; color: #999999; font-family: sans-serif; font-size: 13px; font-weight: 400; line-height: 150%;">subscription settings</a> anytime.
+
+              <!-- ANALYTICS -->
+              <!-- http://www.google-analytics.com/collect?v=1&tid={{UA-Tracking-ID}}&cid={{Client-ID}}&t=event&ec=email&ea=open&cs={{Campaign-Source}}&cm=email&cn={{Campaign-Name}} -->
+              <img width="1" height="1" border="0" vspace="0" hspace="0" style="margin: 0; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: block;"
+                src="https://raw.githubusercontent.com/konsav/email-templates/master/images/tracker.png" />
+
+            </td>
+          </tr>
+
+          <!-- End of WRAPPER -->
+        </table>
+</body>
+</html>
       `;
-      _.forEach(resultList, (obj) => {
-        body += `<div>${obj.name} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
-      });
-      body += `<h1>Total: PHP ${orderEntry.total}</h1>`;
-      resolve({
-        from: 'info@eos.com.ph',
-        to: orderEntry.email,
-        subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
-        text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
-        html: body,
-      });
+          resolve({
+            from: 'info@eos.com.ph',
+            bcc: 'info@eos.com.ph',
+            to: orderEntry.email,
+            subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
+            text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+            html: body,
+          });
+        });
+      }
     })
     .catch((err) => {
       reject(err);
     });
 });
 
+
 /**
-  * Release connection
-  * @param {any} value
-  * @param {string} field
-  * @return {object<Promise>}
-*/
+ * Release connection
+ * @param {any} value
+ * @param {string} field
+ * @return {object<Promise>}
+ */
 Order.prototype.release = () => that.dbConn.releaseConnectionAsync();
 
 module.exports = Order;

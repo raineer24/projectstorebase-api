@@ -6,10 +6,10 @@ module.exports = {
     hostname: 'localhost',
   },
   mail: {
-    host: 'email-smtp.us-east-1.amazonaws.com',
-    port: 465,
-    username: 'AKIAJGOLHIDD37QJLHMA',
-    password: 'Aq1PVRxdh4FDZnZH6Iu2aNpXyy2TDKNVVlf34fhkVxcB',
+    host: 'smtp.gmail.com',
+    port: 587,
+    username: 'info.eos.omg@gmail.com',
+    password: '246sgewg',
   },
   db: {
     hostname: process.env.RDS_HOSTNAME,
