@@ -1413,13 +1413,69 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /transactions/{order_id}:
+  /transactions/{id}:
     x-swagger-router-controller: transactions
     get:
       tags:
       - transactions
       summary: Get a transaction record bases on transaction number
       operationId: getTransaction
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Fetch a transactions
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+    put:
+      tags:
+        - transactions
+      summary: create transaction record
+      operationId: updateTransaction
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: false
+          schema:
+            $ref: "#/definitions/transactionUpdate"
+      responses:
+        200:
+          description: Successful updated order
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /transactions/orders/{order_id}:
+    x-swagger-router-controller: transactions
+    get:
+      tags:
+      - transactions
+      summary: Get a transaction record bases on transaction number
+      operationId: getTransactionByOrderId
       parameters:
         - $ref: "#/parameters/order_id"
       responses:
@@ -1443,7 +1499,7 @@ paths:
       tags:
         - transactions
       summary: create transaction record
-      operationId: updateTransaction
+      operationId: updateTransactionByOrderId
       parameters:
         - $ref: "#/parameters/order_id"
         - name: body
