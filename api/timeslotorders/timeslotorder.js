@@ -18,7 +18,7 @@ function TimeslotOrder(timeslotorder) {
   sql.setDialect('mysql');
 
   this.model = _.extend(timeslotorder, {
-    datetime: new Date(timeslotorder.date).getTime(),
+    // datetime: new Date(timeslotorder.date).getTime(),
     dateCreated: new Date().getTime(),
     dateUpdated: new Date().getTime(),
   });
@@ -73,9 +73,9 @@ function getMax(day) {
   * @return {object/number}
 */
 TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
-  const date = new Date(that.model.datetime);
-  date.setHours(5 + (that.model.timeslot_id * 3));
-  that.model.datetime = date.getTime();
+  // const date = new Date(that.model.datetime);
+  // date.setHours(5 + (that.model.timeslot_id * 3));
+  // that.model.datetime = date.getTime();
   that.findAll(0, 1, {
     orderId: that.model.order_id,
     timeslotId: that.model.timeslot_id,
