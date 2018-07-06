@@ -566,7 +566,7 @@ CREATE TABLE `orderseller` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
   `orderNumber` char(60) DEFAULT '',
   `orderBarcode` varchar(100) DEFAULT '',
-  `status` varchar(50) DEFAULT 'Pending',
+  `status` varchar(50) DEFAULT 'pending',
   `assembledBy` bigint(50) DEFAULT 0,
   `deliveredBy` bigint(50) DEFAULT 0,
   `updatedBy` bigint(50) DEFAULT 0,
@@ -1070,7 +1070,7 @@ DROP TABLE IF EXISTS `orderpaymentdetails`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `orderpaymentdetails` (
   `id` bigint(50) NOT NULL AUTO_INCREMENT,
-  `orderId` char(50) NOT NULL,
+  `order_id` char(50) NOT NULL,
   `paymentType` char(20) NOT NULL,
   `referenceId` char(50) NOT NULL,
   `referenceId2` char(50),
@@ -1092,7 +1092,26 @@ LOCK TABLES `orderpaymentdetails` WRITE;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+DROP TABLE IF EXISTS `orderstatuslogs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `orderstatuslogs` (
+  `id` bigint(50) NOT NULL AUTO_INCREMENT,
+  `order_id` char(50) NOT NULL,
+  `status` char(20) DEFAULT NULL,
+  `handledBy` bigint(50) DEFAULT 0,
+  `dateCreated` bigint(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf16;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--local.sql
+-- Dumping data for table `voucher`
+--
+
+LOCK TABLES `orderstatuslogs` WRITE;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

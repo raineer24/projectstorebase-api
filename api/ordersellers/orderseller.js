@@ -4,6 +4,7 @@ const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
 
 const Conn = require('../../service/connection');
+const OrderStatusLogs = require('../orderstatuslogs/orderstatuslogs');
 
 let that;
 
@@ -142,6 +143,10 @@ OrderSeller.prototype.create = () => new BluePromise((resolve, reject) => {
         const query = that.sqlTable.insert(that.model).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
+            new OrderStatusLogs({
+              order_id: that.model.order_id,
+              status: 'pending',
+            }).create();
             resolve(response.insertId);
           })
           .catch((err) => {
@@ -174,6 +179,11 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
         log.info(query.text);
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
+            new OrderStatusLogs({
+              order_id: that.model.order_id,
+              status: that.model.status,
+              handledBy: that.model.updatedBy,
+            }).create();
             resolve(response.message);
           })
           .catch((err) => {
@@ -213,6 +223,11 @@ OrderSeller.prototype.takeOrder = (id, sellerAccountId) => new BluePromise((reso
               log.info(query.values);
               that.dbConn.queryAsync(query.text, query.values)
                 .then((response) => {
+                  new OrderStatusLogs({
+                    order_id: that.model.order_id,
+                    status: that.model.status,
+                    handledBy: that.model.updatedBy,
+                  }).create();
                   resolve(response.message);
                 })
                 .catch((err) => {
