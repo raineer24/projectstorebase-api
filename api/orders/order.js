@@ -2,7 +2,7 @@ const BluePromise = require('bluebird');
 const sql = require('sql');
 const _ = require('lodash');
 const log = require('color-logs')(true, true, 'Order');
-
+const moment = require('moment');
 
 const Conn = require('../../service/connection');
 const Mailer = require('../../service/mail');
@@ -359,7 +359,6 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
         log.info(resultList.length);
         _.forEach(resultList, (obj) => {
           log.info(obj);
-          log.info(_.map(resultList, test => test.displayPrice));
           const body = `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -468,8 +467,8 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                       <tbody>
                         <tr>
                             <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;padding-right:10px;width:100%;padding:10px!important;" colspan="2">
-                            <h2>Robinsons Supermarket</h2>
-                            <h2><span>Jul 02, 2018 (Mon)</span><span>2:00pm-3:00pm</span></h2>
+                            <h2>Gaisano Supermarket</h2>
+                            <h2><span>${moment(orderEntry.dateCreated).format('MMM D, YYYY')}</span></h2>
                             </td>
                            </tr>
                         <tr>
@@ -478,13 +477,13 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                               <td style="vertical-align:top;padding:0px 0px 10px;width:20px;height:20px;text-align:left!important"><img src="https://assets.honestbee.com/images/order-confirmation-info@2x.png" /></td>
                               <td class="orderRes" style="vertical-align:top;padding:0px 0px 10px;padding-left:20px;text-align:left!important">
                                 <strong>Order number: </strong>
-                                #4573
+                                #${orderEntry.number}
                                 <br>
                                 <br>
                                 <br>
                                 <strong>Order date: </strong>
                                 <br>
-                                ${orderEntry.dateCreated}
+                                ${moment(orderEntry.dateCreated).format('MMM D, YYYY')}
                                 <br>
                                 <br>
                                 <strong>Total: </strong>
@@ -545,7 +544,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                   <table style="border-collapse:collapse;margin:0 auto;width:530px;border-spacing:0!important">
                     <tr>
                       <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;border-bottom:4px solid #ffcb00;padding-right:10px;width:100%;padding:10px!important;padding:0px!important">
-                        <img src="https://ci4.googleusercontent.com/proxy/YldrJ_iSilOkYA_kCc12F1SpPqgqIXnfzb3eR2rQfaoLhQ8pwoEGLBmY_spC3mPoF0IzXgOxxC4mF3IY9HAfwK6khnl9lxJlzRs-hkyWH7gCJDkYWuRk=s0-d-e1-ft#https://assets.honestbee.com/headers/images/360x120/robinsons.png" style="margin:0 auto;float:none;max-width:180px"/>
+                        <img src="http://directory.clix.com.ph/images/logos/7079.jpg" style="margin:0 auto;float:none;max-width:180px"/>
                       </td>
                     </tr>
                     <!-- items -->
@@ -554,7 +553,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                         <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
                           ${_.map(resultList, item => `<tr>
                             <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;margin:10px auto;vertical-align:middle;padding-right:10px;width:16.666666%">
-                              <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg" style="margin:0 auto;float:none;max-width:50px;max-height:50px"/>
+                              <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg" style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://hutcake.com/assets/omg-logo-01.png" />
                             </td>
                             <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:50%">
                               <p style="margin:0 0 5px 0">${item.name}</p>
@@ -563,7 +562,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                               <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1">x${item.quantity}</>
                             </td>
                             <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:16.666666%">
-                              <p>${item.displayPrice}</>
+                              <p>${parseFloat(item.displayPrice).toFixed(2)}</>
                             </td>
                           </tr>`).join('')}
                         </table>
@@ -585,8 +584,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
           <br>
           <br> Eos Omg
           <br>
-          <span class="unstyle-auto-detected-links">123 Fake Street, SpringField, OR, 97477 US
-            <br>(123) 456-7890</span>
+          <span class="unstyle-auto-detected-links">©2018 OMG All Rights Reserved
           <br>
           <br>
           <unsubscribe style="color: #888888; text-decoration: underline;">unsubscribe</unsubscribe>
