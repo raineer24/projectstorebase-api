@@ -38,6 +38,8 @@ function OrderSeller(orderSeller) {
       'order_id',
       'selleraccount_id',
       'seller_id',
+      'dateAssembled',
+      'dateDelivered',
       'dateCompleted',
       'dateCreated',
       'dateUpdated',
@@ -168,6 +170,9 @@ OrderSeller.prototype.create = () => new BluePromise((resolve, reject) => {
 OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.dateCreated;
   that.model.dateUpdated = new Date().getTime();
+  if (that.model.status.toUpperCase() === 'IN-TRANSIT') {
+    that.model.dateDelivered = new Date().getTime();
+  }
   that.getById(id)
     .then((resultList) => {
       if (!resultList[0].id) {
@@ -176,7 +181,6 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
-        log.info(query.text);
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             new OrderStatusLogs({
@@ -203,7 +207,8 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
 OrderSeller.prototype.takeOrder = (id, sellerAccountId) => new BluePromise((resolve, reject) => {
   delete that.model.dateCreated;
   that.model.dateUpdated = new Date().getTime();
-  that.getByValue(sellerAccountId, 'selleraccount_id')
+  that.model.dateAssembled = new Date().getTime();
+  that.findAll(0, 1, { takeOrder: true, selleraccount_id: sellerAccountId })
     .then((resList) => {
       if (resList.length) {
         reject('User Assigned');
@@ -363,6 +368,16 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .order(sortString)
       .limit(limit)
       .offset(skip)
+      .toQuery();
+  } else if (filters.takeOrder) {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.selleraccount_id.equals(filters.selleraccount_id)
+        .and(that.sqlTable.dateAssembled.between(today, tomorrow)))
       .toQuery();
   } else {
     query = that.sqlTable
