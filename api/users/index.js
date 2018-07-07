@@ -2,6 +2,7 @@ const query = require('../../service/query');
 const Log = require('../logs/log');
 
 const User = require('./user');
+const log = require('color-logs')(true, true, 'User Account');
 
 const user = {};
 
@@ -106,6 +107,28 @@ user.registerAccount = (req, res) => {
 };
 
 /**
+* Add an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.registerAccounts = (req, res) => {
+  const instUser = new User();
+  instUser.createMultiple(req.swagger.params.body.value)
+    .then((status) => {
+      new Log({ message: 'Create new user accounts', action: 'USER_REGISTER', type: 'INFO' }).create();
+      return res.json(status);
+    })
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'PBU_CREATE', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+/**
 * User registration
 * @param {Object} req
 * @param {Object} res
@@ -187,5 +210,30 @@ user.viewAccount = (req, res) => {
       instUser.release();
     });
 };
+
+/**
+* View user profile
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.checkAccount = (req, res) => {
+  const instUser = new User();
+  log.info(req.swagger.params.username.value);
+  instUser.getByValue(req.swagger.params.username.value, 'username')
+    .then((resultList) => {
+      if (!resultList[0].id) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
+    })
+    .catch(() => res.status(404).json({
+      message: 'Not found',
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
+
 
 module.exports = user;

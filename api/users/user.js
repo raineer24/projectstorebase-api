@@ -10,6 +10,8 @@ const Mailer = require('../../service/mail');
 
 const Token = require('../token/token');
 
+const Partnerbuyeruser = require('../partnerbuyeruser/partnerbuyeruser');
+
 const log = require('color-logs')(true, true, 'User Account');
 
 let that;
@@ -40,6 +42,26 @@ function User(user) {
       'forcedReset',
       'dateCreated',
       'dateUpdated',
+    ],
+  });
+
+  this.table = 'partnerbuyeruser';
+  this.dbConn = Conn;
+  this.sqlTablePBU = sql.define({
+    name: this.table,
+    columns: [
+      'id',
+      'username',
+      'email',
+      'name',
+      'credit',
+      'availablebalance',
+      'outstandingbalance',
+      'status',
+      'dateCreated',
+      'dateUpdated',
+      'useraccount_id',
+      'partnerBuyer_id',
     ],
   });
 
@@ -161,6 +183,53 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
     .catch((err) => {
       reject(err);
     });
+});
+
+/**
+  * Save User account
+  * @param {string} useraccount_id
+  * @return {object}
+*/
+User.prototype.createMultiple = users => new BluePromise((resolve, reject) => {
+  log.info(users);
+  _.forEach(users, (key) => {
+    that.getByValue(key.user.username, 'username')
+      .then((results) => {
+        if (results.length === 0 && key.user.username !== undefined) {
+          const query = that.sqlTable.insert(key.user).toQuery();
+          that.dbConn.queryAsync(query.text, query.values)
+            .then((response) => {
+              log.info('[RESULTS - CREATE USER]');
+              log.info(response);
+              that.getByValue(key.user.username, 'username')
+                .then((resultList) => {
+                  if (!resultList[0].id) {
+                    log.info(resultList);
+                  } else {
+                    new Partnerbuyeruser(_.merge(key.pbu, {
+                      useraccount_id: resultList[0].id,
+                    })).create()
+                      .then(() => {
+                        log.info(`Successfully registered new user account - ${key.pbu}`);
+                      })
+                      .catch((err) => {
+                        log.error(`Failed to send ${err}`);
+                      });
+                  }
+                })
+                .catch((err) => {
+                  reject(err);
+                });
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        } else {
+          reject('Found');
+        }
+      });
+  });
+  resolve();
 });
 
 User.prototype.mailConfirmation = (userAccount) => {
@@ -315,6 +384,22 @@ User.prototype.getByValue = (value, field) => {
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
+User.prototype.getByValuePBU = (value, field) => {
+  log.info('[getByValuePBU]');
+  log.info(value);
+  log.info(field);
+  const query = that.sqlTablePBU
+    .select(that.sqlTablePBU.star())
+    .from(that.sqlTablePBU)
+    .where(that.sqlTablePBU[field].equals(value)).toQuery();
+  return that.dbConn.queryAsync(query.text, query.values);
+};
 
 /**
   * Get userAccount by id

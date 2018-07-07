@@ -87,6 +87,39 @@ paths:
         #       message:
         #         type: string
         #         example: Not found
+  /user/account/{username}/check:
+    x-swagger-router-controller: users
+    get:
+      tags:
+        - profile
+      summary: Return user profile
+      operationId: checkAccount
+      parameters:
+        - $ref: "#/parameters/username"
+      responses:
+        200:
+          description: Profile Object
+          schema:
+            properties:
+              id:
+                type: number
+                example: 5000012
+              firstName:
+                type: string
+                example: John
+              lastName:
+                type: string
+                example: Stone
+              dateBirthday:
+                type: number
+                example: 587260800000
+                description: timestamp
+              address1:
+                type: string
+                example: Upper Thompson Road
+              address2:
+                type: string
+                example: East Cost Drive
   /user/account/login:
     x-swagger-router-controller: users
     post:
@@ -132,6 +165,37 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/UserRegister"
+      responses:
+        200:
+          description: Successful registration
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /user/account/savemany:
+    x-swagger-router-controller: users
+    post:
+      tags:
+        - user
+      summary: Register user account
+      operationId: registerAccounts
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/MultipleUserRegister"
       responses:
         200:
           description: Successful registration
@@ -2750,6 +2814,30 @@ definitions:
       email:
         type: string
         description: user e-mail
+  MultipleUserRegister:
+    title: Multiple User Register
+    type: object
+    # required:
+    #     - email
+    properties:
+      username:
+        type: string
+        description: user name/alias
+      email:
+        type: string
+        description: user email address
+      firstName:
+        type: string
+        description: user first name
+      lastName:
+        type: string
+        description: user last name
+      password:
+        type: string
+        description: user temporary password
+      doc:
+        type: object
+        description: "Address object"
   partnerbuyeruser:
     title: PBU update
     type: object
@@ -2971,6 +3059,11 @@ parameters:
   useraccount_id:
     in: path
     name: useraccount_id
+    type: string
+    required: true
+  username:
+    in: path
+    name: username
     type: string
     required: true
   partnerbuyer_id:

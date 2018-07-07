@@ -11,7 +11,7 @@ const Mailer = require('../../service/mail');
 const Token = require('../token/token');
 const User = require('../users/user');
 
-const log = require('color-logs')(true, true, 'User Account');
+const log = require('color-logs')(true, true, 'Partner User Account');
 
 let that;
 
@@ -132,19 +132,22 @@ Partnerbuyeruser.prototype.authorize = userAuth => new BluePromise((resolve, rej
   * @return {object}
 */
 Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
-  const id = that.model.useraccount_id;
-  that.getById(that.model.useraccount_id, 'useraccount_id')
+  that.getByValue(that.model.useraccount_id, 'useraccount_id')
     .then((results) => {
       if (results.length === 0) {
-        log.info(id);
+        log.info('[CREATING PBU]');
         const query = that.sqlTable.insert(that.model).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
+            log.info('PARTNER BUYER USER - CREATE');
+            log.info(response);
             that.getById(response.insertId)
               .then((resultList) => {
                 if (!resultList[0].id) {
                   reject('Not found');
                 } else {
+                  log.info('PARTNER BUYER USER - EMAIL');
+                  log.info(resultList[0]);
                   new Mailer(that.mailConfirmation(resultList[0])).send()
                     .then(() => {
                       log.info(`Successfully registered with e-mail ${resultList[0].email}`);
@@ -189,7 +192,6 @@ Partnerbuyeruser.prototype.createMultiple = () => new BluePromise((resolve, reje
           const query = that.sqlTable.insert(key).toQuery();
           that.dbConn.queryAsync(query.text, query.values)
             .then((response) => {
-              log.info(response);
               that.getById(id)
                 .then((resultList) => {
                   if (!resultList[0].id) {
@@ -209,6 +211,7 @@ Partnerbuyeruser.prototype.createMultiple = () => new BluePromise((resolve, reje
                 .catch((err) => {
                   reject(err);
                 });
+              return response;
             })
             .catch((err) => {
               reject(err);
@@ -355,8 +358,8 @@ Partnerbuyeruser.prototype.getByValue = (value, field) => {
   * @return {object<Promise>}
 */
 // User.prototype.getById = id => that.dbConn.readAsync(id);
-Partnerbuyeruser.prototype.findById = id => that.getByValue(id, 'useraccount_id');
-Partnerbuyeruser.prototype.getById = id => that.getByValue(id, 'useraccount_id');
+Partnerbuyeruser.prototype.findById = id => that.getByValue(id, 'id');
+Partnerbuyeruser.prototype.getById = id => that.getByValue(id, 'id');
 
 
 /**
