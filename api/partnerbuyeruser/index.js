@@ -70,10 +70,10 @@ partnerbuyeruser.getUsers = (req, res) => {
     partnerBuyer_id: query.validateParam(req.swagger.params, 'partnerBuyer_id', x),
   })
     .then((result) => {
-      res.json(result);
       new Log({
         message: 'Show all partner buyer users', action: 'PBU_LIST', type: 'INFO', user_id: `${x}`,
       }).create();
+      return res.json(result);
     })
     .catch(() => res.status(404).json({
       message: 'Not found',
