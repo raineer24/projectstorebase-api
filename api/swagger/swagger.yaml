@@ -2372,6 +2372,28 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /ordersellers/count/freshFrozen/:
+    x-swagger-router-controller: ordersellers
+    get:
+      tags:
+        - orderseller
+      summary: Get orderseller
+      operationId: countFreshFrozen
+      parameters:
+        - $ref: "#/parameters/sellerIdQ"
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 123445
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /ratings/save:
     x-swagger-router-controller: ratings
     post:

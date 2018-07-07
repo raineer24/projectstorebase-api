@@ -51,7 +51,7 @@ User.prototype.testConnection = () => new BluePromise((resolve, reject) => {
     resolve(that.dbConn);
     return;
   }
-  reject('Not found');
+  reject('Not Found');
 });
 
 /**
@@ -74,7 +74,7 @@ User.prototype.authenticate = () => new BluePromise((resolve, reject) => {
   that.findAll(0, 1, filter)
     .then((results) => {
       if (results.length === 0) {
-        reject('Not found');
+        reject('Not Found');
         return;
       }
 
@@ -134,7 +134,7 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
             that.getById(response.insertId)
               .then((resultList) => {
                 if (!resultList[0].id) {
-                  reject('Not found');
+                  reject('Not Found');
                 } else {
                   new Mailer(that.mailConfirmation(resultList[0])).send()
                     .then(() => {
@@ -194,21 +194,31 @@ User.prototype.update = (id, isChangePassword = false) => new BluePromise((resol
       if (!resultList[0].id) {
         reject('Not Found');
       } else {
-        that.model = _.merge(resultList[0], that.model);
-        const query = that.sqlTable.update(that.model)
-          .where(that.sqlTable.id.equals(id)).toQuery();
-        that.dbConn.queryAsync(query.text, query.values)
-          .then((response) => {
-            if (isChangePassword) {
-              new Token().invalidate(id, 'USER')
-                .then(() => {
-                  resolve(response.message);
+        that.getByValue(that.model.email, 'email')
+          .then((resultEmail) => {
+            if (resultEmail.length && resultEmail[0].id !== resultList[0].id) {
+              reject('Email Found');
+            } else {
+              that.model = _.merge(resultList[0], that.model);
+              const query = that.sqlTable.update(that.model)
+                .where(that.sqlTable.id.equals(id)).toQuery();
+              that.dbConn.queryAsync(query.text, query.values)
+                .then((response) => {
+                  if (isChangePassword) {
+                    new Token().invalidate(id, 'USER')
+                      .then(() => {
+                        resolve(response.message);
+                      })
+                      .catch((err) => {
+                        reject(err);
+                      });
+                  } else {
+                    resolve(response.message);
+                  }
                 })
                 .catch((err) => {
                   reject(err);
                 });
-            } else {
-              resolve(response.message);
             }
           })
           .catch((err) => {
@@ -256,7 +266,7 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
                       reject(err);
                     });
                 } else {
-                  reject('Not found');
+                  reject('Not Found');
                 }
               })
               .catch((err) => {
@@ -267,7 +277,7 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
             reject(err);
           });
       } else {
-        reject('Not found');
+        reject('Not Found');
       }
     })
     .catch((err) => {

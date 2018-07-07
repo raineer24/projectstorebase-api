@@ -37,7 +37,7 @@ orderseller.getAllOrderSellers = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_LIST', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instOrder.release();
@@ -68,7 +68,7 @@ orderseller.createOrderSeller = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_CREATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instOrderseller.release();
@@ -87,7 +87,7 @@ orderseller.getOrderseller = (req, res) => {
   instOrderseller.getByIdJoinOrder(query.validateParam(req.swagger.params, 'id', ''))
     .then((resultList) => {
       if (resultList.length === 0) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       return res.json(resultList[0]);
     })
@@ -113,7 +113,7 @@ orderseller.updateOrderseller = (req, res) => {
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instOrderseller.release();
@@ -146,6 +146,27 @@ orderseller.takeOrder = (req, res) => {
     })
     .finally(() => {
       instOrderseller.release();
+    });
+};
+
+/**
+* List
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+orderseller.countFreshFrozen = (req, res) => {
+  const instOrder = new OrderSeller({});
+
+  instOrder.countFreshFrozen({
+    sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
+  })
+    .then((result) => {
+      res.json(result);
+    })
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' }))
+    .finally(() => {
+      instOrder.release();
     });
 };
 

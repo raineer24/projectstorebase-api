@@ -219,8 +219,6 @@ OrderSeller.prototype.takeOrder = (id, sellerAccountId) => new BluePromise((reso
               that.model = _.merge(resultList[0], that.model);
               const query = that.sqlTable.update(that.model)
                 .where(that.sqlTable.id.equals(id)).toQuery();
-              log.info(query.text);
-              log.info(query.values);
               that.dbConn.queryAsync(query.text, query.values)
                 .then((response) => {
                   new OrderStatusLogs({
@@ -334,7 +332,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .toQuery();
     } else {
       query = that.sqlTable
-        .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id)
+        .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.datetime)
         .from(that.sqlTable
           .join(that.sqlTableOrder)
           .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
@@ -380,6 +378,30 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
 };
 
 /**
+  * itemCount
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+OrderSeller.prototype.countFreshFrozen = (filters) => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+  const strSql = `
+    SELECT os.id, os.order_id, count(oi.id) AS itemCount
+      FROM orderseller as os
+      LEFT JOIN timeslotorder as tso ON tso.order_id = os.order_id
+      LEFT JOIN orderitem as oi ON oi.order_id = os.order_id
+      LEFT JOIN item as it ON it.id = oi.item_id
+      WHERE it.category1 = 2 || it.category1 = 3
+        AND os.seller_id = ${filters.sellerId}
+        AND tso.datetime BETWEEN ${today} AND ${tomorrow}
+      GROUP BY os.id;
+  `;
+  return that.dbConn.queryAsync(strSql);
+};
+
+/**
   * findById
   * @param {string} limit
   * @param {string} offset
@@ -391,7 +413,6 @@ OrderSeller.prototype.getById = id => that.getByValue(id, 'id');
 /**
   * Get by value
   * @param {any} value
-  * @param {string} field
   * @return {object<Promise>}
 */
 OrderSeller.prototype.getByValue = (value, field) => {
