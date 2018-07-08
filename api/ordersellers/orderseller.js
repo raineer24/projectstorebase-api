@@ -3,7 +3,7 @@ const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
 const Mailer = require('../../service/mail');
-
+const OrderItem = require('../orderItems/orderItem');
 const Conn = require('../../service/connection');
 
 let that;
@@ -176,16 +176,19 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             if (that.model.status === 'assembled') {
-              log.info(that.model.status);
-              new Mailer(that.mailConfirmation(resultList[0])).send()
+              new Mailer(that.mailConfirmation(that.model)).send()
                 .then(() => {
-                  log.info(`Successfully registered with e-mail ${resultList[0].email}`);
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info(`sent! ${orderNumber}`);
+                  log.info(that.model);
                 })
                 .catch((err) => {
                   log.error(`Failed to send ${err}`);
-                }); resolve(response.message); 
+                });
             }
-           })
+            resolve(response.message);
+          })
           .catch((err) => {
             reject(err);
           });
@@ -197,16 +200,18 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
 });
 
 OrderSeller.prototype.mailConfirmation = (userAccount) => {
+  log.info('userAccount');
+  log.info(userAccount);
   const body = `
   <div><p>Hi,</p></div>
-  <div><p>You have successfully registered with username ${userAccount.email}</p></div>
-  <div><p>Please confirm your registration by clicking this link below</p></div>
+  <div><p>FUllfilment order ${userAccount.orderNumber}</p></div>
+  <div><p>FUllfilment order</p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
     from: 'info@eos.com.ph',
-    to: userAccount.email,
-    subject: 'OMG - Successful registration',
+    to: 'delaritaraineer81@gmail.com',
+    subject: 'OMG - Fullfillment order',
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
   };
