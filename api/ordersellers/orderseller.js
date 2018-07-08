@@ -187,6 +187,19 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                   log.error(`Failed to send ${err}`);
                 });
             }
+            if (that.model.status === 'in-transit') {
+              new Mailer(that.mailTransitConfirmation(that.model)).send()
+                .then(() => {
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info(`sent! ${orderNumber}`);
+                  log.info(that.model);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                });
+            }
+            log.info(that.model.status);
             resolve(response.message);
           })
           .catch((err) => {
@@ -212,6 +225,23 @@ OrderSeller.prototype.mailConfirmation = (userAccount) => {
     from: 'info@eos.com.ph',
     to: 'delaritaraineer81@gmail.com',
     subject: 'OMG - Fullfillment order',
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
+  log.info('userAccount');
+  log.info(userAccount);
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>in-transit order ${userAccount.orderNumber}</p></div>
+  <div><p>in-transit order</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'delaritaraineer81@gmail.com',
+    subject: 'OMG - In-transit confirmation order',
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
   };
