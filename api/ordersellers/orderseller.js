@@ -2,6 +2,7 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
+const Mailer = require('../../service/mail');
 
 const Conn = require('../../service/connection');
 
@@ -174,8 +175,17 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
         log.info(query.text);
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
-            resolve(response.message);
-          })
+            if (that.model.status === 'assembled') {
+              log.info(that.model.status);
+              new Mailer(that.mailConfirmation(resultList[0])).send()
+                .then(() => {
+                  log.info(`Successfully registered with e-mail ${resultList[0].email}`);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                }); resolve(response.message); 
+            }
+           })
           .catch((err) => {
             reject(err);
           });
@@ -185,6 +195,22 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
       reject(err);
     });
 });
+
+OrderSeller.prototype.mailConfirmation = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>You have successfully registered with username ${userAccount.email}</p></div>
+  <div><p>Please confirm your registration by clicking this link below</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: userAccount.email,
+    subject: 'OMG - Successful registration',
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
 
 /**
   * update
