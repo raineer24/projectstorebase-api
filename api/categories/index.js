@@ -10,7 +10,7 @@ category.listAll = (req, res) => {
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'CATEGORY_LIST_STRUCTURED', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instCategory.release();

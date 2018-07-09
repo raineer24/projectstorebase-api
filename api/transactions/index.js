@@ -20,13 +20,13 @@ transactions.getTransaction = (req, res) => {
     .then((resultList) => {
       if (resultList.length === 0) {
         new Log({ message: `Viewing transactions of order id ${resultList[0].order_id}.`, action: 'GET_TRANSACTION', type: 'INFO' }).create();
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       return res.json(resultList[0]);
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'GET_TRANSACTION', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instTransactions.release();
@@ -49,7 +49,7 @@ transactions.getTransactions = (req, res) => {
     .then(instTransactions.formatTimeslots)
     .then((resOrder) => {
       if (resOrder.length === 0) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       new Log({
         message: 'Successfully retrieved all transactions.', action: 'GET_ALL_TRANSACTIONS', type: 'INFO', selleraccount_id: `${resOrder.id}`,
@@ -58,7 +58,7 @@ transactions.getTransactions = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'GET_ALL_TRANSACTIONS', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instTransactions.release();
@@ -102,7 +102,7 @@ transactions.updateTransaction = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'TRANSACTION_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instTrans.release();
@@ -122,7 +122,7 @@ transactions.getGrandTotal = (req, res) => {
     new Log({ message: 'Show totals of all transactions', action: 'TRANSACTIONS_GRANDTOTAL', type: 'INFO' }).create();
   }).catch((err) => {
     new Log({ message: `${err}`, action: 'TRANSACTIONS_GRANDTOTAL', type: 'ERROR' }).create();
-    return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+    return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
   })
     .finally(() => {
       instTransactions.release();
@@ -135,13 +135,13 @@ transactions.getTransactionByOrderId = (req, res) => {
     .then((resultList) => {
       if (resultList.length === 0) {
         new Log({ message: `Viewing transactions of order id ${resultList[0].order_id}.`, action: 'GET_TRANSACTION_BY_ORDER', type: 'INFO' }).create();
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       return res.json(resultList);
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'GET_TRANSACTION_BY_ORDER', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instTrans.release();
@@ -163,7 +163,7 @@ transactions.updateTransactionByOrderId = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'TRANSACTION_UPDATE_BY_ORDER', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instTrans.release();

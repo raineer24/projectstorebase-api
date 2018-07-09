@@ -10,7 +10,7 @@ address.connectDb = (req, res) => {
   instSellerAccount.testConnection()
     .then(result => res.json({ message: result }))
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }));
 };
 
@@ -27,7 +27,7 @@ address.getAddress = (req, res) => {
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ADDRESS_GET', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instAddress.release();
@@ -49,7 +49,7 @@ address.getAllAddress = (req, res) => {
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ADDRESS_LIST', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instAddress.release();
@@ -89,7 +89,7 @@ address.updateAddress = (req, res) => {
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ADDRESS_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instAddress.release();

@@ -180,7 +180,7 @@ ListItems.prototype.removeById = id => new BluePromise((resolve, reject) => {
   that.getById(id)
     .then((resultList) => {
       if (!resultList[0].id) {
-        reject('Not found');
+        reject('Not Found');
       } else {
         const query = that.sqlTable.delete()
           .where(that.sqlTable.id.equals(id)).toQuery();
@@ -194,7 +194,7 @@ ListItems.prototype.removeById = id => new BluePromise((resolve, reject) => {
       }
     })
     .catch(() => {
-      reject('Not found');
+      reject('Not Found');
     });
 });
 

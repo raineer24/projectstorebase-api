@@ -18,7 +18,7 @@ orderfb.createFeedBack = (req, res) => {
     .then(result => res.json({ message: result }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'FEEDBACK_CREATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instOrderfb.release();

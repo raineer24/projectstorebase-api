@@ -230,12 +230,12 @@ user.checkAccount = (req, res) => {
   instUser.getByValue(req.swagger.params.username.value, 'username')
     .then((resultList) => {
       if (!resultList[0].id) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
     })
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }))
     .finally(() => {
       instUser.release();

@@ -21,7 +21,7 @@ voucher.updateVoucherStatus = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'UPDATE_VOUCHER', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })
     .finally(() => {
       instvoucher.release();
@@ -40,7 +40,7 @@ voucher.getvoucher = (req, res) => {
     .then((resultList) => {
       if (resultList.length === 0) {
         new Log({ message: 'Failed to retrieve voucher!', action: 'GET_VOUCHER', type: 'INFO' }).create();
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       new Log({ message: `Successfully retrieved voucher ${resultList[0].code}`, action: 'GET_VOUCHER', type: 'INFO' }).create();
       return res.json(resultList[0]);
