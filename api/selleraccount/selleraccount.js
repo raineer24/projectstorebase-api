@@ -190,7 +190,7 @@ Selleraccount.prototype.resetPassword = email => new BluePromise((resolve, rejec
                       reject(err);
                     });
                 } else {
-                  reject('Not found');
+                  reject('Not Found');
                 }
               })
               .catch((err) => {
@@ -201,7 +201,7 @@ Selleraccount.prototype.resetPassword = email => new BluePromise((resolve, rejec
             reject(err);
           });
       } else {
-        reject('Not found');
+        reject('Not Found');
       }
     })
     .catch((err) => {
@@ -253,7 +253,7 @@ Selleraccount.prototype.authenticate = () => new BluePromise((resolve, reject) =
   that.findAll(0, 1, filter)
     .then((results) => {
       if (results.length === 0) {
-        reject('Not found');
+        reject('Not Found');
         return;
       } else if (!results[0].enabled) {
         reject('Disabled');

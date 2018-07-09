@@ -2,8 +2,9 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
-
+const Mailer = require('../../service/mail');
 const Conn = require('../../service/connection');
+const OrderStatusLogs = require('../orderstatuslogs/orderstatuslogs');
 
 let that;
 
@@ -37,6 +38,8 @@ function OrderSeller(orderSeller) {
       'order_id',
       'selleraccount_id',
       'seller_id',
+      'dateAssembled',
+      'dateDelivered',
       'dateCompleted',
       'dateCreated',
       'dateUpdated',
@@ -142,6 +145,10 @@ OrderSeller.prototype.create = () => new BluePromise((resolve, reject) => {
         const query = that.sqlTable.insert(that.model).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
+            new OrderStatusLogs({
+              order_id: that.model.order_id,
+              status: 'pending',
+            }).create();
             resolve(response.insertId);
           })
           .catch((err) => {
@@ -163,6 +170,9 @@ OrderSeller.prototype.create = () => new BluePromise((resolve, reject) => {
 OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
   delete that.model.dateCreated;
   that.model.dateUpdated = new Date().getTime();
+  if (that.model.status.toUpperCase() === 'IN-TRANSIT') {
+    that.model.dateDelivered = new Date().getTime();
+  }
   that.getById(id)
     .then((resultList) => {
       if (!resultList[0].id) {
@@ -171,9 +181,49 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
-        log.info(query.text);
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
+            if (that.model.status === 'assembled') {
+              new Mailer(that.mailConfirmation(that.model)).send()
+                .then(() => {
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info('sent! Email assembled confirmation');
+                  log.info(that.model);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                });
+            }
+            if (that.model.status === 'in-transit') {
+              new Mailer(that.mailTransitConfirmation(that.model)).send()
+                .then(() => {
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info('sent! Email in-transit confirmation');
+                  log.info(that.model);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                });
+            }
+            if (that.model.status === 'complete') {
+              new Mailer(that.mailCompletedConfirmation(that.model)).send()
+                .then(() => {
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info('sent! Email complete confirmation');
+                  log.info(that.model);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                });
+            }
+            new OrderStatusLogs({
+              order_id: that.model.order_id,
+              status: that.model.status,
+              handledBy: that.model.updatedBy,
+            }).create();
             resolve(response.message);
           })
           .catch((err) => {
@@ -186,6 +236,50 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
     });
 });
 
+OrderSeller.prototype.mailConfirmation = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>Assembled Orders. order # ${userAccount.orderNumber}</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'raineerdelarita@gmail.com',
+    subject: `OMG - Assembled orders ${userAccount.orderNumber}`,
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>in-transit order ${userAccount.orderNumber}</p></div>
+  <div><p>in-transit order</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'raineerdelarita@gmail.com',
+    subject: `Your order #${userAccount.orderNumber} will be delivered now`,
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+OrderSeller.prototype.mailCompletedConfirmation = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>Delivered order ${userAccount.orderNumber}</p></div>
+  <div><p>in-transit order</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'raineerdelarita@gmail.com',
+    subject: `Your order #${userAccount.orderNumber} delivery completed`,
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
 /**
   * update
   * @return {object/number}
@@ -193,7 +287,8 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
 OrderSeller.prototype.takeOrder = (id, sellerAccountId) => new BluePromise((resolve, reject) => {
   delete that.model.dateCreated;
   that.model.dateUpdated = new Date().getTime();
-  that.getByValue(sellerAccountId, 'selleraccount_id')
+  that.model.dateAssembled = new Date().getTime();
+  that.findAll(0, 1, { takeOrder: true, selleraccount_id: sellerAccountId })
     .then((resList) => {
       if (resList.length) {
         reject('User Assigned');
@@ -209,10 +304,13 @@ OrderSeller.prototype.takeOrder = (id, sellerAccountId) => new BluePromise((reso
               that.model = _.merge(resultList[0], that.model);
               const query = that.sqlTable.update(that.model)
                 .where(that.sqlTable.id.equals(id)).toQuery();
-              log.info(query.text);
-              log.info(query.values);
               that.dbConn.queryAsync(query.text, query.values)
                 .then((response) => {
+                  new OrderStatusLogs({
+                    order_id: that.model.order_id,
+                    status: that.model.status,
+                    handledBy: that.model.updatedBy,
+                  }).create();
                   resolve(response.message);
                 })
                 .catch((err) => {
@@ -319,7 +417,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .toQuery();
     } else {
       query = that.sqlTable
-        .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id)
+        .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.datetime)
         .from(that.sqlTable
           .join(that.sqlTableOrder)
           .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
@@ -351,6 +449,16 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
+  } else if (filters.takeOrder) {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    query = that.sqlTable
+      .select(that.sqlTable.star())
+      .from(that.sqlTable)
+      .where(that.sqlTable.selleraccount_id.equals(filters.selleraccount_id)
+        .and(that.sqlTable.dateAssembled.between(today, tomorrow)))
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
@@ -365,6 +473,30 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
 };
 
 /**
+  * itemCount
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+OrderSeller.prototype.countFreshFrozen = (filters) => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+  const strSql = `
+    SELECT os.id, os.order_id, count(oi.id) AS itemCount
+      FROM orderseller as os
+      LEFT JOIN timeslotorder as tso ON tso.order_id = os.order_id
+      LEFT JOIN orderitem as oi ON oi.order_id = os.order_id
+      LEFT JOIN item as it ON it.id = oi.item_id
+      WHERE it.category1 = 2 || it.category1 = 3
+        AND os.seller_id = ${filters.sellerId}
+        AND tso.datetime BETWEEN ${today} AND ${tomorrow}
+      GROUP BY os.id;
+  `;
+  return that.dbConn.queryAsync(strSql);
+};
+
+/**
   * findById
   * @param {string} limit
   * @param {string} offset
@@ -376,7 +508,6 @@ OrderSeller.prototype.getById = id => that.getByValue(id, 'id');
 /**
   * Get by value
   * @param {any} value
-  * @param {string} field
   * @return {object<Promise>}
 */
 OrderSeller.prototype.getByValue = (value, field) => {
