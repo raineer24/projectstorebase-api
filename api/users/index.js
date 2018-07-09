@@ -2,6 +2,7 @@ const query = require('../../service/query');
 const Log = require('../logs/log');
 
 const User = require('./user');
+const log = require('color-logs')(true, true, 'User Account');
 
 const user = {};
 
@@ -27,8 +28,8 @@ user.getAllUsers = (req, res) => {
     // useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 0),
   })
     .then((result) => {
-      res.json(result);
       new Log({ message: 'Successfully retrieve all users', action: 'USER_LIST', type: 'INFO' }).create();
+      return res.json(result);
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'USER_LIST', type: 'ERROR' }).create();
@@ -46,10 +47,12 @@ user.getAllUsers = (req, res) => {
 * @return {Object}
 */
 user.getAllUsersAdmin = (req, res) => {
-  new Log({ message: 'Show all users', action: 'ADMIN_USER_LIST', type: 'INFO' }).create();
   const instUser = new User({});
   instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), { useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 1) })
-    .then(result => res.json(result))
+    .then((result) => {
+      new Log({ message: 'Show all users', action: 'ADMIN_USER_LIST', type: 'INFO' }).create();
+      return res.json(result);
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ADMIN_USER_LIST', type: 'ERROR' }).create();
       return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
@@ -71,10 +74,10 @@ user.loginAccount = (req, res) => {
     .then(userAuth => userAuth)
     .then(instUser.authorize)
     .then((result) => {
-      res.json(instUser.cleanResponse(result, { message: 'Found' }));
       new Log({
         message: 'Logged into user account', action: 'USER_LOGIN', type: 'INFO', user_id: `${result.id}`,
       }).create();
+      return res.json(instUser.cleanResponse(result, { message: 'Found' }));
     })
     .catch(() => res.status(404).json({
       message: 'Not found',
@@ -98,6 +101,28 @@ user.registerAccount = (req, res) => {
     .catch(err => res.status(err === 'Found' ? 201 : 500).json({
       message: err === 'Found' ? 'Existing' : err,
     }))
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+/**
+* Add an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.registerAccounts = (req, res) => {
+  const instUser = new User();
+  instUser.createMultiple(req.swagger.params.body.value)
+    .then((status) => {
+      new Log({ message: 'Create new user accounts', action: 'USER_REGISTER', type: 'INFO' }).create();
+      return res.json(status);
+    })
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'PBU_CREATE', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
     .finally(() => {
       instUser.release();
     });
@@ -185,5 +210,30 @@ user.viewAccount = (req, res) => {
       instUser.release();
     });
 };
+
+/**
+* View user profile
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.checkAccount = (req, res) => {
+  const instUser = new User();
+  log.info(req.swagger.params.username.value);
+  instUser.getByValue(req.swagger.params.username.value, 'username')
+    .then((resultList) => {
+      if (!resultList[0].id) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
+    })
+    .catch(() => res.status(404).json({
+      message: 'Not found',
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
+
 
 module.exports = user;
