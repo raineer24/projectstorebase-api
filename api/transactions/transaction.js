@@ -129,6 +129,36 @@ Transaction.prototype.create = () => new BluePromise((resolve, reject) => {
   * update
   * @return {object/number}
 */
+Transaction.prototype.update = id => new BluePromise((resolve, reject) => {
+  delete that.model.dateCreated;
+  that.model.dateUpdated = new Date().getTime();
+  that.getById(id)
+    .then((resultList) => {
+      if (!resultList[0].id) {
+        reject('Not Found');
+      } else {
+        that.model = _.merge(resultList[0], that.model);
+        const query = that.sqlTable.update(that.model)
+          .where(that.sqlTable.id.equals(id)).toQuery();
+        log.info(query.text);
+        that.dbConn.queryAsync(query.text, query.values)
+          .then((response) => {
+            resolve(response.message);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      }
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+
+/**
+  * update
+  * @return {object/number}
+*/
 Transaction.prototype.updateByOrderId = orderId => new BluePromise((resolve, reject) => {
   that.getByValue(orderId, 'order_id')
     .then((resultList) => {
