@@ -244,7 +244,7 @@ OrderSeller.prototype.mailConfirmation = (userAccount) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    to: 'raineerdelarita@gmail.com',
+    to: 'info@eos.com.ph',
     subject: `OMG - Assembled orders ${userAccount.orderNumber}`,
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
@@ -259,7 +259,7 @@ OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    to: 'raineerdelarita@gmail.com',
+    to: 'info@eos.com.ph',
     subject: `Your order #${userAccount.orderNumber} will be delivered now`,
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
@@ -274,7 +274,7 @@ OrderSeller.prototype.mailCompletedConfirmation = (userAccount) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    to: 'raineerdelarita@gmail.com',
+    to: 'info@eos.com.ph',
     subject: `Your order #${userAccount.orderNumber} delivery completed`,
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
