@@ -3,7 +3,6 @@ const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
 const Mailer = require('../../service/mail');
-const OrderItem = require('../orderItems/orderItem');
 const Conn = require('../../service/connection');
 
 let that;
@@ -200,7 +199,7 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                 });
             }
             if (that.model.status === 'complete') {
-              new Mailer(that.mailTransitConfirmation(that.model)).send()
+              new Mailer(that.mailCompletedConfirmation(that.model)).send()
                 .then(() => {
                   log.info('resultList[0]');
                   log.info(resultList[0]);
@@ -257,7 +256,23 @@ OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
     html: body,
   };
 };
-
+OrderSeller.prototype.mailCompletedConfirmation = (userAccount) => {
+  log.info('userAccount');
+  log.info(userAccount);
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>Completed order ${userAccount.orderNumber}</p></div>
+  <div><p>in-transit order</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'delaritaraineer81@gmail.com',
+    subject: 'OMG - Completed confirmation order',
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
 /**
   * update
   * @return {object/number}
