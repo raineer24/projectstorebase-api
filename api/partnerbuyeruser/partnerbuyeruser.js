@@ -38,7 +38,7 @@ function Partnerbuyeruser(user) {
       'dateCreated',
       'dateUpdated',
       'useraccount_id',
-      'partnerBuyer_id',
+      'partner_id',
     ],
   });
   this.sqlTableUser = sql.define({
@@ -67,7 +67,7 @@ Partnerbuyeruser.prototype.testConnection = () => new BluePromise((resolve, reje
     resolve(that.dbConn);
     return;
   }
-  reject('Not found');
+  reject('Not Found');
 });
 
 /**
@@ -90,7 +90,7 @@ Partnerbuyeruser.prototype.authenticate = () => new BluePromise((resolve, reject
   that.findAll(0, 1, filter)
     .then((results) => {
       if (results.length === 0) {
-        reject('Not found');
+        reject('Not Found');
         return;
       }
 
@@ -144,7 +144,7 @@ Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
             that.getById(response.insertId)
               .then((resultList) => {
                 if (!resultList[0].id) {
-                  reject('Not found');
+                  reject('Not Found');
                 } else {
                   log.info('PARTNER BUYER USER - EMAIL');
                   log.info(resultList[0]);
@@ -195,7 +195,7 @@ Partnerbuyeruser.prototype.createMultiple = () => new BluePromise((resolve, reje
               that.getById(id)
                 .then((resultList) => {
                   if (!resultList[0].id) {
-                    reject('Not found');
+                    reject('Not Found');
                   } else {
                     new Mailer(that.mailConfirmation(resultList[0])).send()
                       .then(() => {
@@ -316,7 +316,7 @@ Partnerbuyeruser.prototype.update = id => new BluePromise((resolve, reject) => {
   that.getByValue(id, 'useraccount_id')
     .then((resultList) => {
       if (!resultList[0].id) {
-        reject('Not foundssss');
+        reject('Not Foundssss');
       } else {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
@@ -379,11 +379,11 @@ Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.partnerBuyer_id) {
+  } else if (filters.partnerId) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
-      .where(that.sqlTable.partnerBuyer_id.equals(filters.partnerBuyer_id))
+      .where(that.sqlTable.partner_id.equals(filters.partnerId))
       .limit(limit)
       .offset(skip)
       .toQuery();

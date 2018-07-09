@@ -11,7 +11,7 @@ partnerbuyeruser.connectDb = (req, res) => {
   instUser.testConnection()
     .then(result => res.json({ message: result }))
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }));
 };
 
@@ -67,7 +67,7 @@ partnerbuyeruser.getUsers = (req, res) => {
   const x = req.swagger.params.partnerbuyer_id.value;
   log.info(x);
   instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    partnerBuyer_id: query.validateParam(req.swagger.params, 'partnerBuyer_id', x),
+    partnerId: query.validateParam(req.swagger.params, 'partnerId', x),
   })
     .then((result) => {
       new Log({
@@ -76,7 +76,7 @@ partnerbuyeruser.getUsers = (req, res) => {
       return res.json(result);
     })
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }))
     .finally(() => {
       instUser.release();
@@ -94,12 +94,12 @@ partnerbuyeruser.getUser = (req, res) => {
   instUser.getById(query.validateParam(req.swagger.params, 'useraccount_id', 0))
     .then((resultList) => {
       if (!resultList[0].name) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
     })
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }))
     .finally(() => {
       instUser.release();
@@ -123,7 +123,7 @@ partnerbuyeruser.updateAccount = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'PARTNERBUYERUSER_ACCOUNT_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instPartnerbuyeruser.release();
@@ -137,7 +137,7 @@ partnerbuyeruser.sendPasswordEmails = (req, res) => {
     .then(() => res.json({ message: 'Password reset emails sent' }))
     .catch((err) => {
       new Log({ message: `PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS ${err}`, type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instUser.release();

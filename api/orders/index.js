@@ -26,7 +26,7 @@ order.getAllOrders = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_LIST', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instOrder.release();
@@ -70,7 +70,7 @@ order.getOrder = (req, res) => {
   instOrder.getByValue(query.validateParam(req.swagger.params, 'orderkey', ''), 'orderkey')
     .then((resultList) => {
       if (resultList.length === 0) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       log.info(resultList);
       new Log({
@@ -105,7 +105,7 @@ order.updateOrder = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instOrder.release();
@@ -130,7 +130,7 @@ order.updateOrderById = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_UPDATE_FINAL', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instOrder.release();
@@ -175,7 +175,7 @@ order.confirmOrder = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_CONFIRM', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instOrder.release();
@@ -192,7 +192,7 @@ order.confirmOrder = (req, res) => {
 order.getAllSellerOrders = (req, res) => {
   const instOrder = new Order({});
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
+    partnerId: query.validateParam(req.swagger.params, 'partnerId', 0),
   })
     .then((result) => {
       new Log({
@@ -202,7 +202,7 @@ order.getAllSellerOrders = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'SELLER_ORDER_LIST', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instOrder.release();

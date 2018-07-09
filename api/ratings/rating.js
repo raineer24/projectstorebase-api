@@ -86,7 +86,7 @@ function Rating(orderSeller) {
       'useraccount_id',
       'address_id',
       'referenceId',
-      'seller_id',
+      'partner_id',
     ],
   });
   this.sqlTableUser = sql.define({
@@ -122,7 +122,7 @@ Rating.prototype.create = () => new BluePromise((resolve, reject) => {
           const ratingEntry = resultList[0];
           log.info(ratingEntry);
           if (!resultList[0].id) {
-            reject('Not found');
+            reject('Not Found');
           } else {
             new Mailer(that.mailConfirmation(ratingEntry)).send()
               .then(() => {

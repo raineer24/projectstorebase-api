@@ -362,7 +362,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /user/account/partnerbuyerusers/{partnerbuyer_id}:
+  /user/account/partnerbuyerusers/{partner_id}:
     x-swagger-router-controller: partnerbuyeruser
     get:
       tags:
@@ -370,7 +370,7 @@ paths:
       summary: check if user is in partnerbuyeruser table
       operationId: getUsers
       parameters:
-        - $ref: "#/parameters/partnerbuyer_id"
+        - $ref: "#/parameters/partner_id"
       responses:
         200:
           description: Get all partner buyer users
@@ -811,7 +811,7 @@ paths:
       parameters:
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
-        - $ref: "#/parameters/sellersId"
+        - $ref: "#/parameters/partnersId"
         - $ref: "#/parameters/count"
       responses:
         200:
@@ -1067,7 +1067,7 @@ paths:
               message:
                 type: string
                 example: Unauthorized
-  /seller/account/order/{sellerId}:
+  /seller/account/order/{partnerId}:
     x-swagger-router-controller: orders
     get:
       tags:
@@ -1075,7 +1075,7 @@ paths:
       summary: Get all orders that are confirmed
       operationId: getAllSellerOrders
       parameters:
-        - $ref: "#/parameters/sellerId"
+        - $ref: "#/parameters/partnerId"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/sort"
@@ -2335,7 +2335,7 @@ paths:
       summary: Get all order seller records
       operationId: getAllOrderSellers
       parameters:
-        - $ref: "#/parameters/sellerIdQ"
+        - $ref: "#/parameters/partnerIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/mode"
@@ -2475,7 +2475,7 @@ paths:
       summary: Get orderseller
       operationId: countFreshFrozen
       parameters:
-        - $ref: "#/parameters/sellerIdQ"
+        - $ref: "#/parameters/partnerIdQ"
       responses:
         200:
           description: Success
@@ -2558,7 +2558,7 @@ paths:
       summary: show logs
       operationId: showallLogs
       parameters:
-        # - $ref: "#/parameters/sellerIdQ"
+        # - $ref: "#/parameters/partnerIdQ"
         - $ref: "#/parameters/skip"
         - $ref: "#/parameters/limit"
       responses:
@@ -2923,7 +2923,7 @@ definitions:
       useraccount_id:
         type: number
         description: user id
-      partnerbuyer_id:
+      partner_id:
         type: number
         description: partner buyer id
       balance:
@@ -3144,9 +3144,9 @@ parameters:
     name: username
     type: string
     required: true
-  partnerbuyer_id:
+  partner_id:
     in: path
-    name: partnerbuyer_id
+    name: partner_id
     type: number
     required: true
   useraccount_Id:
@@ -3274,19 +3274,19 @@ parameters:
     name: useraccountId
     type: string
     required: true
-  sellerId:
+  partnerId:
     in: path
-    name: sellerId
+    name: partnerId
     type: string
     required: true
-  sellerIdQ:
+  partnerIdQ:
     in: query
-    name: sellerId
+    name: partnerId
     type: string
     required: true
-  sellersId:
+  partnersId:
     in: query
-    name: sellersId
+    name: partnersId
     type: number
     required: false
   listId:

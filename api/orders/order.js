@@ -81,7 +81,7 @@ function Order(order) {
       'useraccount_id',
       'address_id',
       'referenceId',
-      'seller_id',
+      'partner_id',
     ],
   });
   this.sqlTableOrderSeller = sql.define({
@@ -99,7 +99,7 @@ function Order(order) {
       'comments',
       'order_id',
       'selleraccount_id',
-      'seller_id',
+      'partner_id',
       'dateCompleted',
       'dateCreated',
       'dateUpdated',
@@ -181,7 +181,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.sellerId) {
+  } else if (filters.partnerId) {
     query = that.sqlTable
       .select(that.sqlTable.id.as('order_id'), that.sqlTable.star(), that.sqlTableUser.star(), that.sqlTableOrderSeller.star())
       .from(that.sqlTable
@@ -189,7 +189,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .on(that.sqlTableUser.id.equals(that.sqlTable.useraccount_id))
         .leftJoin(that.sqlTableOrderSeller)
         .on(that.sqlTableOrderSeller.order_id.equals(that.sqlTable.id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
+      .where(that.sqlTable.partner_id.equals(filters.partnerId))
       .order(sortString)
       .limit(limit)
       .offset(skip)
@@ -250,7 +250,7 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
   that.getByValue(orderkey, 'orderkey')
     .then((resultList) => {
       if (resultList.length === 0) {
-        reject('Not found');
+        reject('Not Found');
       } else {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
@@ -331,7 +331,7 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
               .catch(() => {});
             new Orderseller({
               order_id: orderEntry.id,
-              seller_id: orderEntry.seller_id,
+              partner_id: orderEntry.partner_id,
               orderNumber: orderEntry.number,
             }).create();
             resolve(transactionId);
@@ -492,7 +492,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                                 <hr>
                                                 <p><span style="font-size: 18px;">Total: PHP ${orderEntry.total}</span></p>
                                                 <table>
-                                                
+
                                         </tr>
                                     </tbody>
                                 </table>
