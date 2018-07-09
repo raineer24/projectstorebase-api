@@ -66,7 +66,6 @@ orderItem.updateOrderItem = (req, res) => {
 * @return {Object}
 */
 orderItem.getOrderItems = (req, res) => {
-  userid = req.swagger.params.body.value.user_id;
   const instOrderItem = new OrderItem({});
   instOrderItem.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     orderkey: query.validateParam(req.swagger.params, 'key', ''),
@@ -75,7 +74,7 @@ orderItem.getOrderItems = (req, res) => {
   })
     .then((result) => {
       new Log({
-        message: 'Show all ordered items', action: 'ORDER_ITEM_GET', type: 'INFO', user_id: `${userid}`,
+        message: 'Show all ordered items', action: 'ORDER_ITEM_GET', type: 'INFO',
       }).create();
       return res.json(result);
     })

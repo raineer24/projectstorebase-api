@@ -34,7 +34,7 @@ orderseller.getAllOrderSellers = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_LIST', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instOrder.release();
@@ -65,7 +65,7 @@ orderseller.createOrderSeller = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_CREATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instOrderseller.release();
@@ -112,7 +112,7 @@ orderseller.updateOrderseller = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instOrderseller.release();
@@ -147,6 +147,27 @@ orderseller.takeOrder = (req, res) => {
     })
     .finally(() => {
       instOrderseller.release();
+    });
+};
+
+/**
+* List
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+orderseller.countFreshFrozen = (req, res) => {
+  const instOrder = new OrderSeller({});
+
+  instOrder.countFreshFrozen({
+    sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
+  })
+    .then((result) => {
+      res.json(result);
+    })
+    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' }))
+    .finally(() => {
+      instOrder.release();
     });
 };
 

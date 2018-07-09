@@ -16,17 +16,17 @@ const transactions = {};
 
 transactions.getTransaction = (req, res) => {
   const instTransactions = new Transaction({});
-  instTransactions.getByValue(query.validateParam(req.swagger.params, 'orderId', 0), 'order_id')
+  instTransactions.getByValue(query.validateParam(req.swagger.params, 'id', 0), 'id')
     .then((resultList) => {
       if (resultList.length === 0) {
-        new Log({ message: `Viewing details of transaction id ${resultList.id}.`, action: 'ORDER_GET', type: 'INFO' }).create();
+        new Log({ message: `Viewing transactions of order id ${resultList[0].order_id}.`, action: 'GET_TRANSACTION', type: 'INFO' }).create();
         return res.status(404).json({ message: 'Not found' });
       }
       return res.json(resultList[0]);
     })
     .catch((err) => {
-      new Log({ message: `${err}`, action: 'ORDER_GET', type: 'ERROR' }).create();
-      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+      new Log({ message: `${err}`, action: 'GET_TRANSACTION', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
       instTransactions.release();
@@ -58,7 +58,7 @@ transactions.getTransactions = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'GET_ALL_TRANSACTIONS', type: 'ERROR' }).create();
-      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
       instTransactions.release();
@@ -95,14 +95,14 @@ transactions.recordTransaction = (req, res) => {
 */
 transactions.updateTransaction = (req, res) => {
   const instTrans = new Transaction(req.swagger.params.body.value);
-  instTrans.updateByOrderId(query.validateParam(req.swagger.params, 'order_id', 'order_id'))
-    .then((id) => {
-      res.json({ id, message: 'Saved' });
-      new Log({ message: `Updated transaction ${id} successfully.`, action: 'TRANSACTION_UPDATE', type: 'INFO' }).create();
+  instTrans.update(query.validateParam(req.swagger.params, 'id', 0))
+    .then((msg) => {
+      new Log({ message: `Updated transaction ${req.swagger.params.id} successfully.`, action: 'TRANSACTION_UPDATE', type: 'INFO' }).create();
+      return res.json({ message: `Updated ${msg}` });
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'TRANSACTION_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
     })
     .finally(() => {
       instTrans.release();
@@ -122,10 +122,51 @@ transactions.getGrandTotal = (req, res) => {
     new Log({ message: 'Show totals of all transactions', action: 'TRANSACTIONS_GRANDTOTAL', type: 'INFO' }).create();
   }).catch((err) => {
     new Log({ message: `${err}`, action: 'TRANSACTIONS_GRANDTOTAL', type: 'ERROR' }).create();
-    return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
   })
     .finally(() => {
       instTransactions.release();
+    });
+};
+
+transactions.getTransactionByOrderId = (req, res) => {
+  const instTrans = new Transaction({});
+  instTrans.getByValue(query.validateParam(req.swagger.params, 'order_id', 0), 'order_id')
+    .then((resultList) => {
+      if (resultList.length === 0) {
+        new Log({ message: `Viewing transactions of order id ${resultList[0].order_id}.`, action: 'GET_TRANSACTION_BY_ORDER', type: 'INFO' }).create();
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.json(resultList);
+    })
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'GET_TRANSACTION_BY_ORDER', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instTrans.release();
+    });
+};
+
+/**
+* Update a transaction by order ID
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+transactions.updateTransactionByOrderId = (req, res) => {
+  const instTrans = new Transaction(req.swagger.params.body.value);
+  instTrans.updateByOrderId(query.validateParam(req.swagger.params, 'order_id', 'order_id'))
+    .then((id) => {
+      res.json({ id, message: 'Saved' });
+      new Log({ message: `Updated transaction ${id} successfully.`, action: 'TRANSACTION_UPDATE_BY_ORDER', type: 'INFO' }).create();
+    })
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'TRANSACTION_UPDATE_BY_ORDER', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+    })
+    .finally(() => {
+      instTrans.release();
     });
 };
 

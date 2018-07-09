@@ -2,6 +2,7 @@ const query = require('../../service/query');
 const Log = require('../logs/log');
 
 const User = require('./user');
+const log = require('color-logs')(true, true, 'User Account');
 
 const user = {};
 
@@ -10,7 +11,7 @@ user.connectDb = (req, res) => {
   instUser.testConnection()
     .then(result => res.json({ message: result }))
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }));
 };
 
@@ -32,7 +33,7 @@ user.getAllUsers = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'USER_LIST', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instUser.release();
@@ -54,7 +55,7 @@ user.getAllUsersAdmin = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ADMIN_USER_LIST', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instUser.release();
@@ -79,7 +80,7 @@ user.loginAccount = (req, res) => {
       return res.json(instUser.cleanResponse(result, { message: 'Found' }));
     })
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }))
     .finally(() => {
       instUser.release();
@@ -106,6 +107,28 @@ user.registerAccount = (req, res) => {
 };
 
 /**
+* Add an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.registerAccounts = (req, res) => {
+  const instUser = new User();
+  instUser.createMultiple(req.swagger.params.body.value)
+    .then((status) => {
+      new Log({ message: 'Create new user accounts', action: 'USER_REGISTER', type: 'INFO' }).create();
+      return res.json(status);
+    })
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'PBU_CREATE', type: 'ERROR' }).create();
+      return res.status(err === 'Found' ? 201 : 500).json({ message: err === 'Found' ? 'Existing' : err });
+    })
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+/**
 * User registration
 * @param {Object} req
 * @param {Object} res
@@ -118,9 +141,16 @@ user.updateAccount = (req, res) => {
   const instUser = new User(req.swagger.params.body.value);
   instUser.update(query.validateParam(req.swagger.params, 'id', 0))
     .then(status => res.json({ status, message: 'Updated' }))
-    .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
-      message: err === 'Not Found' ? 'Not found' : err,
-    }))
+    .catch((err) => {
+      switch (err) {
+        case 'Not Found':
+          return res.status(404).json({ message: 'Not Found' });
+        case 'Email Found':
+          return res.status(409).json({ message: 'Email Already Taken' });
+        default:
+          return res.status(500).json({ message: 'Failed' });
+      }
+    })
     .finally(() => {
       instUser.release();
     });
@@ -138,7 +168,7 @@ user.changePassword = (req, res) => {
   instUser.update(query.validateParam(req.swagger.params, 'id', 0), true)
     .then(status => res.json({ status, message: 'Updated' }))
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
-      message: err === 'Not Found' ? 'Not found' : err,
+      message: err === 'Not Found' ? 'Not Found' : err,
     }))
     .finally(() => {
       instUser.release();
@@ -158,7 +188,7 @@ user.forgotPassword = (req, res) => {
     .then(status => res.json({ status, message: 'Success' }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'USER_SEND_PASSWORD_RESET_EMAIL', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instUser.release();
@@ -176,6 +206,30 @@ user.viewAccount = (req, res) => {
   instUser.getById(query.validateParam(req.swagger.params, 'id', 0))
     .then((resultList) => {
       if (!resultList[0].id) {
+        return res.status(404).json({ message: 'Not Found' });
+      }
+      return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
+    })
+    .catch(() => res.status(404).json({
+      message: 'Not Found',
+    }))
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+/**
+* View user profile
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.checkAccount = (req, res) => {
+  const instUser = new User();
+  log.info(req.swagger.params.username.value);
+  instUser.getByValue(req.swagger.params.username.value, 'username')
+    .then((resultList) => {
+      if (!resultList[0].id) {
         return res.status(404).json({ message: 'Not found' });
       }
       return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
@@ -187,5 +241,6 @@ user.viewAccount = (req, res) => {
       instUser.release();
     });
 };
+
 
 module.exports = user;
