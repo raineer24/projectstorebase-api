@@ -360,7 +360,7 @@ Partnerbuyeruser.prototype.getByValue = (value, field) => {
 // User.prototype.getById = id => that.dbConn.readAsync(id);
 Partnerbuyeruser.prototype.findById = id => that.getByValue(id, 'id');
 Partnerbuyeruser.prototype.getById = id => that.getByValue(id, 'id');
-
+Partnerbuyeruser.prototype.getByIdPBU = id => that.getByValue(id, 'useraccount_id');
 
 /**
   * findAll

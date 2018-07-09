@@ -91,10 +91,11 @@ partnerbuyeruser.getUsers = (req, res) => {
 */
 partnerbuyeruser.getUser = (req, res) => {
   const instUser = new Partnerbuyeruser();
-  instUser.getById(query.validateParam(req.swagger.params, 'useraccount_id', 0))
+  log.info(req.swagger.params.value);
+  instUser.getByIdPBU(query.validateParam(req.swagger.params, 'useraccount_id', 0))
     .then((resultList) => {
-      if (!resultList[0].name) {
-        return res.status(404).json({ message: 'Not Found' });
+      if (!resultList[0].id) {
+        return res.status(404).json({ message: 'Not found' });
       }
       return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
     })

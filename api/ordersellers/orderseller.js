@@ -2,7 +2,7 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
-
+const Mailer = require('../../service/mail');
 const Conn = require('../../service/connection');
 const OrderStatusLogs = require('../orderstatuslogs/orderstatuslogs');
 
@@ -183,6 +183,42 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
           .where(that.sqlTable.id.equals(id)).toQuery();
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
+            if (that.model.status === 'assembled') {
+              new Mailer(that.mailConfirmation(that.model)).send()
+                .then(() => {
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info('sent! Email assembled confirmation');
+                  log.info(that.model);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                });
+            }
+            if (that.model.status === 'in-transit') {
+              new Mailer(that.mailTransitConfirmation(that.model)).send()
+                .then(() => {
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info('sent! Email in-transit confirmation');
+                  log.info(that.model);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                });
+            }
+            if (that.model.status === 'complete') {
+              new Mailer(that.mailCompletedConfirmation(that.model)).send()
+                .then(() => {
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info('sent! Email complete confirmation');
+                  log.info(that.model);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                });
+            }
             new OrderStatusLogs({
               order_id: that.model.order_id,
               status: that.model.status,
@@ -200,6 +236,50 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
     });
 });
 
+OrderSeller.prototype.mailConfirmation = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>Assembled Orders. order # ${userAccount.orderNumber}</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'raineerdelarita@gmail.com',
+    subject: `OMG - Assembled orders ${userAccount.orderNumber}`,
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>in-transit order ${userAccount.orderNumber}</p></div>
+  <div><p>in-transit order</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'raineerdelarita@gmail.com',
+    subject: `Your order #${userAccount.orderNumber} will be delivered now`,
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+OrderSeller.prototype.mailCompletedConfirmation = (userAccount) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div><p>Delivered order ${userAccount.orderNumber}</p></div>
+  <div><p>in-transit order</p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'raineerdelarita@gmail.com',
+    subject: `Your order #${userAccount.orderNumber} delivery completed`,
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
 /**
   * update
   * @return {object/number}
