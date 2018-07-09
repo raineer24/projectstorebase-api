@@ -181,10 +181,11 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
           .where(that.sqlTable.id.equals(id)).toQuery();
+        const orderSeller = that.model;
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
-            if (that.model.status === 'assembled') {
-              new Mailer(that.mailConfirmation(that.model)).send()
+            if (orderSeller.status === 'assembled') {
+              new Mailer(that.mailConfirmation(orderSeller)).send()
                 .then(() => {
                   log.info('resultList[0]');
                   log.info(resultList[0]);
@@ -195,8 +196,8 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                   log.error(`Failed to send ${err}`);
                 });
             }
-            if (that.model.status === 'in-transit') {
-              new Mailer(that.mailTransitConfirmation(that.model)).send()
+            if (orderSeller.status === 'in-transit') {
+              new Mailer(that.mailTransitConfirmation(orderSeller)).send()
                 .then(() => {
                   log.info('resultList[0]');
                   log.info(resultList[0]);
@@ -207,8 +208,8 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                   log.error(`Failed to send ${err}`);
                 });
             }
-            if (that.model.status === 'complete') {
-              new Mailer(that.mailCompletedConfirmation(that.model)).send()
+            if (orderSeller.status === 'complete') {
+              new Mailer(that.mailCompletedConfirmation(orderSeller)).send()
                 .then(() => {
                   log.info('resultList[0]');
                   log.info(resultList[0]);
