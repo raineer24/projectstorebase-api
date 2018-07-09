@@ -661,7 +661,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 `;
           resolve({
             from: 'info@eos.com.ph',
-            bcc: 'raineerdelarita@gmail.com',
+            bcc: 'info@eos.com.ph',
             to: orderEntry.email,
             subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
             text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,

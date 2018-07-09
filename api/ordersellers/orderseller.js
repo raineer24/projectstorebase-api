@@ -223,8 +223,6 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
 });
 
 OrderSeller.prototype.mailConfirmation = (userAccount) => {
-  log.info('userAccount');
-  log.info(userAccount);
   const body = `
   <div><p>Hi,</p></div>
   <div><p>FUllfilment order ${userAccount.orderNumber}</p></div>
@@ -233,15 +231,13 @@ OrderSeller.prototype.mailConfirmation = (userAccount) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    to: 'delaritaraineer81@gmail.com',
+    to: 'info@eos.com.ph',
     subject: 'OMG - Fullfillment order',
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
   };
 };
 OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
-  log.info('userAccount');
-  log.info(userAccount);
   const body = `
   <div><p>Hi,</p></div>
   <div><p>in-transit order ${userAccount.orderNumber}</p></div>
@@ -250,25 +246,23 @@ OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    to: 'delaritaraineer81@gmail.com',
-    subject: 'OMG - In-transit confirmation order',
+    to: 'info@eos.com.ph',
+    subject: `Your order #${userAccount.orderNumber} will be delivered now`,
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
   };
 };
 OrderSeller.prototype.mailCompletedConfirmation = (userAccount) => {
-  log.info('userAccount');
-  log.info(userAccount);
   const body = `
   <div><p>Hi,</p></div>
-  <div><p>Completed order ${userAccount.orderNumber}</p></div>
+  <div><p>Delivered order ${userAccount.orderNumber}</p></div>
   <div><p>in-transit order</p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
     from: 'info@eos.com.ph',
-    to: 'delaritaraineer81@gmail.com',
-    subject: 'OMG - Completed confirmation order',
+    to: 'info@eos.com.ph',
+    subject: `Your order #${userAccount.orderNumber} delivery completed`,
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
   };
