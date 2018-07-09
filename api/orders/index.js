@@ -1,6 +1,6 @@
 const query = require('../../service/query');
 const Log = require('../logs/log');
-const log = require('color-logs')(true, true, 'User Account');
+const log = require('color-logs')(true, true, 'Orders');
 const Util = require('../helpers/util');
 const Order = require('./order');
 
@@ -14,12 +14,15 @@ const order = {};
 */
 order.getAllOrders = (req, res) => {
   const instOrder = new Order({});
+  const userid = req.swagger.params.useraccountId.value;
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     useraccountId: query.validateParam(req.swagger.params, 'useraccountId', 0),
   })
     .then((result) => {
-      res.json(result);
-      new Log({ message: 'Show all orders by seller account', action: 'ORDER_LIST', type: 'INFO' }).create();
+      new Log({
+        message: 'Show all orders by user', action: 'ORDER_LIST', type: 'INFO', user_id: `${userid}`,
+      }).create();
+      return res.json(result);
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_LIST', type: 'ERROR' }).create();
@@ -39,10 +42,13 @@ order.getAllOrders = (req, res) => {
 order.addOrder = (req, res) => {
   log.info(req.swagger.params.body.value);
   const instOrder = new Order(req.swagger.params.body.value);
+  const userid = req.swagger.params.body.value.useraccount_id;
   instOrder.create()
     .then((id) => {
-      res.json({ id, message: 'Saved' });
-      new Log({ message: 'Add a new order', action: 'ORDER_CREATE', type: 'INFO' }).create();
+      new Log({
+        message: 'Add a new order', action: 'ORDER_CREATE', type: 'INFO', user_id: `${userid}`,
+      }).create();
+      return res.json({ id, message: 'Saved' });
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_CREATE', type: 'ERROR' }).create();
@@ -66,7 +72,10 @@ order.getOrder = (req, res) => {
       if (resultList.length === 0) {
         return res.status(404).json({ message: 'Not found' });
       }
-      new Log({ message: 'Show current order details', action: 'ORDER_GET', type: 'INFO' }).create();
+      log.info(resultList);
+      new Log({
+        message: 'Show current order details', action: 'ORDER_GET', type: 'INFO', user_id: `${resultList.useraccount_id}`,
+      }).create();
       return res.json(resultList[0]);
     })
     .catch((err) => {
@@ -86,10 +95,13 @@ order.getOrder = (req, res) => {
 */
 order.updateOrder = (req, res) => {
   const instOrder = new Order(req.swagger.params.body.value);
+  const userid = req.swagger.params.body.value.useraccount_id;
   instOrder.updateByOrderkey(query.validateParam(req.swagger.params, 'orderkeypath', ''))
     .then((msg) => {
-      res.json({ message: `Updated ${msg}` });
-      new Log({ message: 'Update current order', action: 'ORDER_UPDATE', type: 'INFO' }).create();
+      new Log({
+        message: 'Update current order', action: 'ORDER_UPDATE', type: 'INFO', user_id: `${userid}`,
+      }).create();
+      return res.json({ message: `Updated ${msg}` });
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_UPDATE', type: 'ERROR' }).create();
@@ -111,8 +123,10 @@ order.updateOrderById = (req, res) => {
   const instOrder = new Order(req.swagger.params.body.value);
   instOrder.update(query.validateParam(req.swagger.params, 'id', 0))
     .then((msg) => {
-      res.json({ message: `Updated ${msg}` });
-      new Log({ message: 'Finalize current order', action: 'ORDER_UPDATE_FINAL', type: 'INFO' }).create();
+      new Log({
+        message: 'Finalize current order', action: 'ORDER_UPDATE_FINAL', type: 'INFO', user_id: `${instOrder.useraccount_id}`,
+      }).create();
+      return res.json({ message: `Updated ${msg}` });
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_UPDATE_FINAL', type: 'ERROR' }).create();
@@ -150,11 +164,14 @@ order.confirmOrder = (req, res) => {
   const transType = req.swagger.params.body.value.paymentType;
   delete req.swagger.params.body.value.gcList;
   delete req.swagger.params.body.value.paymentType;
+  const userid = req.swagger.params.body.value.useraccount_id;
   const instOrder = new Order(req.swagger.params.body.value);
   instOrder.processOrder(query.validateParam(req.swagger.params, 'id', 0), gcList, transType)
     .then((msg) => {
-      res.json({ message: `Processed order ${msg}`, transaction: msg });
-      new Log({ message: 'Order confirmation', action: 'ORDER_CONFIRM', type: 'INFO' }).create();
+      new Log({
+        message: 'Order confirmation', action: 'ORDER_CONFIRM', type: 'INFO', user_id: `${userid}`,
+      }).create();
+      return res.json({ message: `Processed order ${msg}`, transaction: msg });
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDER_CONFIRM', type: 'ERROR' }).create();
@@ -178,10 +195,10 @@ order.getAllSellerOrders = (req, res) => {
     sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
   })
     .then((result) => {
-      res.json(result);
       new Log({
         message: 'Show all orders by seller account', action: 'SELLER_ORDER_LIST', type: 'INFO', user_id: `${result.id}`, selleraccount_id: `${result.selleraccound_id}`,
       }).create();
+      return res.json(result);
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'SELLER_ORDER_LIST', type: 'ERROR' }).create();
