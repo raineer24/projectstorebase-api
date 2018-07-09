@@ -1813,6 +1813,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /category/addmany:
+    x-swagger-router-controller: categories
+    post:
+      tags:
+        - category
+      summary: create a category
+      operationId: addCategories
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/CategoryCreate"
+      responses:
+        200:
+          description: Successful created item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /list/{useraccountId}/user:
     x-swagger-router-controller: list
     get:

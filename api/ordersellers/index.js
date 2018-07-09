@@ -15,9 +15,6 @@ orderseller.getAllOrderSellers = (req, res) => {
   const x = req.swagger.params.sellerId.value;
   log.info(x);
   const instOrder = new OrderSeller({});
-  new Log({
-    message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', seller_id: `${res.id}`,
-  }).create();
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 25), {
     sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
     sellerAccount: true,
@@ -30,10 +27,10 @@ orderseller.getAllOrderSellers = (req, res) => {
     count: query.validateParam(req.swagger.params, 'count', ''),
   })
     .then((result) => {
-      res.json(result);
       new Log({
-        message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', selleraccount_id: `${x}`,
+        message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', selleraccount_id: `${x}`, seller_id: `${x}`,
       }).create();
+      return res.json(result);
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_LIST', type: 'ERROR' }).create();
@@ -82,12 +79,12 @@ orderseller.createOrderSeller = (req, res) => {
 * @return {Object}
 */
 orderseller.getOrderseller = (req, res) => {
-  new Log({ message: 'Get specific order by seller account', action: 'ORDERSELLER_GET', type: 'INFO' }).create();
   const instOrderseller = new OrderSeller({});
   instOrderseller.getByIdJoinOrder(query.validateParam(req.swagger.params, 'id', ''))
     .then((resultList) => {
       if (resultList.length === 0) {
-        return res.status(404).json({ message: 'Not Found' });
+        new Log({ message: 'Get specific order by seller account', action: 'ORDERSELLER_GET', type: 'INFO' }).create();
+        return res.status(404).json({ message: 'Not found' });
       }
       return res.json(resultList[0]);
     })
@@ -107,10 +104,12 @@ orderseller.getOrderseller = (req, res) => {
 * @return {Object}
 */
 orderseller.updateOrderseller = (req, res) => {
-  new Log({ message: 'Update orderseller', action: 'ORDERSELLER_UPDATE', type: 'INFO' }).create();
   const instOrderseller = new OrderSeller(req.swagger.params.body.value);
   instOrderseller.update(query.validateParam(req.swagger.params, 'id', 0))
-    .then(msg => res.json({ message: `Updated ${msg}` }))
+    .then((msg) => {
+      new Log({ message: 'Update orderseller', action: 'ORDERSELLER_UPDATE', type: 'INFO' }).create();
+      return res.json({ message: `Updated ${msg}` });
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_UPDATE', type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
@@ -127,10 +126,12 @@ orderseller.updateOrderseller = (req, res) => {
 * @return {Object}
 */
 orderseller.takeOrder = (req, res) => {
-  new Log({ message: 'Update orderseller', action: 'ORDERSELLER_TAKE_ORDER', type: 'INFO' }).create();
   const instOrderseller = new OrderSeller(req.swagger.params.body.value);
   instOrderseller.takeOrder(query.validateParam(req.swagger.params, 'id', 0), req.swagger.params.body.value.selleraccount_id)
-    .then(msg => res.json({ message: `Updated ${msg}` }))
+    .then((msg) => {
+      new Log({ message: 'Update orderseller', action: 'ORDERSELLER_TAKE_ORDER', type: 'INFO' }).create();
+      return res.json({ message: `Updated ${msg}` });
+    })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ORDERSELLER_TAKE_ORDER', type: 'ERROR' }).create();
       switch (err) {

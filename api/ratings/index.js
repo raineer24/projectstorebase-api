@@ -1,6 +1,7 @@
 const query = require('../../service/query');
 const Rating = require('./rating');
 const Log = require('../logs/log');
+const log = require('color-logs')(true, true, 'Rating');
 
 const rating = {};
 
@@ -37,6 +38,9 @@ rating.getRating = (req, res) => {
 */
 rating.createRating = (req, res) => {
   const instRating = new Rating(req.swagger.params.body.value);
+  instRating.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
+    ratingId: query.validateParam(req.swagger.params, 'Id', 0),
+  });
   instRating.create()
     .then((result) => {
       res.json({ message: result });
@@ -49,6 +53,7 @@ rating.createRating = (req, res) => {
     .finally(() => {
       instRating.release();
     });
+  log.info('InfoRating');
 };
 
 module.exports = rating;
