@@ -180,7 +180,7 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                 .then(() => {
                   log.info('resultList[0]');
                   log.info(resultList[0]);
-                  log.info(`sent! ${orderNumber}`);
+                  log.info('sent! Email assembled confirmation');
                   log.info(that.model);
                 })
                 .catch((err) => {
@@ -192,14 +192,25 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                 .then(() => {
                   log.info('resultList[0]');
                   log.info(resultList[0]);
-                  log.info(`sent! ${orderNumber}`);
+                  log.info('sent! Email in-transit confirmation');
                   log.info(that.model);
                 })
                 .catch((err) => {
                   log.error(`Failed to send ${err}`);
                 });
             }
-            log.info(that.model.status);
+            if (that.model.status === 'complete') {
+              new Mailer(that.mailTransitConfirmation(that.model)).send()
+                .then(() => {
+                  log.info('resultList[0]');
+                  log.info(resultList[0]);
+                  log.info('sent! Email complete confirmation');
+                  log.info(that.model);
+                })
+                .catch((err) => {
+                  log.error(`Failed to send ${err}`);
+                });
+            }
             resolve(response.message);
           })
           .catch((err) => {
