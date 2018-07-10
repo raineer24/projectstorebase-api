@@ -5,6 +5,8 @@ const log = require('color-logs')(true, true, 'Order Seller');
 const Mailer = require('../../service/mail');
 const Conn = require('../../service/connection');
 const OrderStatusLogs = require('../orderstatuslogs/orderstatuslogs');
+const OrderItem = require('../orderItems/orderItem');
+const Order = require('../orders/order');
 
 let that;
 
@@ -185,15 +187,32 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
             if (orderSeller.status === 'assembled') {
-              new Mailer(that.mailConfirmation(orderSeller)).send()
-                .then(() => {
-                  log.info('resultList[0]');
-                  log.info(resultList[0]);
-                  log.info('sent! Email assembled confirmation');
-                  log.info(that.model);
+              that.findAll(0, 1, { order_id: orderSeller.order_id, sendMail: true })
+                .then((orderList) => {
+                  if (orderList.length !== 0) {
+                    new OrderItem({}).findAll(0, 1000, {
+                      orderId: orderList[0].order_id,
+                    })
+                      .then((itemList) => {
+                        if (itemList.length !== 0) {
+                          log.info(itemList.length);
+                          new Mailer(that.mailConfirmation(orderList[0], itemList)).send()
+                            .then(() => {
+                              log.info(orderList);
+                              log.info('resultList[0]');
+                              log.info(resultList[0]);
+                              log.info('sent! Email assembled confirmation');
+                              log.info(that.model);
+                            })
+                            .catch((err) => {
+                              log.info(`Failed to send  ${err}`);
+                            });
+                        }
+                      });
+                  }
                 })
                 .catch((err) => {
-                  log.error(`Failed to send ${err}`);
+                  log.error(`Failed to send 1 ${err}`);
                 });
             }
             if (orderSeller.status === 'in-transit') {
@@ -209,7 +228,7 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                 });
             }
             if (orderSeller.status === 'complete') {
-              new Mailer(that.mailCompletedConfirmation(orderSeller)).send()
+              new Mailer(that.mailCompletedConfirmation()).send()
                 .then(() => {
                   log.info('resultList[0]');
                   log.info(resultList[0]);
@@ -237,17 +256,28 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
     });
 });
 
-OrderSeller.prototype.mailConfirmation = (userAccount) => {
+OrderSeller.prototype.mailConfirmation = (orderSeller, itemList) => {
+  const timeslots = ['', '8:00AM - 10:00AM', '11:00AM - 1:00PM', '2:00PM - 4:00PM', '5:00PM - 7:00PM', '8:00PM - 10:00PM'];
+  let items = '';
+  _.forEach(itemList, (item) => {
+    log.info('item');
+    log.info(item);
+    items += `<div>${item.name}</div>`;
+    items += `<div> <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg"</div>`;
+  });
   const body = `
   <div><p>Hi,</p></div>
-  <div><p>Assembled Orders. order # ${userAccount.orderNumber}</p></div>
+  <div><p>in-transit order ${orderSeller.orderNumber}</p></div>
+  <div>${timeslots[orderSeller.timeslot_id]}</div>
+   <div>${orderSeller.date}</div>
   <div><p>Thank you!</p></div>
+  ${items}
   `;
   return {
     from: 'info@eos.com.ph',
     to: 'raineerdelarita@gmail.com',
-    subject: `OMG - Assembled orders ${userAccount.orderNumber}`,
-    text: `Successfully registered with e-mail ${userAccount.email}`,
+    subject: `Your order #${orderSeller.orderNumber} will be delivered now`,
+    text: `Successfully registered with e-mail ${orderSeller.email}`,
     html: body,
   };
 };
@@ -459,6 +489,19 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .from(that.sqlTable)
       .where(that.sqlTable.selleraccount_id.equals(filters.selleraccount_id)
         .and(that.sqlTable.dateAssembled.between(today, tomorrow)))
+      .toQuery();
+  } else if (filters.sendMail) {
+    query = that.sqlTable
+      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date, that.sqlTableOrder.star())
+      .from(that.sqlTable
+        .join(that.sqlTableOrder)
+        .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
+        .leftJoin(that.sqlTableTimeslotOrder)
+        .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
+      .where(that.sqlTable.order_id.equals(filters.order_id))
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
       .toQuery();
   } else {
     query = that.sqlTable
