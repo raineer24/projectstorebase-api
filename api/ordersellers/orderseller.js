@@ -263,11 +263,11 @@ OrderSeller.prototype.mailConfirmation = (orderSeller, itemList) => {
     log.info('item');
     log.info(item);
     items += `<div>${item.name}</div>`;
-    items += `<div> <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg"</div>`;
+    items += `<div> <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg" style="margin:0 auto;float:none;max-width:50px;max-height:50px"/></div>`;
   });
   const body = `
   <div><p>Hi,</p></div>
-  <div><p>in-transit order ${orderSeller.orderNumber}</p></div>
+  <div><p>Assembled ${orderSeller.orderNumber}</p></div>
   <div>${timeslots[orderSeller.timeslot_id]}</div>
    <div>${orderSeller.date}</div>
   <div><p>Thank you!</p></div>
@@ -275,9 +275,10 @@ OrderSeller.prototype.mailConfirmation = (orderSeller, itemList) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    to: 'raineerdelarita@gmail.com',
-    subject: `Your order #${orderSeller.orderNumber} will be delivered now`,
-    text: `Successfully registered with e-mail ${orderSeller.email}`,
+    bcc: 'raineerdelarita@gmail.com',
+    to: 'nerboikun24@gmail.com',
+    subject: `Assembled #${orderSeller.orderNumber} will be delivered now`,
+    text: `Successfully Assembled orders ${orderSeller.email}`,
     html: body,
   };
 };
@@ -290,7 +291,8 @@ OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    to: 'raineerdelarita@gmail.com',
+    bcc: 'raineerdelarita@gmail.com',
+    to: 'marianghelita@gmail.com',
     subject: `Your order #${userAccount.orderNumber} will be delivered now`,
     text: `Successfully registered with e-mail ${userAccount.email}`,
     html: body,
