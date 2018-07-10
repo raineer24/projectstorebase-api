@@ -2,6 +2,8 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
+const moment = require('moment');
+
 const Mailer = require('../../service/mail');
 const Conn = require('../../service/connection');
 const OrderStatusLogs = require('../orderstatuslogs/orderstatuslogs');
@@ -395,9 +397,11 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .toQuery();
     }
   } else if (filters.sellerId && filters.mode === 'assembly') {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    // const now = new Date();
+    // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    const today = moment().format('YYYY-MM-DD');
+    // const tomorrow = moment().add(1, 'days').format('YYYY-MM-DD');
     if (filters.orderStatus.toUpperCase() === 'ALL') {
       query = that.sqlTable
         .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.datetime)
@@ -410,7 +414,8 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
           .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
         .where(that.sqlTable.seller_id.equals(filters.sellerId))
         // .and(that.sqlTable.dateCreated.gte(today))
-        .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        // .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        .and(that.sqlTableTimeslotOrder.date.equals(today))
         .order(sortString)
         .limit(limit)
         .offset(skip)
@@ -428,7 +433,8 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .where(that.sqlTable.seller_id.equals(filters.sellerId))
         .and(sql.functions.UPPER(that.sqlTable.status).equals(filters.orderStatus.toUpperCase()))
         // .and(that.sqlTable.dateCreated.gte(today))
-        .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        // .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        .and(that.sqlTableTimeslotOrder.date.equals(today))
         .order(sortString)
         .limit(limit)
         .offset(skip)
@@ -450,9 +456,11 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .offset(skip)
       .toQuery();
   } else if (filters.takeOrder) {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    // const now = new Date();
+    // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    const today = moment().startOf('day').valueOf();
+    const tomorrow = moment().endOf('day').valueOf();
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
@@ -479,9 +487,11 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   * @return {object}
 */
 OrderSeller.prototype.countFreshFrozen = (filters) => {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+  // const now = new Date();
+  // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+  const today = moment().startOf('day').valueOf();
+  const tomorrow = moment().endOf('day').valueOf();
   const strSql = `
     SELECT os.id, os.order_id, count(oi.id) AS itemCount
       FROM orderseller as os
