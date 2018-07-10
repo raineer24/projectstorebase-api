@@ -54,7 +54,7 @@ selleraccount.getAllSellerUsers = (req, res) => {
   instSellerAccount.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
     partnerId: query.validateParam(req.swagger.params, 'partnersId', 0),
     count: query.validateParam(req.swagger.params, 'count', 0),
-  })
+  }, query.validateParam(req.swagger.params, 'sortBy', ''), query.validateParam(req.swagger.params, 'sort', ''))
     .then((result) => {
       new Log({ message: 'SELLER_ACCOUNT_USER_LIST', type: 'INFO' }).create();
       return res.json(result);

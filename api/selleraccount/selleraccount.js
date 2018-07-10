@@ -221,7 +221,7 @@ Selleraccount.prototype.passwordResetEmail = (user) => {
   <div><p>Hi ${user.name},</p></div>
   <div><p>Your <b>OMG!</b> Dashboard password has been reset.</p></div>
   <div><p>Please create a new password by clicking on this link within the next 24 hours:
-  <a href="https://${hostname}/admin/resetPassword?token=${user.token}&email=${user.email}&i=${user.id}">Click here</a>
+  <a href="http://${hostname}/admin/resetPassword?token=${user.token}&email=${user.email}&i=${user.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
   <div><p>Thank you!</p></div>

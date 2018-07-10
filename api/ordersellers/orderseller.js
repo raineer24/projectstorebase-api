@@ -354,8 +354,10 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .offset(skip)
       .toQuery();
   } else if (filters.partnerId && filters.mode === 'orderlist') {
-    let whereString = null;
-    whereString = `${that.table}.partner_id = ${filters.partnerId}`;
+    let whereString = `${that.table}.partner_id = ${filters.partnerId}`;
+    if (filters.partnerId === 1) {
+      whereString += ` OR ${that.table}.partner_id != ${filters.partnerId}`;
+    }
     if (filters.orderStatus) {
       whereString += ` AND UPPER(${that.table}.status) = UPPER('${filters.orderStatus}')`;
     }
@@ -396,7 +398,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .offset(skip)
         .toQuery();
     }
-  } else if (filters.sellerId && filters.mode === 'assembly') {
+  } else if (filters.partnerId && filters.mode === 'assembly') {
     // const now = new Date();
     // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
@@ -476,7 +478,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .toQuery();
   }
   log.info(query.text);
-
+  log.info(query.values);
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
