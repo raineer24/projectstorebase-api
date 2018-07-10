@@ -115,7 +115,7 @@ Category.prototype.findStructuredAll = () => new BluePromise((resolve, reject) =
         });
         resolve(structured);
       } else {
-        reject('Not found');
+        reject('Not Found');
       }
     })
     .catch((err) => {
@@ -180,7 +180,7 @@ Category.prototype.createMultiple = () => new BluePromise((resolve, reject) => {
               that.getByValue(response.id, 'id')
                 .then((resultList) => {
                   if (!resultList[0].id) {
-                    reject('Not found');
+                    reject('Not Found');
                   } else {
                     resolve(resultList[0]);
                   }

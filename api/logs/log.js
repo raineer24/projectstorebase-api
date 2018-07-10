@@ -29,7 +29,7 @@ function Log(log) {
       'orderkey',
       'user_id',
       'selleraccount_id',
-      'seller_id',
+      'partner_id',
       'dateCreated',
       'dateUpdated',
     ],

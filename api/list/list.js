@@ -63,7 +63,7 @@ List.prototype.update = id => new BluePromise((resolve, reject) => {
   that.getById(id)
     .then((resultList) => {
       if (!resultList[0].id) {
-        reject('Not found');
+        reject('Not Found');
       } else {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
@@ -78,7 +78,7 @@ List.prototype.update = id => new BluePromise((resolve, reject) => {
       }
     })
     .catch(() => {
-      reject('Not found');
+      reject('Not Found');
     });
 });
 

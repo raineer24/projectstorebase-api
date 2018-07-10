@@ -89,7 +89,7 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
         new Timeslot({}).getById(that.model.timeslot_id)
           .then((timeslotResultList) => {
             if (timeslotResultList.length === 0) {
-              reject('Not found');
+              reject('Not Found');
             } else {
               that.findAll(0, 100, {
                 timeslotId: that.model.timeslot_id,
@@ -138,13 +138,13 @@ TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolv
   })
     .then((resultList) => {
       if (resultList.length === 0) {
-        reject('Not found');
+        reject('Not Found');
       } else {
         const dMax = getMax(moment(that.model.date).format('ddd'));
         new Timeslot({}).getById(that.model.timeslot_id)
           .then((timeslotResultList) => {
             if (timeslotResultList.length === 0) {
-              reject('Not found');
+              reject('Not Found');
             } else {
               that.findAll(0, 100, {
                 timeslotId: that.model.timeslot_id,
@@ -173,7 +173,7 @@ TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolv
             }
           })
           .catch(() => {
-            reject('Not found');
+            reject('Not Found');
           });
       }
     })
@@ -306,7 +306,7 @@ TimeslotOrder.prototype.confirmOrder = (orderId) => new BluePromise((resolve, re
   that.getByValue(orderId, 'order_id')
     .then((resultSet) => {
       if (resultSet.length === 0) {
-        reject('Not found');
+        reject('Not Found');
       } else {
         delete that.model.datetime;
         // that.model = _.merge(resultSet[0], that.model);

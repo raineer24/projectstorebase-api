@@ -11,7 +11,7 @@ partnerbuyeruser.connectDb = (req, res) => {
   instUser.testConnection()
     .then(result => res.json({ message: result }))
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }));
 };
 
@@ -64,19 +64,19 @@ partnerbuyeruser.addUsers = (req, res) => {
 */
 partnerbuyeruser.getUsers = (req, res) => {
   const instUser = new Partnerbuyeruser();
-  const x = req.swagger.params.partnerbuyer_id.value;
-  log.info(x);
+  // const x = req.swagger.params.partner_id.value;
+  // log.info(x);
   instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    partnerBuyer_id: query.validateParam(req.swagger.params, 'partnerBuyer_id', x),
+    partnerId: query.validateParam(req.swagger.params, 'partnerId', 0),
   })
     .then((result) => {
       new Log({
-        message: 'Show all partner buyer users', action: 'PBU_LIST', type: 'INFO', user_id: `${x}`,
+        message: 'Show all partner buyer users', action: 'PBU_LIST', type: 'INFO',
       }).create();
       return res.json(result);
     })
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }))
     .finally(() => {
       instUser.release();
@@ -100,7 +100,7 @@ partnerbuyeruser.getUser = (req, res) => {
       return res.json(instUser.cleanResponse(resultList[0], { message: 'Found' }));
     })
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }))
     .finally(() => {
       instUser.release();
@@ -124,7 +124,7 @@ partnerbuyeruser.updateAccount = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'PARTNERBUYERUSER_ACCOUNT_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instPartnerbuyeruser.release();
@@ -138,7 +138,7 @@ partnerbuyeruser.sendPasswordEmails = (req, res) => {
     .then(() => res.json({ message: 'Password reset emails sent' }))
     .catch((err) => {
       new Log({ message: `PARTNERBUYERUSER_SEND_PASSWORD_RESET_EMAILS ${err}`, type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instUser.release();

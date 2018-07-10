@@ -12,11 +12,11 @@ const orderseller = {};
 * @return {Object}
 */
 orderseller.getAllOrderSellers = (req, res) => {
-  const x = req.swagger.params.sellerId.value;
+  const x = 1; // req.swagger.params.partnerId.value;
   log.info(x);
   const instOrder = new OrderSeller({});
   instOrder.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 25), {
-    sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
+    partnerId: query.validateParam(req.swagger.params, 'partnerId', 0),
     sellerAccount: true,
     orderStatus: query.validateParam(req.swagger.params, 'orderStatus', ''),
     orderNumber: query.validateParam(req.swagger.params, 'orderNumber', ''),
@@ -28,7 +28,7 @@ orderseller.getAllOrderSellers = (req, res) => {
   })
     .then((result) => {
       new Log({
-        message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', selleraccount_id: `${x}`, seller_id: `${x}`,
+        message: 'Show all order sellers', action: 'ORDERSELLER_LIST', type: 'INFO', selleraccount_id: `${x}`, partner_id: `${x}`,
       }).create();
       return res.json(result);
     })
@@ -84,7 +84,7 @@ orderseller.getOrderseller = (req, res) => {
     .then((resultList) => {
       if (resultList.length === 0) {
         new Log({ message: 'Get specific order by seller account', action: 'ORDERSELLER_GET', type: 'INFO' }).create();
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       return res.json(resultList[0]);
     })
@@ -160,7 +160,7 @@ orderseller.countFreshFrozen = (req, res) => {
   const instOrder = new OrderSeller({});
 
   instOrder.countFreshFrozen({
-    sellerId: query.validateParam(req.swagger.params, 'sellerId', 0),
+    partnerId: query.validateParam(req.swagger.params, 'partnerId', 0),
   })
     .then((result) => {
       res.json(result);

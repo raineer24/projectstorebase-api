@@ -19,7 +19,7 @@ gc.updateGc = (req, res) => {
     .then(msg => res.json({ message: `Updated ${msg}` }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'GC_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Found' ? 'Existing' : 'Failed' });
     })
     .finally(() => {
       instGc.release();
@@ -38,7 +38,7 @@ gc.getGc = (req, res) => {
   instGc.getByValue(query.validateParam(req.swagger.params, 'code', ''), 'code')
     .then((resultList) => {
       if (resultList.length === 0) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       return res.json(resultList[0]);
     })

@@ -16,7 +16,7 @@ rating.getRating = (req, res) => {
   instRating.getByValue(query.validateParam(req.swagger.params, 'orderkey', ''), 'orderkey')
     .then((resultList) => {
       if (resultList.length === 0) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       new Log({ message: 'Search rating', action: 'RATING_GET', type: 'INFO' }).create();
       return res.json(resultList[0]);
@@ -48,7 +48,7 @@ rating.createRating = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'RATING_CREATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instRating.release();

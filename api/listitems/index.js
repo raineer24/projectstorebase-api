@@ -14,7 +14,7 @@ listitem.getAllListItems = (req, res) => {
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'LIST_ITEM_LIST ', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instListItem.release();
@@ -32,7 +32,7 @@ listitem.getAllListItemsByItem = (req, res) => {
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'LIST_ITEM_LIST_BY_ITEM', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instListItem.release();
@@ -61,7 +61,7 @@ listitem.removeListItem = (req, res) => {
     .then(message => res.json({ message }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'LIST_ITEM_REMOVE', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instListItem.release();
