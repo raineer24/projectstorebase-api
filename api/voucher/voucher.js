@@ -62,7 +62,7 @@ Voucher.prototype.update = code => new BluePromise((resolve, reject) => {
   that.getByValue(code, 'code')
     .then((resultList) => {
       if (!resultList[0].id) {
-        reject('Not foundssss');
+        reject('Not Foundssss');
       } else {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)

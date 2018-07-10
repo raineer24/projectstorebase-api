@@ -22,7 +22,7 @@ item.listItems = (req, res) => {
     }))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ITEM_LIST', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instItem.release();
@@ -37,7 +37,7 @@ item.previewItem = (req, res) => {
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ITEM_GET', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instItem.release();
@@ -85,7 +85,7 @@ item.getItemSuggestions = (req, res) => {
     .then(result => res.json(result))
     .catch((err) => {
       new Log({ message: `${err}`, action: 'ITEM_GET_SUGGESTIONS', type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : err });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
     })
     .finally(() => {
       instItem.release();

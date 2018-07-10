@@ -163,7 +163,7 @@ Transaction.prototype.updateByOrderId = orderId => new BluePromise((resolve, rej
   that.getByValue(orderId, 'order_id')
     .then((resultList) => {
       if (resultList.length === 0) {
-        reject('Not found');
+        reject('Not Found');
       } else {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)

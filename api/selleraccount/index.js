@@ -10,7 +10,7 @@ selleraccount.connectDb = (req, res) => {
   instSellerAccount.testConnection()
     .then(result => res.json({ message: result }))
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }));
 };
 
@@ -52,7 +52,7 @@ selleraccount.registerAccount = (req, res) => {
 selleraccount.getAllSellerUsers = (req, res) => {
   const instSellerAccount = new Selleraccount({});
   instSellerAccount.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    sellerId: query.validateParam(req.swagger.params, 'sellersId', 0),
+    partnerId: query.validateParam(req.swagger.params, 'partnersId', 0),
     count: query.validateParam(req.swagger.params, 'count', 0),
   })
     .then((result) => {
@@ -61,7 +61,7 @@ selleraccount.getAllSellerUsers = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `SELLER_ACCOUNT_USER_LIST ${err}`, type: 'ERROR' }).create();
-      return res.status(err === 'Not found' ? 404 : 500).json({ message: err === 'Not found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instSellerAccount.release();
@@ -109,7 +109,7 @@ selleraccount.viewAccount = (req, res) => {
   instSellerAccount.getById(query.validateParam(req.swagger.params, 'id', 0))
     .then((resultList) => {
       if (!resultList[0].id) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       new Log({
         message: 'View seller account', action: 'SELLER_ACCOUNT_VIEW', type: 'INFO', selleraccount_id: `${resultList.id}`,
@@ -118,7 +118,7 @@ selleraccount.viewAccount = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'SELLER_ACCOUNT_VIEW', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instSellerAccount.release();
@@ -175,7 +175,7 @@ selleraccount.changePassword = (req, res) => {
       return res.json({ status, message: 'Updated' });
     })
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
-      message: err === 'Not Found' ? 'Not found' : err,
+      message: err === 'Not Found' ? 'Not Found' : err,
     }))
     .finally(() => {
       instSellerAccount.release();
@@ -198,7 +198,7 @@ selleraccount.resetPassword = (req, res) => {
       return res.json({ status, message: 'Success' });
     })
     .catch(err => res.status(err === 'Not Found' ? 404 : 500).json({
-      message: err === 'Not Found' ? 'Not found' : err,
+      message: err === 'Not Found' ? 'Not Found' : err,
     }))
     .finally(() => {
       instSellerAccount.release();

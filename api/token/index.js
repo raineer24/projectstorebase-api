@@ -9,7 +9,7 @@ token.connectDb = (req, res) => {
   instToken.testConnection()
     .then(result => res.json({ message: result }))
     .catch(() => res.status(404).json({
-      message: 'Not found',
+      message: 'Not Found',
     }));
 };
 

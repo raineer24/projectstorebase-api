@@ -37,7 +37,7 @@ function OrderSeller(orderSeller) {
       'comments',
       'order_id',
       'selleraccount_id',
-      'seller_id',
+      'partner_id',
       'dateAssembled',
       'dateDelivered',
       'dateCompleted',
@@ -96,7 +96,7 @@ function OrderSeller(orderSeller) {
       'useraccount_id',
       'address_id',
       'referenceId',
-      'seller_id',
+      'partner_id',
     ],
   });
   this.sqlTableSellerAccount = sql.define({
@@ -107,7 +107,7 @@ function OrderSeller(orderSeller) {
       'password',
       'email',
       'name',
-      'seller_id',
+      'partner_id',
       'role_id',
       'dateCreated',
       'dateUpdated',
@@ -351,9 +351,9 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.sellerId && filters.mode === 'orderlist') {
+  } else if (filters.partnerId && filters.mode === 'orderlist') {
     let whereString = null;
-    whereString = `${that.table}.seller_id = ${filters.sellerId}`;
+    whereString = `${that.table}.partner_id = ${filters.partnerId}`;
     if (filters.orderStatus) {
       whereString += ` AND UPPER(${that.table}.status) = UPPER('${filters.orderStatus}')`;
     }
@@ -394,7 +394,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .offset(skip)
         .toQuery();
     }
-  } else if (filters.sellerId && filters.mode === 'assembly') {
+  } else if (filters.partnerId && filters.mode === 'assembly') {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
@@ -408,7 +408,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
           .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
           .leftJoin(that.sqlTableTimeslotOrder)
           .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
-        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .where(that.sqlTable.partner_id.equals(filters.partnerId))
         // .and(that.sqlTable.dateCreated.gte(today))
         .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
         .order(sortString)
@@ -425,7 +425,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
           .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
           .leftJoin(that.sqlTableTimeslotOrder)
           .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
-        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .where(that.sqlTable.partner_id.equals(filters.partnerId))
         .and(sql.functions.UPPER(that.sqlTable.status).equals(filters.orderStatus.toUpperCase()))
         // .and(that.sqlTable.dateCreated.gte(today))
         .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
@@ -434,7 +434,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .offset(skip)
         .toQuery();
     }
-  } else if (filters.sellerId) {
+  } else if (filters.partnerId) {
     query = that.sqlTable
       .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id)
       .from(that.sqlTable
@@ -444,7 +444,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
         .leftJoin(that.sqlTableTimeslotOrder)
         .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
+      .where(that.sqlTable.partner_id.equals(filters.partnerId))
       .order(sortString)
       .limit(limit)
       .offset(skip)
@@ -489,7 +489,7 @@ OrderSeller.prototype.countFreshFrozen = (filters) => {
       LEFT JOIN orderitem as oi ON oi.order_id = os.order_id
       LEFT JOIN item as it ON it.id = oi.item_id
       WHERE it.category1 = 2 || it.category1 = 3
-        AND os.seller_id = ${filters.sellerId}
+        AND os.partner_id = ${filters.partnerId}
         AND tso.datetime BETWEEN ${today} AND ${tomorrow}
       GROUP BY os.id;
   `;

@@ -39,7 +39,7 @@ function Selleraccount(selleraccount) {
       'email',
       'name',
       'enabled',
-      'seller_id',
+      'partner_id',
       'role_id',
       'lastLogin',
       'dateCreated',
@@ -327,12 +327,12 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   if (sortBy) {
     sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
   }
-  if (filters.sellerId) {
+  if (filters.partnerId) {
     if (filters.count) {
       query = that.sqlTable
         .select(sql.functions.COUNT(that.sqlTable.id).as('count'))
         .from(that.sqlTable)
-        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .where(that.sqlTable.partner_id.equals(filters.partnerId))
         .toQuery();
     } else {
       query = that.sqlTable
@@ -340,7 +340,7 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .from(that.sqlTable
           .leftJoin(that.sqlTableRole)
           .on(that.sqlTableRole.id.equals(that.sqlTable.role_id)))
-        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .where(that.sqlTable.partner_id.equals(filters.partnerId))
         .order(sortString)
         .limit(limit)
         .offset(skip)
