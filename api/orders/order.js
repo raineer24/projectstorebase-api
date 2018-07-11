@@ -355,7 +355,10 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     orderkey: orderEntry.orderkey,
   })
     .then((resultList) => {
+      log.info('esultList');
+      log.info(resultList);
       if (resultList.length > 0) {
+        log.info('resultList.length');
         log.info(resultList.length);
         _.forEach(resultList, (obj) => {
           log.info(obj);
