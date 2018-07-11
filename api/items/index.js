@@ -59,6 +59,30 @@ item.addItem = (req, res) => {
 };
 
 /**
+* Update an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+item.updateItem = (req, res) => {
+  const instItem = new Item(req.swagger.params.body.value);
+  instItem.update(query.validateParam(req.swagger.params, 'id', 0))
+    .then((msg) => {
+      new Log({
+        message: 'Update current order', action: 'ORDER_UPDATE', type: 'INFO',
+      }).create();
+      return res.json({ message: `Updated ${msg}` });
+    })
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'ORDER_UPDATE', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
+    })
+    .finally(() => {
+      instItem.release();
+    });
+};
+
+/**
 * Add items
 * @param {Object} req
 * @param {Object} res

@@ -132,8 +132,10 @@ Partnerbuyeruser.prototype.authorize = userAuth => new BluePromise((resolve, rej
   * @return {object}
 */
 Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
-  that.getByValue(that.model.useraccount_id, 'useraccount_id')
+  log.info('START PBU CREATION!');
+  that.getByIdPBU(that.model.useraccount_id)
     .then((results) => {
+      log.info(results.length);
       if (results.length === 0) {
         log.info('[CREATING PBU]');
         const query = that.sqlTable.insert(that.model).toQuery();
@@ -141,27 +143,15 @@ Partnerbuyeruser.prototype.create = () => new BluePromise((resolve, reject) => {
           .then((response) => {
             log.info('PARTNER BUYER USER - CREATE');
             log.info(response);
-            that.getById(response.insertId)
-              .then((resultList) => {
-                if (!resultList[0].id) {
-                  reject('Not Found');
-                } else {
-                  log.info('PARTNER BUYER USER - EMAIL');
-                  log.info(resultList[0]);
-                  new Mailer(that.mailConfirmation(resultList[0])).send()
-                    .then(() => {
-                      log.info(`Successfully registered with e-mail ${resultList[0].email}`);
-                    })
-                    .catch((err) => {
-                      log.error(`Failed to send ${err}`);
-                    });
-
-                  resolve(resultList[0]);
-                }
-              })
-              .catch((err) => {
-                reject(err);
-              });
+            // that.getById(response.insertId)
+            //   .then((resultList) => {
+            //     if (!resultList[0].id) {
+            //       reject('Not Found');
+            //     }
+            //   })
+            //   .catch((err) => {
+            //     reject(err);
+            //   });
           })
           .catch((err) => {
             reject(err);
@@ -197,13 +187,13 @@ Partnerbuyeruser.prototype.createMultiple = () => new BluePromise((resolve, reje
                   if (!resultList[0].id) {
                     reject('Not Found');
                   } else {
-                    new Mailer(that.mailConfirmation(resultList[0])).send()
-                      .then(() => {
-                        log.info(`Successfully registered with e-mail ${resultList[0].email}`);
-                      })
-                      .catch((err) => {
-                        log.error(`Failed to send ${err}`);
-                      });
+                    // new Mailer(that.mailConfirmation(resultList[0])).send()
+                    //   .then(() => {
+                    log.info(`Successfully registered with e-mail ${resultList[0].email}`);
+                    // })
+                    // .catch((err) => {
+                    //   log.error(`Failed to send ${err}`);
+                    // });
 
                     resolve(resultList[0]);
                   }
