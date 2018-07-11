@@ -107,4 +107,24 @@ orderItem.removeOrderItem = (req, res) => {
     });
 };
 
+orderItem.removeAllOrderItems = (req, res) => {
+  // const itemid = req.swagger.params.body.value.id;
+  const instOrderItem = new OrderItem({});
+  instOrderItem.removeByOrderId(query.validateParam(req.swagger.params, 'orderId', 0))
+    .then((message) => {
+      new Log({
+        message: 'Remove items from current order', action: 'ORDER_ITEM_REMOVE_ALL', type: 'INFO', user_id: `${userid}`,
+      }).create();
+      return res.json({ message });
+    })
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'ORDER_ITEM_REMOVE_ALL', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
+    })
+    .finally(() => {
+      instOrderItem.release();
+    });
+};
+
+
 module.exports = orderItem;

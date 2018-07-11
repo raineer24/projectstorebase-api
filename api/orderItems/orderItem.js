@@ -262,6 +262,35 @@ OrderItem.prototype.removeById = id => new BluePromise((resolve, reject) => {
 });
 
 /**
+  * removeById
+  * @param {string} limit
+  * @param {string} offset
+  * @return {object}
+*/
+OrderItem.prototype.removeByOrderId = orderId => new BluePromise((resolve, reject) => {
+  that.getByValue(orderId, 'order_id')
+    .then((resultList) => {
+      if (!resultList.length) {
+        reject('Not Found');
+      } else {
+        const query = that.sqlTable.delete()
+          .where(that.sqlTable.order_id.equals(orderId)).toQuery();
+        that.dbConn.queryAsync(query.text, query.values)
+          .then(() => {
+            resolve('Deleted');
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      }
+    })
+    .catch(() => {
+      reject('Not Found');
+    });
+});
+
+
+/**
   * Release connection
   * @param {any} value
   * @param {string} field
