@@ -39,7 +39,7 @@ function Selleraccount(selleraccount) {
       'email',
       'name',
       'enabled',
-      'seller_id',
+      'partner_id',
       'role_id',
       'lastLogin',
       'dateCreated',
@@ -221,7 +221,7 @@ Selleraccount.prototype.passwordResetEmail = (user) => {
   <div><p>Hi ${user.name},</p></div>
   <div><p>Your <b>OMG!</b> Dashboard password has been reset.</p></div>
   <div><p>Please create a new password by clicking on this link within the next 24 hours:
-  <a href="https://${hostname}/admin/resetPassword?token=${user.token}&email=${user.email}&i=${user.id}">Click here</a>
+  <a href="http://${hostname}/admin/resetPassword?token=${user.token}&email=${user.email}&i=${user.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
   <div><p>Thank you!</p></div>
@@ -327,12 +327,12 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   if (sortBy) {
     sortString = `${sortBy === 'date' ? 'dateUpdated' : 'status'} ${sort}`;
   }
-  if (filters.sellerId) {
+  if (filters.partnerId) {
     if (filters.count) {
       query = that.sqlTable
         .select(sql.functions.COUNT(that.sqlTable.id).as('count'))
         .from(that.sqlTable)
-        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .where(that.sqlTable.partner_id.equals(filters.partnerId))
         .toQuery();
     } else {
       query = that.sqlTable
@@ -340,7 +340,7 @@ Selleraccount.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .from(that.sqlTable
           .leftJoin(that.sqlTableRole)
           .on(that.sqlTableRole.id.equals(that.sqlTable.role_id)))
-        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .where(that.sqlTable.partner_id.equals(filters.partnerId))
         .order(sortString)
         .limit(limit)
         .offset(skip)

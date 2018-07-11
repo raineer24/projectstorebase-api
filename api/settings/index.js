@@ -19,7 +19,7 @@ setting.getSettings = (req, res) => {
       res.json(Setting.cleanResponse(result, { message: 'Found' }));
     })
     // .catch((err) => {
-    //   return res.status(err).json({ message: 'Not found!' });
+    //   return res.status(err).json({ message: 'Not Found!' });
     // })
     .finally(() => {
       instSetting.release();

@@ -2,6 +2,8 @@ const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
+const moment = require('moment');
+
 const Mailer = require('../../service/mail');
 const Conn = require('../../service/connection');
 const OrderStatusLogs = require('../orderstatuslogs/orderstatuslogs');
@@ -38,7 +40,7 @@ function OrderSeller(orderSeller) {
       'comments',
       'order_id',
       'selleraccount_id',
-      'seller_id',
+      'partner_id',
       'dateAssembled',
       'dateDelivered',
       'dateCompleted',
@@ -97,7 +99,7 @@ function OrderSeller(orderSeller) {
       'useraccount_id',
       'address_id',
       'referenceId',
-      'seller_id',
+      'partner_id',
     ],
   });
   this.sqlTableSellerAccount = sql.define({
@@ -108,7 +110,7 @@ function OrderSeller(orderSeller) {
       'password',
       'email',
       'name',
-      'seller_id',
+      'partner_id',
       'role_id',
       'dateCreated',
       'dateUpdated',
@@ -682,9 +684,11 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.sellerId && filters.mode === 'orderlist') {
-    let whereString = null;
-    whereString = `${that.table}.seller_id = ${filters.sellerId}`;
+  } else if (filters.partnerId && filters.mode === 'orderlist') {
+    let whereString = `${that.table}.partner_id = ${filters.partnerId}`;
+    if (filters.partnerId === 1) {
+      whereString += ` OR ${that.table}.partner_id != ${filters.partnerId}`;
+    }
     if (filters.orderStatus) {
       whereString += ` AND UPPER(${that.table}.status) = UPPER('${filters.orderStatus}')`;
     }
@@ -725,10 +729,12 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .offset(skip)
         .toQuery();
     }
-  } else if (filters.sellerId && filters.mode === 'assembly') {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+  } else if (filters.partnerId && filters.mode === 'assembly') {
+    // const now = new Date();
+    // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    const today = moment().format('YYYY-MM-DD');
+    // const tomorrow = moment().add(1, 'days').format('YYYY-MM-DD');
     if (filters.orderStatus.toUpperCase() === 'ALL') {
       query = that.sqlTable
         .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.datetime)
@@ -739,9 +745,10 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
           .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
           .leftJoin(that.sqlTableTimeslotOrder)
           .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
-        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .where(that.sqlTable.partner_id.equals(filters.partnerId))
         // .and(that.sqlTable.dateCreated.gte(today))
-        .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        // .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        .and(that.sqlTableTimeslotOrder.date.equals(today))
         .order(sortString)
         .limit(limit)
         .offset(skip)
@@ -756,16 +763,17 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
           .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
           .leftJoin(that.sqlTableTimeslotOrder)
           .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
-        .where(that.sqlTable.seller_id.equals(filters.sellerId))
+        .where(that.sqlTable.partner_id.equals(filters.partnerId))
         .and(sql.functions.UPPER(that.sqlTable.status).equals(filters.orderStatus.toUpperCase()))
         // .and(that.sqlTable.dateCreated.gte(today))
-        .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        // .and(that.sqlTableTimeslotOrder.datetime.between(today, tomorrow))
+        .and(that.sqlTableTimeslotOrder.date.equals(today))
         .order(sortString)
         .limit(limit)
         .offset(skip)
         .toQuery();
     }
-  } else if (filters.sellerId) {
+  } else if (filters.partnerId) {
     query = that.sqlTable
       .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id)
       .from(that.sqlTable
@@ -775,15 +783,17 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .on(that.sqlTableSellerAccount.id.equals(that.sqlTable.selleraccount_id))
         .leftJoin(that.sqlTableTimeslotOrder)
         .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.order_id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
+      .where(that.sqlTable.partner_id.equals(filters.partnerId))
       .order(sortString)
       .limit(limit)
       .offset(skip)
       .toQuery();
   } else if (filters.takeOrder) {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    // const now = new Date();
+    // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    const today = moment().startOf('day').valueOf();
+    const tomorrow = moment().endOf('day').valueOf();
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
@@ -814,7 +824,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .toQuery();
   }
   log.info(query.text);
-
+  log.info(query.values);
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
@@ -825,9 +835,11 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   * @return {object}
 */
 OrderSeller.prototype.countFreshFrozen = (filters) => {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+  // const now = new Date();
+  // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+  const today = moment().startOf('day').valueOf();
+  const tomorrow = moment().endOf('day').valueOf();
   const strSql = `
     SELECT os.id, os.order_id, count(oi.id) AS itemCount
       FROM orderseller as os
@@ -835,7 +847,7 @@ OrderSeller.prototype.countFreshFrozen = (filters) => {
       LEFT JOIN orderitem as oi ON oi.order_id = os.order_id
       LEFT JOIN item as it ON it.id = oi.item_id
       WHERE it.category1 = 2 || it.category1 = 3
-        AND os.seller_id = ${filters.sellerId}
+        AND os.partner_id = ${filters.partnerId}
         AND tso.datetime BETWEEN ${today} AND ${tomorrow}
       GROUP BY os.id;
   `;

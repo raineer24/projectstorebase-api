@@ -30,7 +30,7 @@ function Seller(seller) {
       'id',
       'name',
       'code',
-      'mobileNumber',
+      'type',
       'dateCreated',
       'dateUpdated',
     ],

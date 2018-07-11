@@ -24,7 +24,7 @@ timeslotOrder.addTimeslotOrder = (req, res) => {
       new Log({ message: `${err}`, action: 'TIMESLOT_ORDER_CREATE', type: 'ERROR' }).create();
       if (err === 'Found') {
         return res.status(201).json({ message: 'Existing' });
-      } else if (err === 'Not found') {
+      } else if (err === 'Not Found') {
         return res.status(404).json({ message: 'Timeslot not found' });
       } else if (err === 'Full') {
         return res.status(409).json({ message: 'Slot is full' });
@@ -47,7 +47,7 @@ timeslotOrder.getTimeslotOrder = (req, res) => {
   instTimeslotOrder.getByValue(query.validateParam(req.swagger.params, 'orderId', ''), 'order_id')
     .then((resultList) => {
       if (resultList.length === 0) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       new Log({ message: 'Show timeslot for current order', action: 'TIMESLOT_ORDER_GET', type: 'INFO' }).create();
       return res.json(resultList[0]);
@@ -76,7 +76,7 @@ timeslotOrder.getTimeslotOrderAll = (req, res) => {
     .then(instTimeslotOrder.formatTimeslots)
     .then((resOrder) => {
       if (resOrder.length === 0) {
-        return res.status(404).json({ message: 'Not found' });
+        return res.status(404).json({ message: 'Not Found' });
       }
       new Log({ message: 'Show all timeslots for order', action: 'TIMESLOT_ORDER_GET_ALL', type: 'INFO' }).create();
       return res.json(resOrder);
@@ -105,8 +105,8 @@ timeslotOrder.updateTimeslotOrder = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'TIMESLOT_ORDER_UPDATE', type: 'ERROR' }).create();
-      if (err === 'Not found') {
-        return res.status(404).json({ message: 'Not found' });
+      if (err === 'Not Found') {
+        return res.status(404).json({ message: 'Not Found' });
       } else if (err === 'Full') {
         return res.status(409).json({ message: 'Slot is full' });
       }

@@ -81,7 +81,7 @@ function Order(order) {
       'useraccount_id',
       'address_id',
       'referenceId',
-      'seller_id',
+      'partner_id',
     ],
   });
   this.sqlTableOrderSeller = sql.define({
@@ -99,7 +99,7 @@ function Order(order) {
       'comments',
       'order_id',
       'selleraccount_id',
-      'seller_id',
+      'partner_id',
       'dateCompleted',
       'dateCreated',
       'dateUpdated',
@@ -181,7 +181,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.sellerId) {
+  } else if (filters.partnerId) {
     query = that.sqlTable
       .select(that.sqlTable.id.as('order_id'), that.sqlTable.star(), that.sqlTableUser.star(), that.sqlTableOrderSeller.star())
       .from(that.sqlTable
@@ -189,7 +189,7 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .on(that.sqlTableUser.id.equals(that.sqlTable.useraccount_id))
         .leftJoin(that.sqlTableOrderSeller)
         .on(that.sqlTableOrderSeller.order_id.equals(that.sqlTable.id)))
-      .where(that.sqlTable.seller_id.equals(filters.sellerId))
+      .where(that.sqlTable.partner_id.equals(filters.partnerId))
       .order(sortString)
       .limit(limit)
       .offset(skip)
@@ -250,7 +250,7 @@ Order.prototype.updateByOrderkey = orderkey => new BluePromise((resolve, reject)
   that.getByValue(orderkey, 'orderkey')
     .then((resultList) => {
       if (resultList.length === 0) {
-        reject('Not found');
+        reject('Not Found');
       } else {
         that.model = _.merge(resultList[0], that.model);
         const query = that.sqlTable.update(that.model)
@@ -331,7 +331,7 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
               .catch(() => {});
             new Orderseller({
               order_id: orderEntry.id,
-              seller_id: orderEntry.seller_id,
+              partner_id: orderEntry.partner_id,
               orderNumber: orderEntry.number,
             }).create();
             resolve(transactionId);
@@ -405,9 +405,9 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
   .orderTD img {
     display:none;
   }
-  
-  
-  
+
+
+
 }
 </style>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -459,7 +459,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                         <img src="http://hutcake.com/assets/main-01.jpg" alt="picsum" width="600" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; width: 100%; display: block;">
                         <table width="640" border="0" cellspacing="0" cellpadding="20" bgcolor="#ff5847" class="100p" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
                           <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-                            
+
                           </tr>
                         </table>
                         <table class="holiday-container" style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important;">
@@ -571,9 +571,9 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
               </tr>
             </table>
             <!-- end itemContainer -->
-      
-    
-    
+
+
+
      <!-- Email Footer : BEGIN -->
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; max-width: 600px; margin: 0 auto;" valign="top">
       <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
@@ -587,7 +587,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
           <br>
           <unsubscribe style="color: #888888; text-decoration: underline;">unsubscribe</unsubscribe>
           </td>
-     
+
       </tr>
 
     </table>

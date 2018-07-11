@@ -42,7 +42,7 @@ seller.updateAccount = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'SELLER_ACCT_UPDATE', type: 'ERROR' }).create();
-      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not found' : 'Failed' });
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
     .finally(() => {
       instSeller.release();
@@ -65,7 +65,7 @@ seller.viewAccount = (req, res) => {
     })
     .catch((err) => {
       new Log({ message: `${err}`, action: 'SELLER_ACCT_GET', type: 'ERROR' }).create();
-      return res.status(404).json({ message: 'Not found' });
+      return res.status(404).json({ message: 'Not Found' });
     })
     .finally(() => {
       instSeller.release();

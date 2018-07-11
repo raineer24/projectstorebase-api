@@ -238,7 +238,7 @@ User.prototype.mailConfirmation = (userAccount) => {
   <div><p>Hi,</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>
   <div><p>Please confirm your registration by clicking this link below</p></div>
-  <div><p><a href="https://${hostname}">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
+  <div><p><a href="http://${hostname}">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
@@ -366,7 +366,7 @@ User.prototype.passwordResetEmail = (userAccount) => {
   <div><p>Hi ${userAccount.firstName},</p></div>
   <div><p>Your <b>Oh My Grocery</b> password has been reset.</p></div>
   <div><p>Please provide a new password by clicking on this link within the next 24 hours:
-  <a href="https://${hostname}/user/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
+  <a href="http://${hostname}/user/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
   <div><p>Thank you!</p></div>
