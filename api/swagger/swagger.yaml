@@ -813,6 +813,8 @@ paths:
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/partnersId"
         - $ref: "#/parameters/count"
+        - $ref: "#/parameters/sortBy"
+        - $ref: "#/parameters/sort"
       responses:
         200:
           description: Fetch all seller account users
@@ -1351,6 +1353,32 @@ paths:
       operationId: removeOrderItem
       parameters:
         - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful deleted
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  /orderItem/all/{orderId}:
+    x-swagger-router-controller: orderItems
+    delete:
+      tags:
+        - orderItem
+      summary: Add an item to the order
+      operationId: removeAllOrderItems
+      parameters:
+        - $ref: "#/parameters/orderId"
       responses:
         200:
           description: Successful deleted
