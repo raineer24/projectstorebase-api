@@ -409,8 +409,8 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    bcc: 'raineerdelarita@gmail.com',
-    to: 'nerboikun24@gmail.com',
+    bcc: 'info@eos.com.ph',
+    to: orderSeller.email,
     subject: `Delivered #${orderSeller.orderNumber} will be delivered now`,
     text: `Successfully In-transit delivery Assembled orders ${orderSeller.email}`,
     html: body,
@@ -545,7 +545,7 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
                     </td>
                     <td style="vertical-align:top;padding:0px 0px 10px;width:8.333333%">&nbsp;</td>
                     <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:16.666666%">
-                      <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1;white-space:nowrap">${parseFloat(item.displayPrice).toFixed(2)}</p>
+                      <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1;white-space:nowrap">₱${parseFloat(item.displayPrice).toFixed(2)}</p>
                     </td>
                     <td
                   </tr>`).join('')}
@@ -571,7 +571,7 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
                       <p style="margin:0 0 5px 0"><strong></strong>Subtotal</p>
                     </td>
                     <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
-                      <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">${orderSeller.itemTotal}</p>
+                      <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(orderSeller.itemTotal).toFixed(2)}</p>
                     </td>
                     <td style="vertical-align:top;width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding:0!important">
                     </td>
@@ -604,8 +604,8 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    bcc: 'raineerdelarita@gmail.com',
-    to: 'nerboikun24@gmail.com',
+    bcc: 'info@eos.com.ph',
+    to: orderSeller.email,
     subject: `Completed #${orderSeller.orderNumber} will be delivered now`,
     text: `Completed ${orderSeller.email}`,
     html: body,
@@ -791,8 +791,10 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .and(that.sqlTable.dateAssembled.between(today, tomorrow)))
       .toQuery();
   } else if (filters.sendMail) {
+    const now = that.sqlTableOrder.star();
     query = that.sqlTable
-      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date, that.sqlTableOrder.star())
+    /*eslint-disable */
+      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date, now) 
       .from(that.sqlTable
         .join(that.sqlTableOrder)
         .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
