@@ -373,7 +373,7 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
             <tr>
               <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;background-color:#f5f5f5;color:#000000;text-align:left;padding-left:10px;font-size:16px;padding-right:10px;width:100%;padding:10px!important">
                 <p style="margin:0 0 5px 0">
-                  <strong>fulfilled Items</strong>
+                  <strong>Fulfilled Items</strong>
                 </p>
               </td>
               <td></td>
@@ -414,7 +414,7 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
     bcc: 'info@eos.com.ph',
     to: orderSeller.email,
     subject: `Delivered #${orderSeller.orderNumber} will be delivered now`,
-    text: `Successfully In-transit delivery Assembled orders ${orderSeller.email}`,
+    text: `Successfully Delivered orders ${orderSeller.email}`,
     html: body,
   };
 };
@@ -528,7 +528,7 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
             <tr>
               <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;background-color:#f5f5f5;color:#000000;text-align:left;padding-left:10px;font-size:16px;padding-right:10px;width:100%;padding:10px!important">
                 <p style="margin:0 0 5px 0">
-                  <strong>fulfilled Items</strong>
+                  <strong>Fulfilled Items</strong>
                 </p>
               </td>
               <td></td>
@@ -608,7 +608,7 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
     from: 'info@eos.com.ph',
     bcc: 'info@eos.com.ph',
     to: orderSeller.email,
-    subject: `Completed #${orderSeller.orderNumber} will be delivered now`,
+    subject: `Completed #${orderSeller.orderNumber} All item orders delivered.`,
     text: `Completed ${orderSeller.email}`,
     html: body,
   };
@@ -803,8 +803,8 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   } else if (filters.sendMail) {
     const now = that.sqlTableOrder.star();
     query = that.sqlTable
-    /*eslint-disable */
-      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date, now) 
+      /*eslint-disable */
+      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date, now)
       .from(that.sqlTable
         .join(that.sqlTableOrder)
         .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))
