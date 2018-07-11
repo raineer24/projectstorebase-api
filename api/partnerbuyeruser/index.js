@@ -64,10 +64,10 @@ partnerbuyeruser.addUsers = (req, res) => {
 */
 partnerbuyeruser.getUsers = (req, res) => {
   const instUser = new Partnerbuyeruser();
-  // const x = req.swagger.params.partner_id.value;
-  // log.info(x);
+  const x = req.swagger.params.partner_id.value;
+  log.info(x);
   instUser.findAll(query.validateParam(req.swagger.params, 'skip', 0), query.validateParam(req.swagger.params, 'limit', 10), {
-    partnerId: query.validateParam(req.swagger.params, 'partnerId', 0),
+    partner_id: query.validateParam(req.swagger.params, 'partner_id', 0),
   })
     .then((result) => {
       new Log({

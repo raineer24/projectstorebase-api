@@ -369,11 +369,11 @@ Partnerbuyeruser.prototype.findAll = (skip, limit, filters) => {
       .limit(limit)
       .offset(skip)
       .toQuery();
-  } else if (filters.partnerId) {
+  } else if (filters.partner_id) {
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
-      .where(that.sqlTable.partner_id.equals(filters.partnerId))
+      .where(that.sqlTable.partner_id.equals(filters.partner_id))
       .limit(limit)
       .offset(skip)
       .toQuery();
