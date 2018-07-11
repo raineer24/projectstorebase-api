@@ -10,7 +10,7 @@ const Mailer = require('../../service/mail');
 
 const Token = require('../token/token');
 
-const Partnerbuyeruser = require('../partnerbuyeruser/partnerbuyeruser');
+// const Partnerbuyeruser = require('../partnerbuyeruser/partnerbuyeruser');
 
 const log = require('color-logs')(true, true, 'User Account');
 
@@ -61,7 +61,7 @@ function User(user) {
       'dateCreated',
       'dateUpdated',
       'useraccount_id',
-      'partnerBuyer_id',
+      'partner_id',
     ],
   });
 
@@ -201,28 +201,16 @@ User.prototype.createMultiple = users => new BluePromise((resolve, reject) => {
             .then((response) => {
               log.info('[RESULTS - CREATE USER]');
               log.info(response);
-              that.getByValue(key.user.username, 'username')
-                .then((resultList) => {
-                  if (!resultList[0].id) {
-                    log.info(resultList);
-                  } else {
-                    new Partnerbuyeruser(_.merge(key.pbu, {
-                      useraccount_id: resultList[0].id,
-                    })).create()
-                      .then(() => {
-                        log.info(`Successfully registered new user account - ${key.pbu}`);
-                      })
-                      .catch((err) => {
-                        log.error(`Failed to send ${err}`);
-                      });
-                  }
-                })
+              const arr = _.merge(key.pbu, { useraccount_id: response.insertId });
+              const pbuquery = that.sqlTablePBU.insert(arr).toQuery();
+              that.dbConn.queryAsync(pbuquery.text, pbuquery.values)
+                .then(result => resolve(result))
                 .catch((err) => {
-                  reject(err);
+                  log.info(err);
                 });
             })
             .catch((err) => {
-              reject(err);
+              log.info(err);
             });
         } else {
           reject('Found');

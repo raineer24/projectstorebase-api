@@ -1769,6 +1769,36 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+    put:
+      tags:
+        - item
+      summary: upate item
+      operationId: updateItem
+      parameters:
+        - $ref: "#/parameters/id"
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/Item"
+      responses:
+        200:
+          description: Successfully updated item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   # /items/count: FOR FUTURE IMPLEMENTATION
   #   x-swagger-router-controller: items
   #   get:
@@ -2998,6 +3028,24 @@ definitions:
       category3:
         type: string
         description: item cat3
+  Item:
+    title: item
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: item id
+      name:
+        type: string
+        description: item name
+      code:
+        type: number
+        description: item specific code
+      price:
+        type: number
+        description: item price
   OrderSellerCreate:
     title: OrderSellerCreate
     type: object
