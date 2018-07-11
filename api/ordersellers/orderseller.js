@@ -186,7 +186,7 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
         const orderSeller = that.model;
         that.dbConn.queryAsync(query.text, query.values)
           .then((response) => {
-            if (orderSeller.status === 'assembled') {
+            if (orderSeller.status === 'in-transit') {
               that.findAll(0, 1, { order_id: orderSeller.order_id, sendMail: true })
                 .then((orderList) => {
                   if (orderList.length !== 0) {
@@ -201,7 +201,7 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                               log.info(orderList);
                               log.info('resultList[0]');
                               log.info(resultList[0]);
-                              log.info('sent! Email assembled confirmation');
+                              log.info('sent! Email in-transit checked orders confirmation');
                               log.info(that.model);
                             })
                             .catch((err) => {
@@ -215,28 +215,33 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
                   log.error(`Failed to send 1 ${err}`);
                 });
             }
-            if (orderSeller.status === 'in-transit') {
-              new Mailer(that.mailTransitConfirmation(orderSeller)).send()
-                .then(() => {
-                  log.info('resultList[0]');
-                  log.info(resultList[0]);
-                  log.info('sent! Email in-transit confirmation');
-                  log.info(that.model);
-                })
-                .catch((err) => {
-                  log.error(`Failed to send ${err}`);
-                });
-            }
             if (orderSeller.status === 'complete') {
-              new Mailer(that.mailCompletedConfirmation()).send()
-                .then(() => {
-                  log.info('resultList[0]');
-                  log.info(resultList[0]);
-                  log.info('sent! Email complete confirmation');
-                  log.info(that.model);
+              that.findAll(0, 1, { order_id: orderSeller.order_id, sendMail: true })
+                .then((orderList) => {
+                  if (orderList.length !== 0) {
+                    new OrderItem({}).findAll(0, 1000, {
+                      orderId: orderList[0].order_id,
+                    })
+                      .then((itemList) => {
+                        if (itemList.length !== 0) {
+                          log.info(itemList.length);
+                          new Mailer(that.mailCompletedConfirmation(orderList[0], itemList)).send()
+                            .then(() => {
+                              log.info(orderList);
+                              log.info('resultList[0]');
+                              log.info(resultList[0]);
+                              log.info('sent! Email Completed orders assembled confirmation');
+                              log.info(that.model);
+                            })
+                            .catch((err) => {
+                              log.info(`Failed to send  ${err}`);
+                            });
+                        }
+                      });
+                  }
                 })
                 .catch((err) => {
-                  log.error(`Failed to send ${err}`);
+                  log.error(`Failed to send 1 ${err}`);
                 });
             }
             new OrderStatusLogs({
@@ -267,7 +272,7 @@ OrderSeller.prototype.mailConfirmation = (orderSeller, itemList) => {
   });
   const body = `
   <div><p>Hi,</p></div>
-  <div><p>Assembled ${orderSeller.orderNumber}</p></div>
+  <div><p>In-transit delivery ${orderSeller.orderNumber}</p></div>
   <div>${timeslots[orderSeller.timeslot_id]}</div>
    <div>${orderSeller.date}</div>
   <div><p>Thank you!</p></div>
@@ -277,39 +282,34 @@ OrderSeller.prototype.mailConfirmation = (orderSeller, itemList) => {
     from: 'info@eos.com.ph',
     bcc: 'raineerdelarita@gmail.com',
     to: 'nerboikun24@gmail.com',
-    subject: `Assembled #${orderSeller.orderNumber} will be delivered now`,
-    text: `Successfully Assembled orders ${orderSeller.email}`,
+    subject: `Delivered #${orderSeller.orderNumber} will be delivered now`,
+    text: `Successfully In-transit delivery Assembled orders ${orderSeller.email}`,
     html: body,
   };
 };
-OrderSeller.prototype.mailTransitConfirmation = (userAccount) => {
+OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
+  const timeslots = ['', '8:00AM - 10:00AM', '11:00AM - 1:00PM', '2:00PM - 4:00PM', '5:00PM - 7:00PM', '8:00PM - 10:00PM'];
+  let items = '';
+  _.forEach(itemList, (item) => {
+    log.info('item');
+    log.info(item);
+    items += `<div>${item.name}</div>`;
+    items += `<div> <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg" style="margin:0 auto;float:none;max-width:50px;max-height:50px"/></div>`;
+  });
   const body = `
-  <div><p>Hi,</p></div>
-  <div><p>in-transit order ${userAccount.orderNumber}</p></div>
-  <div><p>in-transit order</p></div>
+  <div><p>Completed,</p></div>
+  <div><p>Completed ${orderSeller.orderNumber}</p></div>
+  <div>${timeslots[orderSeller.timeslot_id]}</div>
+   <div>${orderSeller.date}</div>
   <div><p>Thank you!</p></div>
+  ${items}
   `;
   return {
     from: 'info@eos.com.ph',
     bcc: 'raineerdelarita@gmail.com',
-    to: 'marianghelita@gmail.com',
-    subject: `Your order #${userAccount.orderNumber} will be delivered now`,
-    text: `Successfully registered with e-mail ${userAccount.email}`,
-    html: body,
-  };
-};
-OrderSeller.prototype.mailCompletedConfirmation = (userAccount) => {
-  const body = `
-  <div><p>Hi,</p></div>
-  <div><p>Delivered order ${userAccount.orderNumber}</p></div>
-  <div><p>in-transit order</p></div>
-  <div><p>Thank you!</p></div>
-  `;
-  return {
-    from: 'info@eos.com.ph',
-    to: 'raineerdelarita@gmail.com',
-    subject: `Your order #${userAccount.orderNumber} delivery completed`,
-    text: `Successfully registered with e-mail ${userAccount.email}`,
+    to: 'nerboikun24@gmail.com',
+    subject: `Completed #${orderSeller.orderNumber} will be delivered now`,
+    text: `Completed ${orderSeller.email}`,
     html: body,
   };
 };
