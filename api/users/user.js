@@ -205,7 +205,9 @@ User.prototype.createMultiple = users => new BluePromise((resolve, reject) => {
               const pbuquery = that.sqlTablePBU.insert(arr).toQuery();
               that.dbConn.queryAsync(pbuquery.text, pbuquery.values)
                 .then((result) => {
-                  that.getById(result.id)
+                  log.info('EMAIL GENERATION');
+                  log.info(result);
+                  that.getById(result.insertId)
                     .then((resultList) => {
                       if (!resultList[0].id) {
                         log.info('User Not Found');
