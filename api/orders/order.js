@@ -355,7 +355,10 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     orderkey: orderEntry.orderkey,
   })
     .then((resultList) => {
+      log.info('esultList');
+      log.info(resultList);
       if (resultList.length > 0) {
+        log.info('resultList.length');
         log.info(resultList.length);
         _.forEach(resultList, (obj) => {
           log.info(obj);
@@ -488,7 +491,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                 <br>
                                 <strong>Total: </strong>
                                 <br>
-                                ${parseFloat(orderEntry.total).toFixed(2)}
+                                ₱${parseFloat(orderEntry.total).toFixed(2)}
                               </td>
                            </table>
                           </td>
@@ -542,11 +545,6 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
               <tr>
                 <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
                   <table style="border-collapse:collapse;margin:0 auto;width:530px;border-spacing:0!important">
-                    <tr>
-                      <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;border-bottom:4px solid #ffcb00;padding-right:10px;width:100%;padding:10px!important;padding:0px!important">
-                        <img src="http://directory.clix.com.ph/images/logos/7079.jpg" style="margin:0 auto;float:none;max-width:180px"/>
-                      </td>
-                    </tr>
                     <!-- items -->
                     <tr>
                       <td>
@@ -562,7 +560,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                               <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1">x${item.quantity}</>
                             </td>
                             <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:16.666666%">
-                              <p>${parseFloat(item.displayPrice).toFixed(2)}</>
+                              <p>₱${parseFloat(item.displayPrice).toFixed(2)}</>
                             </td>
                           </tr>`).join('')}
                         </table>
@@ -640,7 +638,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
           <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
             <td align="center" valign="top" style="border: none; vertical-align: top; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 6.25%; padding-right: 6.25%; width: 87.5%; font-size: 13px; font-weight: 400; line-height: 150%; padding-top: 20px; padding-bottom: 20px; color: #999999; font-family: sans-serif;" class="footer" width="87.5%">
 
-              This email template was sent to&nbsp;you becouse we&nbsp;want to&nbsp;make the&nbsp;world a&nbsp;better place.
+             
               <br> You&nbsp;could change your
               <a href="https://github.com/konsav/email-templates/" target="_blank" style="text-decoration: underline; color: #999999; font-family: sans-serif; font-size: 13px; font-weight: 400; line-height: 150%;">subscription settings</a> anytime.
 
