@@ -371,6 +371,7 @@ paths:
       operationId: getUsers
       parameters:
         - $ref: "#/parameters/partner_id"
+        - $ref: "#/parameters/skip"
       responses:
         200:
           description: Get all partner buyer users
