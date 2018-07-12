@@ -5,6 +5,8 @@ const sql = require('sql');
 const Conn = require('../../service/connection');
 const log = require('color-logs')(true, true, 'Rating');
 const Mailer = require('../../service/mail');
+const OrderItem = require('../orderItems/orderItem');
+const Order = require('../orders/order');
 
 let that;
 
@@ -120,16 +122,25 @@ Rating.prototype.create = () => new BluePromise((resolve, reject) => {
       that.getById(response.insertId)
         .then((resultList) => {
           const ratingEntry = resultList[0];
-          log.info(ratingEntry);
           if (!resultList[0].id) {
             reject('Not Found');
           } else {
-            new Mailer(that.mailConfirmation(ratingEntry)).send()
-              .then(() => {
-                log.info('sent!');
+            new Order({}).getByValue(ratingEntry.orderkey, 'orderkey')
+              .then((orderResults) => {
+                if (orderResults.length !== 0) {
+                  new Mailer(that.mailConfirmation(ratingEntry, orderResults[0])).send()
+                    .then(() => {
+                      log.info('ratingEntry1');
+                      log.info(ratingEntry);
+                      log.info('sent!');
+                    })
+                    .catch((err) => {
+                      log.error(`Failed to send 1 ${err}`);
+                    });
+                }
               })
               .catch((err) => {
-                log.error(`Failed to send ${err}`);
+                log.error(`Not Found ${err}`);
               });
           }
         });
@@ -188,35 +199,22 @@ Rating.prototype.findAll = (skip, limit, filters) => {
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
-Rating.prototype.mailConfirmation = ratingEntry => new BluePromise((resolve, reject) => {
-  new Rating({}).findAll(0, 1000, {
-    orderkey: ratingEntry.orderkey,
-  })
-    .then((resultList) => {
-      log.info(resultList);
-      let body = `
-      <div><p>Email Notification - User and Audit Personnel</p></div>
-      <div><p>Send emails to user and audit personnel upon confirmation of order</p></div>
-      <div><b>Transaction # ${ratingEntry.feedback}</b></div>
-      <h2>Trigger is the Place Order Now button in Payment page</h2>
-      `;
-      _.forEach(resultList, (obj) => {
-        log.info(obj);
-        body += `<div>${obj} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
-      });
-      body += `<h1>Total: PHP ${ratingEntry.total}</h1>`;
-      resolve({
-        from: 'info@eos.com.ph',
-        to: ratingEntry.email,
-        subject: 'OMG - Feedback Email ',
-        text: `Successfully sent feedback with e-mail ${ratingEntry.email}`,
-        html: body,
-      });
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
+Rating.prototype.mailConfirmation = (ratingEntry, order) => {
+  const body = `
+  <div><p>Hi,</p></div>
+  <div></p></div>
+  <div><p>Please confirm your registration by clicking this link below</p></div>
+  <div>/p></div>
+  <div><p>Thank you!</p></div>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: order.email,
+    subject: 'OMG - Feedback',
+    text: `Omg feedback e-mail ${order.email}`,
+    html: body,
+  };
+};
 
 /**
   * findById

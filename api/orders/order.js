@@ -204,7 +204,6 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .toQuery();
   }
   log.info(query.text);
-  log.info('findall');
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
@@ -317,7 +316,6 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
         .then((resultList) => {
           if (resultList.length > 0) {
             const orderEntry = resultList[0];
-            log.info(orderEntry);
             that.mailConfirmation(_.merge(orderEntry, { transactionId }))
               .then((mailOptions) => {
                 new Mailer(mailOptions).send()
@@ -355,14 +353,8 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     orderkey: orderEntry.orderkey,
   })
     .then((resultList) => {
-      log.info('esultList');
-      log.info(resultList);
       if (resultList.length > 0) {
-        log.info('resultList.length');
-        log.info(resultList.length);
-        _.forEach(resultList, (obj) => {
-          log.info(obj);
-          const body = `
+        const body = `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 
@@ -657,14 +649,13 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 
 </html>
 `;
-          resolve({
-            from: 'info@eos.com.ph',
-            bcc: 'info@eos.com.ph',
-            to: orderEntry.email,
-            subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
-            text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
-            html: body,
-          });
+        resolve({
+          from: 'info@eos.com.ph',
+          bcc: 'raineerdelarita@gmail.com',
+          to: orderEntry.email,
+          subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
+          text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+          html: body,
         });
       }
     })
