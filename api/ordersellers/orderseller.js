@@ -267,7 +267,6 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
   const body = `
  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -307,15 +306,10 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
   .orderTD img {
     display:none;
   }
-  
-  
-  
+
 }
 </style>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
+ </head>
 
 
   <body style="style="border-collapse:collapse;height:100%;width:100%;min-width:600px;table-layout:fixed;background-color:#eee;color:#212121;font-family:"Helvetica Neue","Helvetica","Arial",sans-serif;font-weight:normal;margin:0;padding:0;text-align:center;line-height:1.3;font-size:14px;line-height:19px;border-spacing:0!important;"">
@@ -384,8 +378,7 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
                    ${_.map(itemList, item => `<tr>
                     <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;vertical-align:middle;padding-right:10px;width:16.666666%;padding:0px 10px 0px 0px!important">
                       <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg"" style="margin:0 auto;float:none;max-width:70%;max-height:80px"/>
-                      
-                    </td>
+                   </td>
                     <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:58.333333%">
                       <p style="margin:0 0 5px 0"><strong>${item.name}</strong></p>
                       <p style="margin:0 0 5px 0">x${item.quantity}</p>
@@ -404,9 +397,6 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
       </tr>
     </table>
   </body>
-
-
-
 </html>
   `;
   return {
@@ -422,16 +412,15 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
   const body = `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>A responsive two column example</title>
   <!-- Latest compiled and minified CSS -->
   <style>
-  img {
-            width: 100%;
-            display: block;
+        img {
+          width: 100%;
+          display: block;
         }
         .email-container {
           width: 100%;
@@ -442,12 +431,10 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
         .deliver {
           width: 50%;
         }
-
 @media only screen and (max-width: 620px) {
   .wrapper .section {
     width: 100%;
   }
-
   .wrapper .column {
     width: 100%;
     display: block;
@@ -462,17 +449,9 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
   .orderTD img {
     display:none;
   }
-
-
-
 }
 </style>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-
-
   <body style="style="border-collapse:collapse;height:100%;width:100%;min-width:600px;table-layout:fixed;background-color:#eee;color:#212121;font-family:"Helvetica Neue","Helvetica","Arial",sans-serif;font-weight:normal;margin:0;padding:0;text-align:center;line-height:1.3;font-size:14px;line-height:19px;border-spacing:0!important;"">
     <table class="mainContainer" style="margin: 0 auto;">
      <tr>
@@ -801,7 +780,6 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
         .and(that.sqlTable.dateAssembled.between(today, tomorrow)))
       .toQuery();
   } else if (filters.sendMail) {
-    const now = that.sqlTableOrder.star();
     query = that.sqlTable
       /*eslint-disable */
       .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date, now)

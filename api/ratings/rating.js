@@ -5,7 +5,6 @@ const sql = require('sql');
 const Conn = require('../../service/connection');
 const log = require('color-logs')(true, true, 'Rating');
 const Mailer = require('../../service/mail');
-const OrderItem = require('../orderItems/orderItem');
 const Order = require('../orders/order');
 
 let that;
@@ -200,19 +199,44 @@ Rating.prototype.findAll = (skip, limit, filters) => {
 };
 
 Rating.prototype.mailConfirmation = (ratingEntry, order) => {
+  let img = '';
+  let stars = '';
+  if (ratingEntry.feedbacktype === 3) {
+    img += '<div>Emoji Ratings: <img src="https://emojipedia-us.s3.amazonaws.com/thumbs/120/google/119/white-smiling-face_263a.png" style="margin:0 auto;float:none;max-width:50px;max-height:50px" /></div>';
+  }
+  if (ratingEntry.feedbacktype === 2) {
+    img += '<div>Emoji Ratings: ★★★★★<img src="https://emojipedia-us.s3.amazonaws.com/thumbs/120/google/119/white-frowning-face_2639.png" style="margin:0 auto;float:none;max-width:50px;max-height:50px" /></div>';
+  }
+  if (ratingEntry.starCount === '5') {
+    log.info('result5');
+    stars += '<div><p style="font-size: 34px;">StarCount: <span style="color: yellow;">★★★★★</span></p></div>';
+  }
+  if (ratingEntry.starCount === '4') {
+    log.info('result');
+    stars += '<div><pp style="font-size: 34px;">StarCount: <span style="color: yellow;">★★★★</span></p></div>';
+  }
   const body = `
-  <div><p>Hi,</p></div>
-  <div></p></div>
-  <div><p>Please confirm your registration by clicking this link below</p></div>
-  <div>/p></div>
+  <div><p>Hi,${order.number}</p></div>
+  <div><p>${ratingEntry.feedback}</p></div>
+  <div><p>${ratingEntry.starCount}</p></div>
+  <div><p>${ratingEntry.feedbacktype}<img src="" style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://hutcake.com/assets/omg-logo-01.png" /></p></div>
+  <div><p>${order.firstname} ${order.lastname}</p></div>
   <div><p>Thank you!</p></div>
+  ${img} 
+  ${stars}
   `;
   return {
     from: 'info@eos.com.ph',
-    to: order.email,
+    bcc: 'raineerdelarita@gmail.com',
+    to: 'delaritaraineer81@gmail.com',
     subject: 'OMG - Feedback',
     text: `Omg feedback e-mail ${order.email}`,
     html: body,
+    attachments: [{
+      filename: 'image.jpg',
+      path: 'http://hutcake.com/assets/omg-logo-01.png',
+      cid: 'unique@kreata.ee',
+    }],
   };
 };
 
