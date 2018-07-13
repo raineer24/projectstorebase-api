@@ -38,7 +38,7 @@ function Item(item) {
       'packaging',
       'packageMeasurement',
       'sizing',
-      'pacakgeMinimum',
+      'packageMinimum',
       'packageIntervals',
       'availableOn',
       'slug',
@@ -47,7 +47,7 @@ function Item(item) {
       'category1',
       'category2',
       'category3',
-      'sellerAccount_id',
+      'partner_id',
       'dateCreated',
       'dateUpdated',
     ],
@@ -306,6 +306,7 @@ Item.prototype.findAll = (skip, limit, filters, sortBy, sort) => new Promise((re
   * @param {string} offset
   * @return {object}
 */
+Item.prototype.getById = id => that.getByValue(id, 'id');
 Item.prototype.findById = id => that.getByValue(id, 'id');
 
 // Item.prototype.countItems = () => {
@@ -388,7 +389,7 @@ Item.prototype.create = () => new BluePromise((resolve, reject) => {
  */
 Item.prototype.update = id => new BluePromise((resolve, reject) => {
   that.model.dateUpdated = new Date().getTime();
-  that.getById(id)
+  that.findById(id)
     .then((resultList) => {
       if (!resultList[0].id) {
         reject('Not Found');
@@ -427,7 +428,6 @@ Item.prototype.createMultiple = () => new BluePromise((resolve, reject) => {
           const query = that.sqlTable.insert(key).toQuery();
           that.dbConn.queryAsync(query.text, query.values)
             .then((response) => {
-              log.info(response);
               that.getByValue(response.id, 'id')
                 .then((resultList) => {
                   if (!resultList[0].id) {
@@ -445,6 +445,50 @@ Item.prototype.createMultiple = () => new BluePromise((resolve, reject) => {
             });
         } else {
           reject('Found');
+        }
+      });
+  });
+  resolve();
+});
+
+/**
+  * Update User account
+  * @param {string} id
+  * @return {object}
+*/
+Item.prototype.updateMultiple = () => new BluePromise((resolve, reject) => {
+  let str = [];
+  str = that.model;
+  log.info('START - update items');
+  _.forEach(str, (key) => {
+    const itemCode = key.code;
+    log.info(itemCode);
+    that.getByValue(itemCode, 'code')
+      .then((results) => {
+        log.info('UPDATE - RESULTS');
+        if (results.length > 0 && itemCode !== undefined) {
+          const query = that.sqlTable.update(key)
+            .where(that.sqlTable.id.equals(results[0].id)).toQuery();
+          that.dbConn.queryAsync(query.text, query.values)
+            .then((response) => {
+              log.info(response.message);
+              // that.getByValue(response, 'id')
+              //   .then((resultList) => {
+              //     log.info(`RESULT LIST - ${resultList}`);
+              //     if (!resultList[0].id) {
+              //       log.info('Not Found');
+              //     }
+              //   })
+              //   .catch((err) => {
+              //     log.info(err);
+              //   });
+            })
+            .catch((err) => {
+              reject(err);
+              log.info(err);
+            });
+        } else {
+          log.info('Found');
         }
       });
   });

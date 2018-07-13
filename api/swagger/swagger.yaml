@@ -1746,7 +1746,7 @@ paths:
                 example: Unauthorized
   /items/create:
     x-swagger-router-controller: items
-    put:
+    post:
       tags:
         - item
       summary: create items
@@ -1857,6 +1857,37 @@ paths:
   #         description: Error
   #         schema:
   #           $ref: "#/definitions/ErrorResponse"
+  /items/update:
+    x-swagger-router-controller: items
+    put:
+      tags:
+        - item
+      summary: upate multiple items
+      operationId: updateItems
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateItems"
+      responses:
+        200:
+          description: Successfully updated item
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 10012
+        403:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /item/{id}/suggestions:
     x-swagger-router-controller: items
     get:
@@ -3062,6 +3093,22 @@ definitions:
     type: object
     required:
       - id
+    properties:
+      id:
+        type: string
+        description: item id
+      name:
+        type: string
+        description: item name
+      code:
+        type: number
+        description: item specific code
+      price:
+        type: number
+        description: item price
+  UpdateItems:
+    title: item
+    type: object
     properties:
       id:
         type: string
