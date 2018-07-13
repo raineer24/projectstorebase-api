@@ -507,7 +507,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                   <br>
                                   <br>
                                   <strong>Special Instructions: </strong>
-                                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec auctor metus. Praesent ut elit ac sem fringilla egestas. Nulla nec diam sed justo tempus mollis et id nulla. Mauris aliquam lacus sit amet purus ultrices viverra. Fusce commodo in diam quis malesuada. Cras nec lorem ac magna bibendum condimentum. Praesent ac magna urna. Praesent imperdiet dui feugiat ligula gravida, a elementum nulla bibendum. Nullam mattis, nisi in finibus aliquet, quam nunc hendrerit ex, sed aliquam libero est suscipit leo.
+                                  ${orderEntry.specialInstructions}
                                   <br>
                                   <br>
                                   <strong>Contact Number: </strong>
