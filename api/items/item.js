@@ -1,6 +1,7 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
+
 const log = require('color-logs')(true, true, 'Item');
 
 const Conn = require('../../service/connection');
@@ -419,6 +420,7 @@ Item.prototype.update = id => new BluePromise((resolve, reject) => {
 Item.prototype.createMultiple = () => new BluePromise((resolve, reject) => {
   let str = [];
   str = that.model;
+  log.info(str);
   _.forEach(str, (key) => {
     const itemCode = key.code;
     that.getByValue(itemCode, 'code')

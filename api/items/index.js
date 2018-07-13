@@ -1,15 +1,8 @@
+// const getRawBody = require('raw-body');
+
 const query = require('../../service/query');
 const Item = require('./item');
 const Log = require('../logs/log');
-const bodyParser = require('body-parser');
-
-const express = require('express');
-
-const app = express();
-
-// const jsonParser = bodyParser.json();
-
-app.use(bodyParser.json());
 
 const log = require('color-logs')(true, true, 'Item');
 
