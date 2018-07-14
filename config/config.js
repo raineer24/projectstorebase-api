@@ -8,8 +8,8 @@ module.exports = {
   mail: {
     host: 'smtp.gmail.com',
     port: 587,
-    username: 'eosomg@gmail.com',
-    password: 'infoeosomg',
+    username: 'info.eos.omg@gmail.com',
+    password: '246sgewg',
   },
   db: {
     hostname: process.env.RDS_HOSTNAME,

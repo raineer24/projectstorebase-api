@@ -377,9 +377,8 @@ Rating.prototype.mailConfirmation = (ratingEntry, order) => {
   `;
   return {
     from: 'info@eos.com.ph',
-    bcc: 'raineerdelarita@gmail.com',
-    to: 'delaritaraineer81.com@gmail.com',
-    subject: 'OMG - Feedback',
+    to: 'info@eos.com.ph',
+    subject: 'OMG - Feedback Rating review',
     text: `Omg feedback e-mail ${order.email}`,
     html: body,
   };
