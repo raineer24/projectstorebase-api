@@ -85,7 +85,7 @@ TimeslotOrder.prototype.create = () => new BluePromise((resolve, reject) => {
         if (that.model.id) {
           delete that.model.id;
         }
-        const dMax = getMax(moment(that.model.date).format('ddd'));
+        const dMax = getMax(moment(that.model.date).utcOffset(8).format('ddd'));
         new Timeslot({}).getById(that.model.timeslot_id)
           .then((timeslotResultList) => {
             if (timeslotResultList.length === 0) {
@@ -140,7 +140,7 @@ TimeslotOrder.prototype.updateTimeslotOrder = orderId => new BluePromise((resolv
       if (resultList.length === 0) {
         reject('Not Found');
       } else {
-        const dMax = getMax(moment(that.model.date).format('ddd'));
+        const dMax = getMax(moment(that.model.date).utcOffset(8).format('ddd'));
         new Timeslot({}).getById(that.model.timeslot_id)
           .then((timeslotResultList) => {
             if (timeslotResultList.length === 0) {
@@ -201,8 +201,8 @@ TimeslotOrder.prototype.formatTimeslots = tsoResult => new BluePromise((resolve,
     .then((results) => {
       /*eslint-disable */
       for (let n = 0; n < 7; n++) {
-        const currDate = moment().add(n, 'days').format('YYYY-MM-DD');
-        const maxValue = getMax(moment().add(n, 'days').format('ddd'));
+        const currDate = moment().add(n, 'days').utcOffset(8).format('YYYY-MM-DD');
+        const maxValue = getMax(moment().add(n, 'days').utcOffset(8).format('ddd'));
         formatted.push({
           date: currDate,
           range: [],
