@@ -355,20 +355,16 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     orderkey: orderEntry.orderkey,
   })
     .then((resultList) => {
-      log.info('esultList');
-      log.info(resultList);
       if (resultList.length > 0) {
-        log.info('resultList.length');
-        log.info(resultList.length);
-        _.forEach(resultList, (obj) => {
-          log.info(obj);
-          const body = `
+        const body = `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
    <title>A responsive two column example</title>
   <!-- Latest compiled and minified CSS -->
   <style>
@@ -511,7 +507,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                   <br>
                                   <br>
                                   <strong>Special Instructions: </strong>
-                                  No special Instructions instructed
+                                  ${orderEntry.specialInstructions}
                                   <br>
                                   <br>
                                   <strong>Contact Number: </strong>
@@ -645,7 +641,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
               <!-- ANALYTICS -->
               <!-- http://www.google-analytics.com/collect?v=1&tid={{UA-Tracking-ID}}&cid={{Client-ID}}&t=event&ec=email&ea=open&cs={{Campaign-Source}}&cm=email&cn={{Campaign-Name}} -->
               <img width="1" height="1" border="0" vspace="0" hspace="0" style="border-spacing: 0px; border-collapse: collapse; vertical-align: top; width: 100%; margin: 0; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: block;" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/tracker.png">
-
+          
             </td>
           </tr>
 
@@ -657,14 +653,13 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 
 </html>
 `;
-          resolve({
-            from: 'info@eos.com.ph',
-            bcc: 'info@eos.com.ph',
-            to: orderEntry.email,
-            subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
-            text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
-            html: body,
-          });
+        resolve({
+          from: 'info@eos.com.ph',
+          bcc: 'info@eos.com.ph',
+          to: orderEntry.email,
+          subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
+          text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+          html: body,
         });
       }
     })

@@ -5,6 +5,7 @@ const sql = require('sql');
 const Conn = require('../../service/connection');
 const log = require('color-logs')(true, true, 'Rating');
 const Mailer = require('../../service/mail');
+const Order = require('../orders/order');
 
 let that;
 
@@ -120,16 +121,25 @@ Rating.prototype.create = () => new BluePromise((resolve, reject) => {
       that.getById(response.insertId)
         .then((resultList) => {
           const ratingEntry = resultList[0];
-          log.info(ratingEntry);
           if (!resultList[0].id) {
             reject('Not Found');
           } else {
-            new Mailer(that.mailConfirmation(ratingEntry)).send()
-              .then(() => {
-                log.info('sent!');
+            new Order({}).getByValue(ratingEntry.orderkey, 'orderkey')
+              .then((orderResults) => {
+                if (orderResults.length !== 0) {
+                  new Mailer(that.mailConfirmation(ratingEntry, orderResults[0])).send()
+                    .then(() => {
+                      log.info('ratingEntry1');
+                      log.info(ratingEntry);
+                      log.info('Email sent feedback sent!');
+                    })
+                    .catch((err) => {
+                      log.error(`Failed to send 1 ${err}`);
+                    });
+                }
               })
               .catch((err) => {
-                log.error(`Failed to send ${err}`);
+                log.error(`Not Found ${err}`);
               });
           }
         });
@@ -188,35 +198,191 @@ Rating.prototype.findAll = (skip, limit, filters) => {
   return that.dbConn.queryAsync(query.text, query.values);
 };
 
-Rating.prototype.mailConfirmation = ratingEntry => new BluePromise((resolve, reject) => {
-  new Rating({}).findAll(0, 1000, {
-    orderkey: ratingEntry.orderkey,
-  })
-    .then((resultList) => {
-      log.info(resultList);
-      let body = `
-      <div><p>Email Notification - User and Audit Personnel</p></div>
-      <div><p>Send emails to user and audit personnel upon confirmation of order</p></div>
-      <div><b>Transaction # ${ratingEntry.feedback}</b></div>
-      <h2>Trigger is the Place Order Now button in Payment page</h2>
-      `;
-      _.forEach(resultList, (obj) => {
-        log.info(obj);
-        body += `<div>${obj} &nbsp; (${obj.displayPrice} x ${obj.quantity})</div>`;
-      });
-      body += `<h1>Total: PHP ${ratingEntry.total}</h1>`;
-      resolve({
-        from: 'info@eos.com.ph',
-        to: ratingEntry.email,
-        subject: 'OMG - Feedback Email ',
-        text: `Successfully sent feedback with e-mail ${ratingEntry.email}`,
-        html: body,
-      });
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
+Rating.prototype.mailConfirmation = (ratingEntry, order) => {
+  let img = '';
+  let stars = '';
+  if (ratingEntry.feedbacktype === 3) {
+    img += 'https://emojipedia-us.s3.amazonaws.com/thumbs/120/google/119/white-smiling-face_263a.png';
+  }
+  if (ratingEntry.feedbacktype === 2) {
+    img += 'https://emojipedia-us.s3.amazonaws.com/thumbs/120/google/119/neutral-face_1f610.png';
+  }
+  if (ratingEntry.feedbacktype === 1) {
+    img += 'https://emojipedia-us.s3.amazonaws.com/thumbs/120/google/119/white-frowning-face_2639.png';
+  }
+  if (ratingEntry.feedbacktype === 0) {
+    img += 'https://emojipedia-us.s3.amazonaws.com/thumbs/120/facebook/138/thinking-face_1f914.png';
+  }
+  if (ratingEntry.starCount === '5') {
+    log.info('result5');
+    stars += '<div><span style="color: #ff5847;font-size: 19px;">★★★★★</span></div>';
+  }
+  if (ratingEntry.starCount === '4') {
+    log.info('result');
+    stars += '<div><span style="color: #ff5847;font-size: 19px;">★★★★☆</span></div>';
+  }
+  if (ratingEntry.starCount === '3') {
+    log.info('result');
+    stars += '<div><span style="color: #ff5847;font-size: 19px;">★★★☆☆</span></div>';
+  }
+  if (ratingEntry.starCount === '2') {
+    log.info('result');
+    stars += '<div><span style="color: #ff5847;font-size: 19px;">★★☆☆☆</span></div>';
+  }
+  if (ratingEntry.starCount === '1') {
+    log.info('result');
+    stars += '<div><span style="color: #ff5847;font-size: 19px;">★☆☆☆☆</span></div>';
+  }
+  if (ratingEntry.starCount === '0') {
+    log.info('result');
+    stars += '<div><span style="color: #ff5847;font-size: 19px;">☆☆☆☆☆</span></div>';
+  }
+  const body = `
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+    <!-- Latest compiled and minified CSS -->
+  <style>
+  img {
+            width: 100%;
+            display: block;
+        }
+        .email-container {
+          width: 100%;
+        }
+        .orderTD {
+          width: 50%;
+        }
+        .deliver {
+          width: 50%;
+        }
+
+@media only screen and (max-width: 620px) {
+  .wrapper .section {
+    width: 100%;
+  }
+
+  .wrapper .column {
+    width: 100%;
+    display: block;
+  }
+ .holidayTreats td {
+    width: 100%!important;
+    float: left;
+  }
+  .deliver img {
+    display: none;
+  }
+  .orderTD img {
+    display:none;
+  }
+  
+  
+  
+}
+</style>
+</head>
+
+
+  <body style="style="border-collapse:collapse;height:100%;width:100%;min-width:600px;table-layout:fixed;background-color:#eee;color:#212121;font-family:"Helvetica Neue","Helvetica","Arial",sans-serif;font-weight:normal;margin:0;padding:0;text-align:center;line-height:1.3;font-size:14px;line-height:19px;border-spacing:0!important;"">
+    <table class="mainContainer" style="margin: 0 auto;">
+     <tr>
+      <td style="vertical-align:top;text-align:center">
+        <table style="border-collapse:collapse;width:580px;margin:0 auto;text-align:inherit;background-color:#fff;height:80px;margin-top:20px;border-spacing:0!important">
+          <tr>
+            <td style="vertical-align:top;text-align:center" align="center" valign="top">
+              <table style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important">
+                <tr>
+                  <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
+                    <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
+                      <tr>
+                      <td>
+                        <img src="http://hutcake.com/assets/omg-logo-01.png" style="margin:0 auto;margin-top:15px;margin-bottom:4px;width:34%;max-width:250px;height:auto;float:none;clear:none;display:inline-block" />
+                      </td>
+                      </tr>
+                    </table>
+                    
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+     </tr>
+    </table>
+    <table style="margin: 0 auto;">
+      <tr>
+                        <td style="vertical-align:top">
+                          <table style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important">
+                            <tr>
+                              <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
+                                <table class="glenda" style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
+                                  <tr>
+                                    <td style="vertical-align:top;padding:0px 0px 10px;text-align:center;padding:0px 40px">
+                                     <h2 style="font-weight:normal;word-break:normal;line-height:normal;font-size:20px;margin-top:0">Customer Name: ${order.firstname} ${order.lastname}</h2>
+                                    </td>
+                                    <td></td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+    </table>
+    <table class="fulfilled items" style="margin: 0 auto;">
+      <tr>
+        <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
+          <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
+            <tr>
+              <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;background-color:#f5f5f5;color:#000000;text-align:left;padding-left:10px;font-size:16px;padding-right:10px;width:100%;padding:10px!important">
+                <p style="margin:0 0 5px 0;float: left">
+                  <strong>Feedback Rating Review:<span style="font-size: 17px;">${stars}</span></strong>
+                </p>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;padding-right:10px;width:100%;padding:10px!important;padding:0px!important">
+                <table style="border-collapse:collapse;margin:0 auto;width:480px;margin:0px;table-layout:fixed;border-spacing:0!important">
+                  <tr>
+                    
+                    <td style="text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:100%">
+                      <p style="margin:7px 0px 5px 8px">${ratingEntry.feedback}</p>
+                    </td>
+                    
+                    
+                    <td
+                  </tr>
+                  <tr>
+
+                    <td style="text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:100%">
+                      <img src="${img}" style="margin:0 auto;float:none;max-width: 24%;max-height: 74px;"/>
+                    </td>
+                    
+                    
+                    <td
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `;
+  return {
+    from: 'info@eos.com.ph',
+    to: 'info@eos.com.ph',
+    subject: 'OMG - Feedback Rating review',
+    text: `Omg feedback e-mail ${order.email}`,
+    html: body,
+  };
+};
 
 /**
   * findById
