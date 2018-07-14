@@ -1,6 +1,10 @@
+// const getRawBody = require('raw-body');
+
 const query = require('../../service/query');
 const Item = require('./item');
 const Log = require('../logs/log');
+
+const log = require('color-logs')(true, true, 'Item');
 
 const item = {};
 
@@ -74,6 +78,7 @@ item.updateItem = (req, res) => {
       return res.json({ message: `Updated ${msg}` });
     })
     .catch((err) => {
+      log.info(err);
       new Log({ message: `${err}`, action: 'ORDER_UPDATE', type: 'ERROR' }).create();
       return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
     })
@@ -81,6 +86,33 @@ item.updateItem = (req, res) => {
       instItem.release();
     });
 };
+
+/**
+* Update an order
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+item.updateItems = (req, res) => {
+  log.info(req.swagger.params.body.value);
+  const instItem = new Item(req.swagger.params.body.value);
+  instItem.updateMultiple()
+    .then((msg) => {
+      new Log({
+        message: 'Update current order', action: 'ORDER_UPDATE', type: 'INFO',
+      }).create();
+      return res.json({ message: `Updated ${msg}` });
+    })
+    .catch((err) => {
+      log.info(err);
+      new Log({ message: `${err}`, action: 'ORDER_UPDATE', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : 'Failed' });
+    })
+    .finally(() => {
+      instItem.release();
+    });
+};
+
 
 /**
 * Add items
