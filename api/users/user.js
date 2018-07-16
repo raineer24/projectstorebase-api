@@ -368,7 +368,8 @@ User.prototype.passwordResetEmail = (userAccount) => {
   <a href="http://${hostname}/user/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
-  <div><p>Thank you!</p></div>
+  <div><p>Thanks!</p></div>
+  <div><p>OMG!  We're so excited for your first order!</p><div>
   `;
   return {
     from: 'info@eos.com.ph',
