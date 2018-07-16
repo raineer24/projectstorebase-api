@@ -3,13 +3,13 @@ require('dotenv').config();
 module.exports = {
   env: {
     port: process.env.PORT || '6001',
-    hostname: 'clickablebrand-omg.com',
+    hostname: 'www.clickablebrand-omg.com',
   },
   mail: {
     host: 'smtp.gmail.com',
     port: 587,
-    username: 'info.eos.omg@gmail.com',
-    password: '246sgewg',
+    username: 'omg.robot@ohmygrocery.com',
+    password: 'IAmAGroceryRobot!20180716',
   },
   db: {
     hostname: process.env.RDS_HOSTNAME,
