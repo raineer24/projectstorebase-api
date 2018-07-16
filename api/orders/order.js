@@ -431,13 +431,10 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                             </td>
                           </tr>
                         </table>
-                        <h2 style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif;">Hi, ${orderEntry.firstname}  ${orderEntry.lastname}!</h2>
-                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; text-align: justify;">Great choice. Awesome groceries from
-                          <a href="/" style="font-family: 'Helvetica', 'Arial', sans-serif;">OMG</a> is on its way</p>
-                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif;">We hope that you enjoy your purchase on OMG grocery and continue to shop with us a loyal customer.</p>
-                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; text-align: justify;">Check below for your order details.</p>
-                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; text-align: justify;">Until next time,</p>
-                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; text-align: justify;">Your OMG team</p>
+                        <h2 style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif;">Hi ${orderEntry.firstname},</h2>
+                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; text-align: justify;">Alrighty, thank you for using OMG!  Here's a recap of your order:
+                        </p>
+                       
                       </td>
                     </tr>
                   </tbody>
@@ -466,8 +463,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                       <tbody>
                         <tr>
                             <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;padding-right:10px;width:100%;padding:10px!important;" colspan="2">
-                            <h2>Gaisano Supermarket</h2>
-                            <h2><span>${moment(orderEntry.dateCreated).format('MMM D, YYYY')}</span></h2>
+                            <h2><span>Order Number #${orderEntry.number}</span></h2>
                             </td>
                            </tr>
                         <tr>
@@ -475,14 +471,14 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                             <table style="border-collapse:collapse;border-spacing:0!important">
                               <td style="vertical-align:top;padding:0px 0px 10px;width:20px;height:20px;text-align:left!important"><img src="https://assets.honestbee.com/images/order-confirmation-info@2x.png" /></td>
                               <td class="orderRes" style="vertical-align:top;padding:0px 0px 10px;padding-left:20px;text-align:left!important">
-                                <strong>Order number: </strong>
-                                #${orderEntry.number}
-                                <br>
-                                <br>
-                                <br>
-                                <strong>Order date: </strong>
-                                <br>
+                                <strong>Order Date: </strong>
                                 ${moment(orderEntry.dateCreated).format('MMM D, YYYY')}
+                                <br>
+                                <br>
+                                <br>
+                                <strong>Service Fee: </strong>
+                                <br>
+                                ₱${orderEntry.serviceFee}
                                 <br>
                                 <br>
                                 <strong>Total: </strong>
@@ -574,14 +570,21 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; max-width: 600px; margin: 0 auto;" valign="top">
       <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
         <td style="margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;" align="center" valign="top">
-          <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">View as a Web Page</webversion>
+          <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">Our team has got you covered.  So sit back, relax and just do what you love.  We'll take care of the grocery shopping for you.  We'll send you a message once our awesome team has assembled your order.  </webversion>
           <br>
-          <br> Eos Omg
+          <br> 
           <br>
-          <span class="unstyle-auto-detected-links">©2018 OMG All Rights Reserved
+          <span class="unstyle-auto-detected-links">Have a wonderful day ahead of you!
+          <br>  
           <br>
+          <span class="unstyle-auto-detected-links">Actual prices may differ, and quantity is subject to availability.  But our friendly OMG! staff will contact you if ever...
           <br>
-          <unsubscribe style="color: #888888; text-decoration: underline;">unsubscribe</unsubscribe>
+          <br> Love,
+          <br>
+          <span class="unstyle-auto-detected-links">OMG!
+          <br> P.S.
+          <br>
+          <unsubscribe style="color: #888888; text-decoration: underline;">Your Fave Grocery App</unsubscribe>
           </td>
 
       </tr>
