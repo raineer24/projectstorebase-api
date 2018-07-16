@@ -3,6 +3,7 @@ const sql = require('sql');
 const _ = require('lodash');
 const log = require('color-logs')(true, true, 'Order');
 const moment = require('moment');
+const config = require('../../config/config');
 
 const Conn = require('../../service/connection');
 const Mailer = require('../../service/mail');
@@ -357,64 +358,9 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     .then((resultList) => {
       if (resultList.length > 0) {
         const body = `
-    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
-   <title>A responsive two column example</title>
-  <!-- Latest compiled and minified CSS -->
-  <style>
-  img {
-            width: 100%;
-            display: block;
-        }
-        .email-container {
-          width: 100%;
-        }
-        .orderTD {
-          width: 50%;
-        }
-        .deliver {
-          width: 50%;
-        }
-
-@media only screen and (max-width: 620px) {
-  .wrapper .section {
-    width: 100%;
-  }
-
-  .wrapper .column {
-    width: 100%;
-    display: block;
-  }
- .holidayTreats td {
-    width: 100%!important;
-    float: left;
-  }
-  .deliver img {
-    display: none;
-  }
-  .orderTD img {
-    display:none;
-  }
-
-
-
-}
-</style>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
-
-<body style="border-collapse:collapse;height:100%;width:100%;min-width:600px;table-layout:fixed;background-color:#eee;color:#212121;font-family:"Helvetica Neue","Helvetica","Arial",sans-serif;font-weight:normal;margin:0;padding:0;text-align:center;line-height:1.3;font-size:14px;line-height:19px;border-spacing:0!important;">
-  <table class="mainContainer" style="margin: 0 auto;">
-      <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-        <td class="wrapper" width="600" align="center" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding-left: 10px; padding-right: 10px;" valign="top">
+<table class="mainContainer" style="margin: 0 auto;">
+  <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
+    <td class="wrapper" width="600" align="center" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding-left: 10px; padding-right: 10px;" valign="top">
           <!-- Header image -->
           <table class="section header" cellpadding="0" cellspacing="0" width="600" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
             <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
@@ -423,18 +369,18 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                   <tbody style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
                     <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
                       <td align="left" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-                        <img src="http://hutcake.com/assets/omg-logo-01.png" alt="picsum" style="margin:0 auto;margin-top:15px;margin-bottom:4px;width:34%;max-width:250px;height:auto;float:none;clear:none">
-                        <table width="640" border="0" cellspacing="0" cellpadding="20" bgcolor="#ff5847" class="100p" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
+                        <img src="http://${config.env.hostname}/assets/MAIN_01.png" alt="picsum" style="width:100%;">
+                        <table width="640" border="0" cellspacing="0" cellpadding="20" bgcolor="#ff005d" style="padding: 0; margin: 0 0 10px; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
                           <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-                            <td align="center" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; font-size: 24px; color: #FFFFFF;" valign="top">
-                              <font face="'Roboto', Arial, sans-serif">Your order has been placed</font>
+                            <td align="center" style="padding: 10px; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; font-size: 16px; color: #FFFFFF; font-weight: bold;" valign="top">
+                              <span style="font-face='Roboto', Arial, sans-serif">Your Wish Is My Command</style>
                             </td>
                           </tr>
                         </table>
-                        <h2 style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif;">Hi ${orderEntry.firstname},</h2>
+                        <h3 style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif;">Hi ${orderEntry.firstname},</h3>
                         <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; text-align: justify;">Alrighty, thank you for using OMG!  Here's a recap of your order:
                         </p>
-                       
+
                       </td>
                     </tr>
                   </tbody>
@@ -449,7 +395,6 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                   <tbody style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
                     <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
                       <td align="left" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-                        <img src="http://hutcake.com/assets/main-01.jpg" alt="picsum" width="600" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; width: 100%; display: block;">
                         <table width="640" border="0" cellspacing="0" cellpadding="20" bgcolor="#ff5847" class="100p" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
                           <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
 
@@ -469,21 +414,19 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                         <tr>
                           <td class="orderTD" style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;padding-right:10px;width:50%;padding:10px!important;">
                             <table style="border-collapse:collapse;border-spacing:0!important">
-                              <td style="vertical-align:top;padding:0px 0px 10px;width:20px;height:20px;text-align:left!important"><img src="https://assets.honestbee.com/images/order-confirmation-info@2x.png" /></td>
+                              <!-- <td style="vertical-align:top;padding:0px 0px 10px;width:20px;height:20px;text-align:left!important">
+                                <img src="https://assets.honestbee.com/images/order-confirmation-info@2x.png" />
+                              </td> -->
                               <td class="orderRes" style="vertical-align:top;padding:0px 0px 10px;padding-left:20px;text-align:left!important">
-                                <strong>Order Date: </strong>
-                                ${moment(orderEntry.dateCreated).format('MMM D, YYYY')}
+                                <strong>Order Date: </strong>${moment(orderEntry.dateCreated).format('MMM D, YYYY')}
+                                <br><br><br>
+                                <strong>Service Fee: </strong>₱${parseFloat(orderEntry.serviceFee).toFixed(2)}
                                 <br>
-                                <br>
-                                <br>
-                                <strong>Service Fee: </strong>
-                                <br>
-                                ₱${orderEntry.serviceFee}
-                                <br>
-                                <br>
+                                <strong>Delivery Fee: </strong>₱${parseFloat(orderEntry.deliveryFee).toFixed(2)}
+                                <br><br>
                                 <strong>Total: </strong>
                                 <br>
-                                ₱${parseFloat(orderEntry.total).toFixed(2)}
+                                <span style="font-size: 16px;">₱${parseFloat(orderEntry.total).toFixed(2)}</span>
                               </td>
                            </table>
                           </td>
@@ -491,9 +434,9 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                            <table>
                             <tbody>
                               <tr>
-                                <td style="vertical-align:top;padding:0px 0px 10px;width:20px;height:20px;text-align:left!important">
+                                <!-- <td style="vertical-align:top;padding:0px 0px 10px;width:20px;height:20px;text-align:left!important">
                                   <img src="https://assets.honestbee.com/images/order-confirmation-info@2x.png" style="margin:0 auto;float:none" />
-                                </td>
+                                </td> -->
                                 <td style="vertical-align:top;padding:0px 0px 10px;padding-left:20px;text-align:left!important">
                                   <strong>Deliver to</strong>
                                   <br>
@@ -501,11 +444,11 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                   <br>
                                   ${orderEntry.shippingAddress01}
                                   <br>
-                                  <br>
+                                  ${orderEntry.city}, ${orderEntry.country} ${orderEntry.postalcode}
+                                  <br><br>
                                   <strong>Special Instructions: </strong>
                                   ${orderEntry.specialInstructions}
-                                  <br>
-                                  <br>
+                                  <br><br>
                                   <strong>Contact Number: </strong>
                                   <br>
                                     ${orderEntry.phone}
@@ -528,133 +471,65 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
               </td>
             </tr>
           </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<!-- start itemContainer -->
+<table style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important">
+  <tr>
+    <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
+      <table style="border-collapse:collapse;margin:0 auto;width:530px;border-spacing:0!important">
+        <!-- items -->
+        <tr>
+          <td>
+            <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
+              ${_.map(resultList, item => `
+                <tr>
+                  <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;margin:10px auto;vertical-align:middle;padding-right:10px;width:16.666666%">
+                    <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg" style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://${config.env.hostname}/assets/omg-logo-01.png" />
                   </td>
-            </tr>
-            </tbody></table>
-            <br>
-            <!-- start itemContainer -->
-            <table style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important">
-              <tr>
-                <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
-                  <table style="border-collapse:collapse;margin:0 auto;width:530px;border-spacing:0!important">
-                    <!-- items -->
-                    <tr>
-                      <td>
-                        <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
-                          ${_.map(resultList, item => `<tr>
-                            <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;margin:10px auto;vertical-align:middle;padding-right:10px;width:16.666666%">
-                              <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg" style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://hutcake.com/assets/omg-logo-01.png" />
-                            </td>
-                            <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:50%">
-                              <p style="margin:0 0 5px 0">${item.name}</p>
-                            </td>
-                            <td>
-                              <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1">x${item.quantity}</>
-                            </td>
-                            <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:16.666666%">
-                              <p>₱${parseFloat(item.displayPrice).toFixed(2)}</>
-                            </td>
-                          </tr>`).join('')}
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
+                  <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:50%">
+                    <p style="margin:0 0 5px 0">${item.name}</p>
+                  </td>
+                  <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-right:10px;">
+                    <p style="margin:0 0 5px 0;text-align:left;">x${item.quantity}</p>
+                  </td>
+                  <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:16.666666%">
+                    <p style="margin:0 0 5px 0">₱${parseFloat(item.displayPrice).toFixed(2)}</p>
+                  </td>
+                </tr>`).join('')}
             </table>
-            <!-- end itemContainer -->
-
-
-
-     <!-- Email Footer : BEGIN -->
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; max-width: 600px; margin: 0 auto;" valign="top">
-      <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-        <td style="margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;" align="center" valign="top">
-          <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">Our team has got you covered.  So sit back, relax and just do what you love.  We'll take care of the grocery shopping for you.  We'll send you a message once our awesome team has assembled your order.  </webversion>
-          <br>
-          <br> 
-          <br>
-          <span class="unstyle-auto-detected-links">Have a wonderful day ahead of you!
-          <br>  
-          <br>
-          <span class="unstyle-auto-detected-links">Actual prices may differ, and quantity is subject to availability.  But our friendly OMG! staff will contact you if ever...
-          <br>
-          <br> Love,
-          <br>
-          <span class="unstyle-auto-detected-links">OMG!
-          <br> P.S.
-          <br>
-          <unsubscribe style="color: #888888; text-decoration: underline;">Your Fave Grocery App</unsubscribe>
           </td>
-
-      </tr>
-
-    </table>
- <table border="0" cellpadding="0" cellspacing="0" align="center" width="600" style="border: none; vertical-align: top; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0; padding: 0; width: inherit; max-width: 600px; margin: 0 auto;" class="wrapper" valign="top">
-
-          <!-- SOCIAL NETWORKS -->
-          <!-- Image text color should be opposite to background color. Set your url, image src, alt and title. Alt text should fit the image size. Real image size should be x2 -->
-          <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-            <td align="center" valign="top" style="border: none; vertical-align: top; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 6.25%; padding-right: 6.25%; width: 87.5%; padding-top: 25px;" class="social-icons" width="87.5%">
-              <table width="256" border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0; border: none; vertical-align: top; border-collapse: collapse; border-spacing: 0; padding: 0;" valign="top">
-                <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-
-                  <!-- ICON 1 -->
-                  <td align="center" valign="top" style="border: none; vertical-align: top; margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
-                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="font-family: 'Helvetica', 'Arial', sans-serif; text-decoration: none;">
-                      <img border="0" vspace="0" hspace="0" style="border-spacing: 0px; border-collapse: collapse; vertical-align: top; width: 100%; padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block; color: #000000;" alt="F" title="Facebook" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/facebook.png">
-                    </a>
-                  </td>
-
-                  <!-- ICON 2 -->
-                  <td align="center" valign="top" style="border: none; vertical-align: top; margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
-                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="font-family: 'Helvetica', 'Arial', sans-serif; text-decoration: none;">
-                      <img border="0" vspace="0" hspace="0" style="border-spacing: 0px; border-collapse: collapse; vertical-align: top; width: 100%; padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block; color: #000000;" alt="T" title="Twitter" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/twitter.png">
-                    </a>
-                  </td>
-
-                  <!-- ICON 3 -->
-                  <td align="center" valign="top" style="border: none; vertical-align: top; margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
-                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="font-family: 'Helvetica', 'Arial', sans-serif; text-decoration: none;">
-                      <img border="0" vspace="0" hspace="0" style="border-spacing: 0px; border-collapse: collapse; vertical-align: top; width: 100%; padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block; color: #000000;" alt="G" title="Google Plus" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/googleplus.png">
-                    </a>
-                  </td>
-
-                  <!-- ICON 4 -->
-                  <td align="center" valign="top" style="border: none; vertical-align: top; margin: 0; padding: 0; padding-left: 10px; padding-right: 10px; border-collapse: collapse; border-spacing: 0;">
-                    <a target="_blank" href="https://raw.githubusercontent.com/konsav/email-templates/" style="font-family: 'Helvetica', 'Arial', sans-serif; text-decoration: none;">
-                      <img border="0" vspace="0" hspace="0" style="border-spacing: 0px; border-collapse: collapse; vertical-align: top; width: 100%; padding: 0; margin: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: inline-block; color: #000000;" alt="I" title="Instagram" width="44" height="44" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/social-icons/instagram.png">
-                    </a>
-                  </td>
-
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- FOOTER -->
-          <!-- Set text color and font family ("sans-serif" or "Georgia, serif"). Duplicate all text styles in links, including line-height -->
-          <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
-            <td align="center" valign="top" style="border: none; vertical-align: top; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 6.25%; padding-right: 6.25%; width: 87.5%; font-size: 13px; font-weight: 400; line-height: 150%; padding-top: 20px; padding-bottom: 20px; color: #999999; font-family: sans-serif;" class="footer" width="87.5%">
-
-             
-              <br> You&nbsp;could change your
-              <a href="https://github.com/konsav/email-templates/" target="_blank" style="text-decoration: underline; color: #999999; font-family: sans-serif; font-size: 13px; font-weight: 400; line-height: 150%;">subscription settings</a> anytime.
-
-              <!-- ANALYTICS -->
-              <!-- http://www.google-analytics.com/collect?v=1&tid={{UA-Tracking-ID}}&cid={{Client-ID}}&t=event&ec=email&ea=open&cs={{Campaign-Source}}&cm=email&cn={{Campaign-Name}} -->
-              <img width="1" height="1" border="0" vspace="0" hspace="0" style="border-spacing: 0px; border-collapse: collapse; vertical-align: top; width: 100%; margin: 0; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: block;" src="https://raw.githubusercontent.com/konsav/email-templates/master/images/tracker.png">
-          
-            </td>
-          </tr>
-
-          <!-- End of WRAPPER -->
-        </table>
-
-
-</body>
-
-</html>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- end itemContainer -->
+<!-- Email Footer : BEGIN -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; max-width: 600px; margin: 0 auto;" valign="top">
+  <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
+    <td style="margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding: 20px; font-family: 'Helvetica','Arial',sans-serif; font-size: 13px; line-height: 15px; text-align: left;" align="center" valign="top">
+      <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">Our team has got you covered.  So sit back, relax and just do what you love.  We'll take care of the grocery shopping for you.  We'll send you a message once our awesome team has assembled your order.  </webversion>
+      <br>
+      <br>
+      <br>
+      <span class="unstyle-auto-detected-links">Have a wonderful day ahead of you!
+      <br>
+      <br>
+      <br>Love,
+      <br>
+      <span class="unstyle-auto-detected-links">OMG!
+      <br>
+      Your Fave Grocery App
+      <br>
+      <br>
+      <span style="font-style: italic">P.S. Actual prices may differ, and quantity is subject to availability. But our friendly OMG! staff will contact you if ever...
+    </td>
+  </tr>
+</table>
 `;
         resolve({
           from: 'info@eos.com.ph',
