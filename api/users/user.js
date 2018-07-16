@@ -191,7 +191,6 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
   * @return {object}
 */
 User.prototype.createMultiple = users => new BluePromise((resolve, reject) => {
-  log.info(users);
   _.forEach(users, (key) => {
     that.getByValue(key.user.username, 'username')
       .then((results) => {
@@ -202,12 +201,13 @@ User.prototype.createMultiple = users => new BluePromise((resolve, reject) => {
               log.info('[RESULTS - CREATE USER]');
               log.info(response);
               const arr = _.merge(key.pbu, { useraccount_id: response.insertId });
+              const uId = response.insertId;
               const pbuquery = that.sqlTablePBU.insert(arr).toQuery();
               that.dbConn.queryAsync(pbuquery.text, pbuquery.values)
                 .then((result) => {
                   log.info('EMAIL GENERATION');
                   log.info(result);
-                  that.getById(result.insertId)
+                  that.getById(uId)
                     .then((resultList) => {
                       if (!resultList[0].id) {
                         log.info('User Not Found');
