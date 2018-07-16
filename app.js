@@ -52,9 +52,9 @@ SwaggerParser.bundle(config.swaggerFile)
         credentials: true,
       }));
       app.use(cookieParser());
-      app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-      app.use(bodyParser({ limit: '50mb' }));
-      app.use(bodyParser.json({ type: 'application/*+json' }));
+      app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+      app.use(bodyParser({ limit: '100mb', extended: true }));
+      app.use(bodyParser.json({ type: 'application/*+json', limit: '100mb', extended: true }));
       app.use(SwaggerUi(swaggerExpress.runner.swagger));
       app.use(express.static(path.join(__dirname, 'public')));
       app.use(morgan('combined'));

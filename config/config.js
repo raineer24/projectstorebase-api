@@ -3,7 +3,7 @@ require('dotenv').config();
 module.exports = {
   env: {
     port: process.env.PORT || '6001',
-    hostname: 'clickable-omg.com',
+    hostname: 'clickablebrand-omg.com',
   },
   mail: {
     host: 'smtp.gmail.com',

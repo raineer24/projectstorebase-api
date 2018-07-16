@@ -243,7 +243,7 @@ User.prototype.mailConfirmation = (userAccount) => {
   <div><p>Hi,</p></div>
   <div><p>You have successfully registered with username ${userAccount.email}</p></div>
   <div><p>Please confirm your registration by clicking this link below</p></div>
-  <div><p><a href="http://${hostname}">lkasdjfkladsjflkdsajflkasdjflkajsdlkfadfs</a></p></div>
+  <div><p><a href="http://${hostname}">Registration Link</a></p></div>
   <div><p>Thank you!</p></div>
   `;
   return {
