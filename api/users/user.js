@@ -212,13 +212,7 @@ User.prototype.createMultiple = users => new BluePromise((resolve, reject) => {
                       if (!resultList[0].id) {
                         log.info('User Not Found');
                       } else {
-                        new Mailer(that.mailConfirmation(resultList[0])).send()
-                          .then(() => {
-                            log.info(`Successfully registered with e-mail ${resultList[0].email}`);
-                          })
-                          .catch((err) => {
-                            log.error(`Failed to send ${err}`);
-                          });
+                        that.sendPasswordResetEmail(resultList[0]);
                       }
                     });
                 })
@@ -247,7 +241,7 @@ User.prototype.mailConfirmation = (userAccount) => {
   <div><p>Thank you!</p></div>
   `;
   return {
-    from: 'info@eos.com.ph',
+    from: config.mail.username,
     to: userAccount.email,
     subject: 'OMG - Successful registration',
     text: `Successfully registered with e-mail ${userAccount.email}`,
