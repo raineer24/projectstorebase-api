@@ -377,10 +377,8 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                             </td>
                           </tr>
                         </table>
-                        <h3 style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif;">Hi ${orderEntry.firstname},</h3>
-                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; text-align: justify;">Alrighty, thank you for using OMG!  Here's a recap of your order:
-                        </p>
-
+                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; font-size: 16px;">Hi <b>${orderEntry.firstname}</b>,</h3>
+                        <p style="margin: 0; padding: 0; padding-bottom: 20px; line-height: 1.6; font-family: 'Helvetica', 'Arial', sans-serif; text-align: justify;">Alrighty, thank you for using OMG!  Here's a recap of your order:</p>
                       </td>
                     </tr>
                   </tbody>
@@ -521,7 +519,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
       <br>
       <br>Love,
       <br>
-      <span class="unstyle-auto-detected-links">OMG!
+      <span class="unstyle-auto-detected-links"><b>OMG!</b>
       <br>
       Your Fave Grocery App
       <br>
