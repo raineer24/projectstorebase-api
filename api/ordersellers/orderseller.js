@@ -3,6 +3,7 @@ const _ = require('lodash');
 const sql = require('sql');
 const log = require('color-logs')(true, true, 'Order Seller');
 const moment = require('moment');
+const config = require('../../config/config');
 
 const Mailer = require('../../service/mail');
 const Conn = require('../../service/connection');
@@ -264,55 +265,9 @@ OrderSeller.prototype.update = id => new BluePromise((resolve, reject) => {
 
 OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
   const timeslots = ['', '8:00AM - 10:00AM', '11:00AM - 1:00PM', '2:00PM - 4:00PM', '5:00PM - 7:00PM', '8:00PM - 10:00PM'];
+  /*eslint-disable */
+  const grandTotal = Number(orderSeller.serviceFee) + Number(orderSeller.deliveryFee) + Number(orderSeller.finalItemTotal);
   const body = `
- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>A responsive two column example</title>
-  <!-- Latest compiled and minified CSS -->
-  <style>
-  img {
-            width: 100%;
-            display: block;
-        }
-        .email-container {
-          width: 100%;
-        }
-        .orderTD {
-          width: 50%;
-        }
-        .deliver {
-          width: 50%;
-        }
-
-@media only screen and (max-width: 620px) {
-  .wrapper .section {
-    width: 100%;
-  }
-
-  .wrapper .column {
-    width: 100%;
-    display: block;
-  }
- .holidayTreats td {
-    width: 100%!important;
-    float: left;
-  }
-  .deliver img {
-    display: none;
-  }
-  .orderTD img {
-    display:none;
-  }
-
-}
-</style>
- </head>
-
-
-  <body style="style="border-collapse:collapse;height:100%;width:100%;min-width:600px;table-layout:fixed;background-color:#eee;color:#212121;font-family:"Helvetica Neue","Helvetica","Arial",sans-serif;font-weight:normal;margin:0;padding:0;text-align:center;line-height:1.3;font-size:14px;line-height:19px;border-spacing:0!important;"">
     <table class="mainContainer" style="margin: 0 auto;">
      <tr>
       <td style="vertical-align:top;text-align:center">
@@ -325,7 +280,7 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
                     <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
                       <tr>
                       <td>
-                        <img src="http://hutcake.com/assets/omg-logo-01.png" style="margin:0 auto;margin-top:15px;margin-bottom:4px;width:34%;max-width:250px;height:auto;float:none;clear:none;display:inline-block" />
+                         <img src="http://${config.env.hostname}/assets/MAIN_01.png" alt="picsum" style="width:100%;" />
                       </td>
                       </tr>
                     </table>
@@ -341,29 +296,30 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
     </table>
     <table style="margin: 0 auto;">
       <tr>
-                        <td style="vertical-align:top">
-                          <table style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important">
-                            <tr>
-                              <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
-                                <table class="glenda" style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
-                                  <tr>
-                                    <td style="vertical-align:top;padding:0px 0px 10px;text-align:center;padding:0px 40px">
-                                      <h2 style="font-weight:normal;word-break:normal;line-height:normal;font-size:20px;margin-top:0">Hi, ${orderSeller.firstname}<span style="color:#ff762c;font-weight:bold">,  Great news, your order will be at your doorstep on ${orderSeller.date} 
-                                      </span><span>${timeslots[orderSeller.timeslot_id]}</span></h2>
-                                    </td>
-                                    <td></td>
-                                  </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
+        <td style="vertical-align:top">
+          <table style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important">
+            <tr>
+              <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
+                <table class="glenda" style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
+                  <tr>
+                    <td style="vertical-align:top;padding:0px 10px 10px;text-align:left;">
+                      <h2 style="font-weight:normal;word-break:normal;line-height:normal;font-size:20px;margin-top:0">Hi, ${orderSeller.firstname}</h2>
+                      <p>Popping-fresh groceries from <strong>OMG!</strong> is on your way. Expect delivery on <strong>${moment(orderSeller.date).format('MMM D, YYYY')}, ${timeslots[orderSeller.timeslot_id]}</strong></p>
+                      <p>Here's a list of what to expect in your <strong>OMG!</strong> bag:</p>
+                    </td>
+                    <td></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
     </table>
     <table class="fulfilled items" style="margin: 0 auto;">
       <tr>
         <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
-          <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
+          <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
             <tr>
               <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;background-color:#f5f5f5;color:#000000;text-align:left;padding-left:10px;font-size:16px;padding-right:10px;width:100%;padding:10px!important">
                 <p style="margin:0 0 5px 0">
@@ -374,25 +330,78 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
             </tr>
             <tr>
               <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;padding-right:10px;width:100%;padding:10px!important;padding:0px!important">
-                <table style="border-collapse:collapse;margin:0 auto;width:480px;margin:0px;table-layout:fixed;border-spacing:0!important">
-                   ${_.map(itemList, item => `<tr>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;vertical-align:middle;padding-right:10px;width:16.666666%;padding:0px 10px 0px 0px!important">
-                      <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg"" style="margin:0 auto;float:none;max-width:70%;max-height:80px"/>
-                   </td>
-                    <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:58.333333%">
-                      <p style="margin:0 0 5px 0"><strong>${item.name}</strong></p>
-                      <p style="margin:0 0 5px 0">x${item.quantity}</p>
-                    </td>
-                    <td style="vertical-align:top;padding:0px 0px 10px;width:8.333333%">&nbsp;</td>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:16.666666%">
-                      <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1;white-space:nowrap"> 1.0</p>
-                    </td>
-                    <td
-                  </tr>`).join('')}
+                <table style="border-collapse:collapse;margin:0 auto;width:580px;margin:0px;table-layout:fixed;border-spacing:0!important">
+                   ${_.map(itemList, item => {
+                     if (Number(item.finalQuantity) == 0) {
+                      return '';
+                     }
+                      const itemTotalPrice =  Number(item.finalQuantity) * Number(item.finalPrice);
+                      return `<tr>
+                        <td style="vertical-align:top;min-width:0px;padding:0px 10px 10px 10px;vertical-align:middle;width:16.666666%;">
+                            <img src=${config.imageRepo}${item.imageKey}.jpg style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://${config.env.hostname}/assets/omg-logo-01.png" />
+                        </td>
+                        <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 10px 10px 0px;width:58.333333%">
+                          <p style="margin:0 0 5px 0">${item.name}</p>
+                          <p style="margin:0 0 5px 0">x${item.finalQuantity}</p>
+                        </td>
+                        <td style="vertical-align:top;padding:0px 0px 10px;width:8.333333%">&nbsp;</td>
+                        <td style="vertical-align:top;min-width:0px;padding:0px 10px 10px 0px;width:16.666666%;text-align:right;">
+                          <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1;white-space:nowrap"><p style="margin:0 0 5px 0">₱${parseFloat(itemTotalPrice).toFixed(2)}</p></p>
+                        </td>
+                      </tr>`
+                   }).join('')}
                 </table>
+  
               </td>
             </tr>
           </table>
+          <br>
+          <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
+            <tr>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:right;padding-right:10px;width:83.333333%">
+                <p style="margin:0 0 5px 0">Groceries Subtotal</p>
+              </td>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
+                <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(orderSeller.finalItemTotal).toFixed(2)}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:right;padding-right:10px;width:83.333333%">
+                <p style="margin:0 0 5px 0">Service Fee</p>
+              </td>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
+                <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(orderSeller.serviceFee).toFixed(2)}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:right;padding-right:10px;width:83.333333%">
+                <p style="margin:0 0 5px 0">Delivery Fee</p>
+              </td>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
+                <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(orderSeller.deliveryFee).toFixed(2)}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:right;padding-right:10px;width:83.333333%">
+                <p style="margin:0 0 5px 0">Grand Total</p>
+              </td>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
+                <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(grandTotal).toFixed(2)}</p>
+              </td>
+            </tr>
+          </table>
+                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; max-width: 600px; margin: 0 auto;" valign="top">
+  <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
+    <td style="margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding: 20px; font-family: 'Helvetica','Arial',sans-serif; font-size: 13px; line-height: 15px; text-align: left;" align="center" valign="top">
+       <br>Love,
+      <br>
+      <span class="unstyle-auto-detected-links"><b>OMG!</b>
+      <br>
+      Your Fave Grocery App
+      <br>
+   </td>
+  </tr>
+</table>
         </td>
       </tr>
     </table>
@@ -400,60 +409,19 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
 </html>
   `;
   return {
-    from: 'info@eos.com.ph',
-    bcc: 'info@eos.com.ph',
+    from: config.mail.username,
+    bcc: config.orderEmail,
     to: orderSeller.email,
-    subject: `Delivered #${orderSeller.orderNumber} will be delivered now`,
+    subject: `OMG! - Order #${orderSeller.orderNumber} will be delivered now`,
     text: `Successfully Delivered orders ${orderSeller.email}`,
     html: body,
   };
 };
+
 OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
+  const grandTotal = Number(orderSeller.serviceFee) + Number(orderSeller.deliveryFee) + Number(orderSeller.finalItemTotal);
   const body = `
-  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>A responsive two column example</title>
-  <!-- Latest compiled and minified CSS -->
-  <style>
-        img {
-          width: 100%;
-          display: block;
-        }
-        .email-container {
-          width: 100%;
-        }
-        .orderTD {
-          width: 50%;
-        }
-        .deliver {
-          width: 50%;
-        }
-@media only screen and (max-width: 620px) {
-  .wrapper .section {
-    width: 100%;
-  }
-  .wrapper .column {
-    width: 100%;
-    display: block;
-  }
- .holidayTreats td {
-    width: 100%!important;
-    float: left;
-  }
-  .deliver img {
-    display: none;
-  }
-  .orderTD img {
-    display:none;
-  }
-}
-</style>
-</head>
-  <body style="style="border-collapse:collapse;height:100%;width:100%;min-width:600px;table-layout:fixed;background-color:#eee;color:#212121;font-family:"Helvetica Neue","Helvetica","Arial",sans-serif;font-weight:normal;margin:0;padding:0;text-align:center;line-height:1.3;font-size:14px;line-height:19px;border-spacing:0!important;"">
-    <table class="mainContainer" style="margin: 0 auto;">
+   <table class="mainContainer" style="margin: 0 auto;">
      <tr>
       <td style="vertical-align:top;text-align:center">
         <table style="border-collapse:collapse;width:580px;margin:0 auto;text-align:inherit;background-color:#fff;height:80px;margin-top:20px;border-spacing:0!important">
@@ -465,11 +433,11 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
                     <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
                       <tr>
                       <td>
-                        <img src="http://hutcake.com/assets/omg-logo-01.png" style="margin:0 auto;margin-top:15px;margin-bottom:4px;width:34%;max-width:250px;height:auto;float:none;clear:none;display:inline-block" />
+                         <img src="http://${config.env.hostname}/assets/MAIN_01.png" alt="picsum" style="width:100%;" />
                       </td>
                       </tr>
                     </table>
-
+                    
                   </td>
                 </tr>
               </table>
@@ -481,29 +449,30 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
     </table>
     <table style="margin: 0 auto;">
       <tr>
-                        <td style="vertical-align:top">
-                          <table style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important">
-                            <tr>
-                              <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
-                                <table class="glenda" style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
-                                  <tr>
-                                    <td style="vertical-align:top;padding:0px 0px 10px;text-align:center;padding:0px 40px">
-                                      <h2 style="font-weight:normal;word-break:normal;line-height:normal;font-size:20px;margin-top:0">
-                                          All done—delivered fresh, fast and without the heavy lifting!</h2>
-                                    </td>
-                                    <td></td>
-                                  </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
+        <td style="vertical-align:top">
+          <table style="border-collapse:collapse;padding:0px;width:100%;border-spacing:0!important">
+            <tr>
+              <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
+                <table class="glenda" style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
+                  <tr>
+                    <td style="vertical-align:top;padding:0px 10px 10px;text-align:left;">
+                      <h2 style="font-weight:normal;word-break:normal;line-height:normal;font-size:20px;margin-top:0">Hi, ${orderSeller.firstname}</h2>
+                      <p>It's all good:  We have shopped, assembled, and delivered your order!</p>
+                      <p>It was a blast shopping for you!  Do you know that on the average, people spend at least 3 hours doing grocery shopping?  So good choice on using OMG! What will you do with the time you saved?</p>
+                    </td>
+                    <td></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
     </table>
     <table class="fulfilled items" style="margin: 0 auto;">
       <tr>
         <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
-          <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
+          <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
             <tr>
               <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;background-color:#f5f5f5;color:#000000;text-align:left;padding-left:10px;font-size:16px;padding-right:10px;width:100%;padding:10px!important">
                 <p style="margin:0 0 5px 0">
@@ -514,78 +483,87 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
             </tr>
             <tr>
               <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;padding-right:10px;width:100%;padding:10px!important;padding:0px!important">
-                <table style="border-collapse:collapse;margin:0 auto;width:480px;margin:0px;table-layout:fixed;border-spacing:0!important">
-                   ${_.map(itemList, item => `<tr>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;vertical-align:middle;padding-right:10px;width:16.666666%;padding:0px 10px 0px 0px!important">
-                      <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg"" style="margin:0 auto;float:none;max-width:70%;max-height:80px"/>
-                      
-                    </td>
-                    <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:58.333333%">
-                      <p style="margin:0 0 5px 0"><strong>${item.name}</strong></p>
-                      <p style="margin:0 0 5px 0">x${item.quantity}</p>
-                    </td>
-                    <td style="vertical-align:top;padding:0px 0px 10px;width:8.333333%">&nbsp;</td>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:16.666666%">
-                      <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1;white-space:nowrap">₱${parseFloat(item.displayPrice).toFixed(2)}</p>
-                    </td>
-                    <td
-                  </tr>`).join('')}
+                <table style="border-collapse:collapse;margin:0 auto;width:580px;margin:0px;table-layout:fixed;border-spacing:0!important">
+                   ${_.map(itemList, item => {
+                        if (Number(item.finalQuantity) == 0) {
+                          return '';
+                        }
+                        const itemTotalPrice = Number(item.finalQuantity) * Number(item.finalPrice);
+                        return `<tr>
+                        <td style="vertical-align:top;min-width:0px;padding:0px 10px 10px 10px;vertical-align:middle;width:16.666666%;">
+                            <img src=${config.imageRepo}${item.imageKey}.jpg style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://${config.env.hostname}/assets/omg-logo-01.png" />
+                        </td>
+                        <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 10px 10px 0px;width:58.333333%">
+                          <p style="margin:0 0 5px 0">${item.name}</p>
+                          <p style="margin:0 0 5px 0">x${item.finalQuantity}</p>
+                        </td>
+                        <td style="vertical-align:top;padding:0px 0px 10px;width:8.333333%">&nbsp;</td>
+                        <td style="vertical-align:top;min-width:0px;padding:0px 10px 10px 0px;width:16.666666%;text-align:right;">
+                          <p style="margin:0 0 5px 0;text-align:left;color:#a1a1a1;white-space:nowrap"><p style="margin:0 0 5px 0">₱${parseFloat(itemTotalPrice).toFixed(2)}</p></p>
+                        </td>
+                      </tr>`
+    }).join('')}
                 </table>
+  
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
-    </table>
-    <table style="margin: 0 auto;">
-      <tr>
-        <td style="vertical-align:top;padding:10px 20px 0px 0px;padding-right:0px">
-          <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
+          <br>
+          <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
             <tr>
-              <td style="vertical-align:top;background:#f2f2f2;border:1px solid #d9d9d9;min-width:0px;padding:0px 0px 10px;background-color:#ffffff;padding-right:10px;border:none;width:100%;padding:10px!important">
-                <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
-                  <tr>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:25%">
-                      &nbsp;
-                    </td>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:58.333333%">
-                      <p style="margin:0 0 5px 0"><strong></strong>Subtotal</p>
-                    </td>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
-                      <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(orderSeller.itemTotal).toFixed(2)}</p>
-                    </td>
-                    <td style="vertical-align:top;width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding:0!important">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:25%">
-                      &nbsp;
-                    </td>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:58.333333%">
-                      <p style="margin:0 0 5px 0"><strong>Delivery fee</strong></p>
-                    </td>
-                    <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
-                      <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap"></p>
-                    </td>
-                    <td style="vertical-align:top;width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding:0!important">
-                    </td>
-                  </tr>
-                </table>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:right;padding-right:10px;width:83.333333%">
+                <p style="margin:0 0 5px 0">Groceries Subtotal</p>
+              </td>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
+                <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(orderSeller.finalItemTotal).toFixed(2)}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:right;padding-right:10px;width:83.333333%">
+                <p style="margin:0 0 5px 0">Service Fee</p>
+              </td>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
+                <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(orderSeller.serviceFee).toFixed(2)}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:right;padding-right:10px;width:83.333333%">
+                <p style="margin:0 0 5px 0">Delivery Fee</p>
+              </td>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
+                <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(orderSeller.deliveryFee).toFixed(2)}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:right;padding-right:10px;width:83.333333%">
+                <p style="margin:0 0 5px 0">Grand Total</p>
+              </td>
+              <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;text-align:left;padding-right:10px;width:16.666666%">
+                <p style="margin:0 0 5px 0;text-align:right;white-space:nowrap">₱${parseFloat(grandTotal).toFixed(2)}</p>
               </td>
             </tr>
           </table>
+                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; max-width: 600px; margin: 0 auto;" valign="top">
+  <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
+    <td style="margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding: 20px; font-family: 'Helvetica','Arial',sans-serif; font-size: 13px; line-height: 15px; text-align: left;" align="center" valign="top">
+       <br>Love,
+      <br>
+      <span class="unstyle-auto-detected-links"><b>OMG!</b>
+      <br>
+      Your Fave Grocery App
+      <br>
+   </td>
+  </tr>
+</table>
         </td>
       </tr>
     </table>
   </body>
-
-
-
 </html>
   `;
   return {
-    from: 'info@eos.com.ph',
-    bcc: 'info@eos.com.ph',
+    from: config.mail.username,
+    bcc: config.orderEmail,
     to: orderSeller.email,
     subject: `Completed #${orderSeller.orderNumber} All item orders delivered.`,
     text: `Completed ${orderSeller.email}`,
@@ -782,7 +760,7 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
   } else if (filters.sendMail) {
     query = that.sqlTable
       /*eslint-disable */
-      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date, now)
+      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date, that.sqlTableOrder.star())
       .from(that.sqlTable
         .join(that.sqlTableOrder)
         .on(that.sqlTableOrder.id.equals(that.sqlTable.order_id))

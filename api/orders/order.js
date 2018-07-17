@@ -123,6 +123,20 @@ function Order(order) {
     ],
   });
   that = this;
+  this.sqlTableTimeslotOrder = sql.define({
+    name: 'timeslotorder',
+    columns: [
+      'id',
+      'order_id',
+      'timeslot_id',
+      'datetime',
+      'date',
+      'confirmed',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
+  that = this;
 }
 
 Order.prototype.setTransactionNumber = (number) => {
@@ -196,6 +210,18 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .offset(skip)
       .toQuery();
     log.info(query);
+  } else if (filters.sendMail) {
+    query = that.sqlTable
+      /*eslint-disable */
+      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date)
+      .from(that.sqlTable
+        .leftJoin(that.sqlTableTimeslotOrder)
+        .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.id)))
+      .where(that.sqlTable.id.equals(filters.order_id))
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
@@ -314,7 +340,7 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
       value: 0,
     }).create) // Create transaction
     .then(() => {
-      that.getById(id)
+      that.findAll(0, 1, { order_id: id, sendMail: true })
         .then((resultList) => {
           if (resultList.length > 0) {
             const orderEntry = resultList[0];
@@ -329,8 +355,8 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
                     log.error(`Failed to send ${err}`);
                   });
               })
-              .catch(() => {});
-            new Orderseller({
+              .catch(() => { });
+              new Orderseller({
               order_id: orderEntry.id,
               partner_id: orderEntry.partner_id,
               orderNumber: orderEntry.number,
@@ -352,13 +378,14 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
 
 
 Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, reject) => {
+  const timeslots = ['', '8:00AM - 10:00AM', '11:00AM - 1:00PM', '2:00PM - 4:00PM', '5:00PM - 7:00PM', '8:00PM - 10:00PM'];
   new OrderItem({}).findAll(0, 1000, {
     orderkey: orderEntry.orderkey,
   })
     .then((resultList) => {
       if (resultList.length > 0) {
         const body = `
-<table class="mainContainer" style="margin: 0 auto;">
+  <table class="mainContainer" style="margin: 0 auto;">
   <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
     <td class="wrapper" width="600" align="center" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding-left: 10px; padding-right: 10px;" valign="top">
           <!-- Header image -->
@@ -436,6 +463,11 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                   <img src="https://assets.honestbee.com/images/order-confirmation-info@2x.png" style="margin:0 auto;float:none" />
                                 </td> -->
                                 <td style="vertical-align:top;padding:0px 0px 10px;padding-left:20px;text-align:left!important">
+                                  <strong>Delivery Date: </strong>
+                                  <br>
+                                  <br>
+                                  ${moment(orderEntry.date).format('MMM D, YYYY')}, ${timeslots[orderEntry.timeslot_id]} 
+                                  <br><br>
                                   <strong>Deliver to</strong>
                                   <br>
                                   ${orderEntry.firstname}  ${orderEntry.lastname}
@@ -444,7 +476,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                   <br>
                                   ${orderEntry.city}, ${orderEntry.country} ${orderEntry.postalcode}
                                   <br><br>
-                                  <strong>Special Instructions: </strong>
+                                  <strong>Delivery Instructions: </strong>
                                   ${orderEntry.specialInstructions}
                                   <br><br>
                                   <strong>Contact Number: </strong>
@@ -482,11 +514,11 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
         <!-- items -->
         <tr>
           <td>
-            <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
+            <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
               ${_.map(resultList, item => `
                 <tr>
                   <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;margin:10px auto;vertical-align:middle;padding-right:10px;width:16.666666%">
-                    <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg" style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://${config.env.hostname}/assets/omg-logo-01.png" />
+                    <img src=${config.imageRepo}${item.imageKey}.jpg style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://${config.env.hostname}/assets/omg-logo-01.png" />
                   </td>
                   <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:50%">
                     <p style="margin:0 0 5px 0">${item.name}</p>
@@ -530,11 +562,11 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 </table>
 `;
         resolve({
-          from: 'info@eos.com.ph',
-          bcc: 'info@eos.com.ph',
+          from: config.mail.username,
+          bcc: config.orderEmail,
           to: orderEntry.email,
-          subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
-          text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+          subject: `OMG! - Order Confirmation (#${orderEntry.transactionId})`,
+          text: `Successfully paid and confirmed order (#${orderEntry.transactionId})`,
           html: body,
         });
       }
