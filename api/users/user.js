@@ -383,11 +383,11 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
             })
               .then((resultList2) => {
                 if (resultList2.length > 0) {
-                  new Mailer(that.mailWelcome(_.merge(resultList[0], {
+                  new Mailer(that.passwordResetEmail(_.merge(resultList[0], {
                     token: resultList2[0].key,
                   }))).send()
                     .then(() => {
-                      log.info(`Successfully sent welcome email to ${resultList[0].email}`);
+                      log.info(`Successfully sent reset password to ${resultList[0].email}`);
                       resolve('Success');
                     })
                     .catch((err) => {
