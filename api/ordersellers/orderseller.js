@@ -459,6 +459,7 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
                       <h2 style="font-weight:normal;word-break:normal;line-height:normal;font-size:20px;margin-top:0">Hi, ${orderSeller.firstname}</h2>
                       <p>It's all good:  We have shopped, assembled, and delivered your order!</p>
                       <p>It was a blast shopping for you!  Do you know that on the average, people spend at least 3 hours doing grocery shopping?  So good choice on using OMG! What will you do with the time you saved?</p>
+                      <p>Rate your OMG! Experience <a href="http://${config.env.hostname}/user/orders/detail/${orderSeller.orderkey}"/>Click Link</a></p>
                     </td>
                     <td></td>
                   </tr>
