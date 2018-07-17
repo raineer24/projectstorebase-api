@@ -249,6 +249,67 @@ User.prototype.mailConfirmation = (userAccount) => {
   };
 };
 
+User.prototype.mailWelcome = (userAccount) => {
+  const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
+  const body = `
+  <table align="center" style="border: 0; width: 800px; font-family: Helvetica,Arial,sans-serif">
+   <tr>
+    <td>
+     <img src="http://${config.env.hostname}/assets/MAIN_01.png"  alt="Welcome!" style="width: 100%; height: 230px; display: block" />
+    </td>
+   </tr>
+   <tr>
+    <td style="background-color: #ffffff">
+      <br>
+      <br>
+      <div>Hi ${userAccount.firstName},</div><br><br>
+      <div>
+        <strong>Welcome to OMG! Oh My Grocery.</strong>
+          <br><br>
+          OMG! allows you to purchase your groceries online and  have them delivered to your office at your preferred delivery timeslot.
+          Before or after your shift, your groceries are already waiting for you. Just like that!
+          And since you belong to the coolest company ever, ClickableBrand lets you order your groceries now and have it charged to your next pay.
+          ClickableBrand rocks!  So skip the trip to the grocery and spend more time doing the things you love!
+        <br>
+        <br>
+        <br>
+        Now, let's get you started. First off, the ClickableBrand-OMG website:<br>
+        <a href="http://${hostname}">www.clickablebrand-omg.com</a>
+        <br>
+        <br>
+        Next, your OMG! credentials:<br><br>
+        <strong>Username:  ${userAccount.email}</strong>
+        <br>
+        <br>
+        <br>
+        For your password, your account has been assigned an auto-generated password.  You will receive another email with the link to provide your new password.
+        <br>
+        <br>
+        <br>
+        Once set, you can already start using OMG! We're so excited for your first order!
+        <br>
+        <br>
+        <br>
+        <br>
+        Love,<br>
+        <strong>OMG!</strong><br>
+        Your Fave Grocery App
+      </div>
+    </td>
+   </tr>
+   <tr>
+   </tr>
+  </table>
+  `;
+  return {
+    from: config.mail.username,
+    to: userAccount.email,
+    subject: 'WELCOME TO OMG!',
+    text: `Successfully registered with e-mail ${userAccount.email}`,
+    html: body,
+  };
+};
+
 User.prototype.update = (id, isChangePassword = false) => new BluePromise((resolve, reject) => {
   delete that.model.username;
   if (!that.model.password || !that.model.newPassword) {
@@ -322,11 +383,11 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
             })
               .then((resultList2) => {
                 if (resultList2.length > 0) {
-                  new Mailer(that.passwordResetEmail(_.merge(resultList[0], {
+                  new Mailer(that.mailWelcome(_.merge(resultList[0], {
                     token: resultList2[0].key,
                   }))).send()
                     .then(() => {
-                      log.info(`Successfully sent password reset email to ${resultList[0].email}`);
+                      log.info(`Successfully sent welcome email to ${resultList[0].email}`);
                       resolve('Success');
                     })
                     .catch((err) => {
@@ -359,6 +420,44 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
   * @param {string} field
   * @return {object<Promise>}
 */
+User.prototype.sendWelcomeEmail = obj => new BluePromise((resolve, reject) => {
+  const errEmail = [];
+  let error = '';
+  _.forEach(obj, (key) => {
+    log.info(key);
+    that.getByValue(key.email, 'email')
+      .then((resultList) => {
+        if (resultList[0].id) {
+          new Mailer(that.mailWelcome(resultList[0])).send()
+            .then(() => {
+              log.info(`Successfully sent welcome email to ${resultList[0].email}`);
+            })
+            .catch((err) => {
+              error = err;
+              log.error(`Failed to send ${err}`);
+              errEmail.push(resultList[0].email);
+            });
+        } else {
+          error = 'Not Found';
+        }
+      }).catch((err) => {
+        error = err;
+        log.error(`Failed to send ${err}`);
+      });
+  });
+  if (errEmail.length) {
+    reject(`${error}, ${errEmail.join(',')}`);
+  } else {
+    resolve('Success');
+  }
+});
+
+/**
+  * Get by value
+  * @param {any} value
+  * @param {string} field
+  * @return {object<Promise>}
+*/
 User.prototype.passwordResetEmail = (userAccount) => {
   const hostname = config.env.hostname === 'localhost' ? `${config.env.hostname}:${config.env.port}` : config.env.hostname;
   const body = `
@@ -372,7 +471,7 @@ User.prototype.passwordResetEmail = (userAccount) => {
   <div><p>OMG!  We're so excited for your first order!</p><div>
   `;
   return {
-    from: 'info@eos.com.ph',
+    from: config.mail.username,
     to: userAccount.email,
     subject: 'OMG - Account Password Reset',
     text: `Password reset request for e-mail ${userAccount.email}`,
