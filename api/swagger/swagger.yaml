@@ -576,6 +576,37 @@ paths:
               message:
                 type: string
                 example: Unauthorized
+  /user/account/email/welcome:
+    x-swagger-router-controller: users
+    post:
+      tags:
+        - user
+      summary: request password reset
+      operationId: welcomeEmail
+      parameters:
+        - name: body
+          in: body
+          description: post contents
+          required: true
+          schema:
+            $ref: "#/definitions/Emails"
+      responses:
+        200:
+          description: Password reset email sent
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: norbert@hutcake.com
+        403:
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
   /partnerbuyeruser/sendpasswordemails:
     x-swagger-router-controller: partnerbuyeruser
     get:
@@ -3175,6 +3206,11 @@ definitions:
         description: date of time slot
   Timeslots:
     title: timeslots
+    type: array
+    items:
+      type: object
+  Emails:
+    title: emails
     type: array
     items:
       type: object

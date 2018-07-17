@@ -196,6 +196,27 @@ user.forgotPassword = (req, res) => {
 };
 
 /**
+* User registration
+* @param {Object} req
+* @param {Object} res
+* @return {Object}
+*/
+user.welcomeEmail = (req, res) => {
+  new Log({ message: 'Sending welcome email to user.', action: 'USER_SEND_WELCOME_EMAIL', type: 'INFO' }).create();
+  const instUser = new User();
+  instUser.sendWelcomeEmail(req.swagger.params.body.value)
+    .then(status => res.json({ status, message: 'Success' }))
+    .catch((err) => {
+      new Log({ message: `${err}`, action: 'USER_SEND_WELCOME_EMAIL', type: 'ERROR' }).create();
+      return res.status(err === 'Not Found' ? 404 : 500).json({ message: err === 'Not Found' ? 'Not Found' : err });
+    })
+    .finally(() => {
+      instUser.release();
+    });
+};
+
+
+/**
 * View user profile
 * @param {Object} req
 * @param {Object} res
