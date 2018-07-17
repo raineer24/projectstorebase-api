@@ -284,7 +284,7 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
                       </td>
                       </tr>
                     </table>
-                    
+
                   </td>
                 </tr>
               </table>
@@ -351,7 +351,7 @@ OrderSeller.prototype.mailDeliveredConfirmation = (orderSeller, itemList) => {
                       </tr>`
                    }).join('')}
                 </table>
-  
+
               </td>
             </tr>
           </table>
@@ -437,7 +437,7 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
                       </td>
                       </tr>
                     </table>
-                    
+
                   </td>
                 </tr>
               </table>
@@ -505,7 +505,7 @@ OrderSeller.prototype.mailCompletedConfirmation = (orderSeller, itemList) => {
                       </tr>`
     }).join('')}
                 </table>
-  
+
               </td>
             </tr>
           </table>
@@ -691,8 +691,8 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
     // const now = new Date();
     // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
-    const today = moment().format('YYYY-MM-DD');
-    // const tomorrow = moment().add(1, 'days').format('YYYY-MM-DD');
+    const today = moment().utcOffset(8).format('YYYY-MM-DD');
+    // const tomorrow = moment().utcOffset(8).add(1, 'days').format('YYYY-MM-DD');
     if (filters.orderStatus.toUpperCase() === 'ALL') {
       query = that.sqlTable
         .select(that.sqlTable.star(), that.sqlTableSellerAccount.name.as('sellerAccountName'), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.datetime)
@@ -750,8 +750,8 @@ OrderSeller.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
     // const now = new Date();
     // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
-    const today = moment().startOf('day').valueOf();
-    const tomorrow = moment().endOf('day').valueOf();
+    const today = moment().utcOffset(8).startOf('day').valueOf();
+    const tomorrow = moment().utcOffset(8).endOf('day').valueOf();
     query = that.sqlTable
       .select(that.sqlTable.star())
       .from(that.sqlTable)
@@ -795,8 +795,8 @@ OrderSeller.prototype.countFreshFrozen = (filters) => {
   // const now = new Date();
   // const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   // const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
-  const today = moment().startOf('day').valueOf();
-  const tomorrow = moment().endOf('day').valueOf();
+  const today = moment().utcOffset(8).startOf('day').valueOf();
+  const tomorrow = moment().utcOffset(8).endOf('day').valueOf();
   const strSql = `
     SELECT os.id, os.order_id, count(oi.id) AS itemCount
       FROM orderseller as os

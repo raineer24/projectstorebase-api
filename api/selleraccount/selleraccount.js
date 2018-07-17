@@ -167,7 +167,7 @@ Selleraccount.prototype.resetPassword = email => new BluePromise((resolve, rejec
       if (resultList[0].id) {
         new Token().invalidate(resultList[0].id, 'PARTNER_USER');
         new Token({
-          dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
+          dateExpiration: parseInt(moment().add(1, 'days').utcOffset(8).format('x'), 10),
           type: 'PASSWORD_RESET',
         }).create(resultList[0].id, 'PARTNER_USER')
           .then((tokenId) => {

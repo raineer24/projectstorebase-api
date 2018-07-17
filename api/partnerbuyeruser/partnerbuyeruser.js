@@ -240,7 +240,7 @@ Partnerbuyeruser.prototype.sendPasswordEmails = () => new BluePromise((resolve, 
       if (resultList.length > 0) {
         _.forEach(resultList, (obj) => {
           new Token({
-            dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
+            dateExpiration: parseInt(moment().add(1, 'days').utcOffset(8).format('x'), 10),
             type: 'PASSWORD_RESET',
           }).create(obj.useraccount_id, 'USER')
             .then(() => {

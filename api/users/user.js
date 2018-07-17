@@ -191,6 +191,7 @@ User.prototype.create = () => new BluePromise((resolve, reject) => {
   * @return {object}
 */
 User.prototype.createMultiple = users => new BluePromise((resolve, reject) => {
+  log.info(users);
   _.forEach(users, (key) => {
     that.getByValue(key.user.username, 'username')
       .then((results) => {
@@ -201,18 +202,23 @@ User.prototype.createMultiple = users => new BluePromise((resolve, reject) => {
               log.info('[RESULTS - CREATE USER]');
               log.info(response);
               const arr = _.merge(key.pbu, { useraccount_id: response.insertId });
-              const uId = response.insertId;
               const pbuquery = that.sqlTablePBU.insert(arr).toQuery();
               that.dbConn.queryAsync(pbuquery.text, pbuquery.values)
                 .then((result) => {
                   log.info('EMAIL GENERATION');
                   log.info(result);
-                  that.getById(uId)
+                  that.getById(result.insertId)
                     .then((resultList) => {
                       if (!resultList[0].id) {
                         log.info('User Not Found');
                       } else {
-                        that.sendPasswordResetEmail(resultList[0]);
+                        new Mailer(that.mailConfirmation(resultList[0])).send()
+                          .then(() => {
+                            log.info(`Successfully registered with e-mail ${resultList[0].email}`);
+                          })
+                          .catch((err) => {
+                            log.error(`Failed to send ${err}`);
+                          });
                       }
                     });
                 })
@@ -241,7 +247,7 @@ User.prototype.mailConfirmation = (userAccount) => {
   <div><p>Thank you!</p></div>
   `;
   return {
-    from: config.mail.username,
+    from: 'info@eos.com.ph',
     to: userAccount.email,
     subject: 'OMG - Successful registration',
     text: `Successfully registered with e-mail ${userAccount.email}`,
@@ -372,7 +378,7 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
       if (resultList[0].id) {
         new Token().invalidate(resultList[0].id, 'USER');
         new Token({
-          dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
+          dateExpiration: parseInt(moment().add(1, 'days').utcOffset(8).format('x'), 10),
           type: 'PASSWORD_RESET',
         }).create(resultList[0].id, 'USER')
           .then((tokenId) => {
@@ -464,11 +470,10 @@ User.prototype.passwordResetEmail = (userAccount) => {
   <div><p>Hi ${userAccount.firstName},</p></div>
   <div><p>Your <b>Oh My Grocery</b> password has been reset.</p></div>
   <div><p>Please provide a new password by clicking on this link within the next 24 hours:
-  <a href="http://${hostname}/user/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
+  <a href="http://www.${hostname}/user/resetPassword?token=${userAccount.token}&email=${userAccount.email}&i=${userAccount.id}">Click here</a>
   </p></div>
   <div><p>Please remember to keep your username and password confidential at all times.</p></div>
-  <div><p>Thanks!</p></div>
-  <div><p>OMG!  We're so excited for your first order!</p><div>
+  <div><p>Thank you!</p></div>
   `;
   return {
     from: config.mail.username,
