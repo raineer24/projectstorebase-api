@@ -372,7 +372,7 @@ User.prototype.sendPasswordResetEmail = obj => new BluePromise((resolve, reject)
       if (resultList[0].id) {
         new Token().invalidate(resultList[0].id, 'USER');
         new Token({
-          dateExpiration: parseInt(moment().add(1, 'days').format('x'), 10),
+          dateExpiration: parseInt(moment().add(1, 'days').utcOffset(8).format('x'), 10),
           type: 'PASSWORD_RESET',
         }).create(resultList[0].id, 'USER')
           .then((tokenId) => {

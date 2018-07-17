@@ -63,7 +63,7 @@ timeSlot.getTimeslot = (req, res) => {
 timeSlot.getTimeslotOrder = (req, res) => {
   const instTimeslot = new Timeslot({});
   instTimeslot.findAll(0, 100, {
-    current: moment().format('YYYY-MM-DD'),
+    current: moment().utcOffset(8).format('YYYY-MM-DD'),
   })
     .then(results => results)
     .then(instTimeslot.formatTimeslots)
