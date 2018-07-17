@@ -20,4 +20,7 @@ module.exports = {
   },
   swaggerFile: 'api/swagger/swagger.yaml',
   jwtKey: 'pSyv3jJnyERUZlYgeKuHJln9WRx6QsK1V2RYoJPBbsohX3eAl87yTyyqcdEM',
+  imageRepo: 'https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/',
+  feedbackEmail: 'internal.feedback@ohmygrocery.com',
+  orderEmail: 'internal.orders@ohmygrocery.com',
 };

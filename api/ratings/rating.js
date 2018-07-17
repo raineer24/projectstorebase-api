@@ -1,6 +1,7 @@
 const BluePromise = require('bluebird');
 const _ = require('lodash');
 const sql = require('sql');
+const config = require('../../config/config');
 
 const Conn = require('../../service/connection');
 const log = require('color-logs')(true, true, 'Rating');
@@ -238,11 +239,9 @@ Rating.prototype.mailConfirmation = (ratingEntry, order) => {
     stars += '<div><span style="color: #ff5847;font-size: 19px;">☆☆☆☆☆</span></div>';
   }
   const body = `
- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-
-<head>
-    <!-- Latest compiled and minified CSS -->
+   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
   <style>
   img {
             width: 100%;
@@ -257,12 +256,10 @@ Rating.prototype.mailConfirmation = (ratingEntry, order) => {
         .deliver {
           width: 50%;
         }
-
 @media only screen and (max-width: 620px) {
   .wrapper .section {
     width: 100%;
   }
-
   .wrapper .column {
     width: 100%;
     display: block;
@@ -277,16 +274,11 @@ Rating.prototype.mailConfirmation = (ratingEntry, order) => {
   .orderTD img {
     display:none;
   }
-  
-  
-  
 }
 </style>
 </head>
-
-
-  <body style="style="border-collapse:collapse;height:100%;width:100%;min-width:600px;table-layout:fixed;background-color:#eee;color:#212121;font-family:"Helvetica Neue","Helvetica","Arial",sans-serif;font-weight:normal;margin:0;padding:0;text-align:center;line-height:1.3;font-size:14px;line-height:19px;border-spacing:0!important;"">
-    <table class="mainContainer" style="margin: 0 auto;">
+<body>
+     <table class="mainContainer" style="margin: 0 auto;">
      <tr>
       <td style="vertical-align:top;text-align:center">
         <table style="border-collapse:collapse;width:580px;margin:0 auto;text-align:inherit;background-color:#fff;height:80px;margin-top:20px;border-spacing:0!important">
@@ -298,7 +290,7 @@ Rating.prototype.mailConfirmation = (ratingEntry, order) => {
                     <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
                       <tr>
                       <td>
-                        <img src="http://hutcake.com/assets/omg-logo-01.png" style="margin:0 auto;margin-top:15px;margin-bottom:4px;width:34%;max-width:250px;height:auto;float:none;clear:none;display:inline-block" />
+                        <img src="http://${config.env.hostname}/assets/omg-logo-01.png" style="margin:0 auto;margin-top:15px;margin-bottom:4px;width:34%;max-width:250px;height:auto;float:none;clear:none;display:inline-block" />
                       </td>
                       </tr>
                     </table>
@@ -372,12 +364,12 @@ Rating.prototype.mailConfirmation = (ratingEntry, order) => {
         </td>
       </tr>
     </table>
-  </body>
+    </body>
 </html>
-  `;
+   `;
   return {
-    from: 'info@eos.com.ph',
-    to: 'info@eos.com.ph',
+    from: config.mail.username,
+    to: config.feedbackEmail,
     subject: 'OMG - Feedback Rating review',
     text: `Omg feedback e-mail ${order.email}`,
     html: body,

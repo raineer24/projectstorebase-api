@@ -385,7 +385,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
     .then((resultList) => {
       if (resultList.length > 0) {
         const body = `
-<table class="mainContainer" style="margin: 0 auto;">
+  <table class="mainContainer" style="margin: 0 auto;">
   <tr style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top;" valign="top">
     <td class="wrapper" width="600" align="center" style="padding: 0; margin: 0; border: none; border-spacing: 0px; border-collapse: collapse; vertical-align: top; padding-left: 10px; padding-right: 10px;" valign="top">
           <!-- Header image -->
@@ -465,8 +465,9 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                 <td style="vertical-align:top;padding:0px 0px 10px;padding-left:20px;text-align:left!important">
                                   <strong>Delivery Date: </strong>
                                   <br>
-                                  ${moment(orderEntry.date).format('MMM D, YYYY')}, ${timeslots[orderEntry.timeslot_id]} 
                                   <br>
+                                  ${moment(orderEntry.date).format('MMM D, YYYY')}, ${timeslots[orderEntry.timeslot_id]} 
+                                  <br><br>
                                   <strong>Deliver to</strong>
                                   <br>
                                   ${orderEntry.firstname}  ${orderEntry.lastname}
@@ -475,7 +476,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                   <br>
                                   ${orderEntry.city}, ${orderEntry.country} ${orderEntry.postalcode}
                                   <br><br>
-                                  <strong>Special Instructions: </strong>
+                                  <strong>Delivery Instructions: </strong>
                                   ${orderEntry.specialInstructions}
                                   <br><br>
                                   <strong>Contact Number: </strong>
@@ -513,11 +514,11 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
         <!-- items -->
         <tr>
           <td>
-            <table style="border-collapse:collapse;margin:0 auto;width:480px;border-spacing:0!important">
+            <table style="border-collapse:collapse;margin:0 auto;width:580px;border-spacing:0!important">
               ${_.map(resultList, item => `
                 <tr>
                   <td style="vertical-align:top;min-width:0px;padding:0px 0px 10px;margin:10px auto;vertical-align:middle;padding-right:10px;width:16.666666%">
-                    <img src="https://s3-ap-southeast-2.amazonaws.com/grocerymegan62201/grocery/${item.imageKey}.jpg" style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://${config.env.hostname}/assets/omg-logo-01.png" />
+                    <img src=${config.imageRepo}${item.imageKey}.jpg style="margin:0 auto;float:none;max-width:50px;max-height:50px" onerror="http://${config.env.hostname}/assets/omg-logo-01.png" />
                   </td>
                   <td style="vertical-align:top;text-align:left;min-width:0px;padding:0px 0px 10px;padding-right:10px;width:50%">
                     <p style="margin:0 0 5px 0">${item.name}</p>
@@ -561,11 +562,11 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 </table>
 `;
         resolve({
-          from: 'info@eos.com.ph',
-          bcc: 'raineerdelarita@gmail.com',
+          from: config.mail.username,
+          bcc: config.orderEmail,
           to: orderEntry.email,
-          subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
-          text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
+          subject: `OMG! - Order Confirmation (#${orderEntry.transactionId})`,
+          text: `Successfully paid and confirmed order (#${orderEntry.transactionId})`,
           html: body,
         });
       }
