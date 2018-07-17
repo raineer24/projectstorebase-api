@@ -123,6 +123,20 @@ function Order(order) {
     ],
   });
   that = this;
+  this.sqlTableTimeslotOrder = sql.define({
+    name: 'timeslotorder',
+    columns: [
+      'id',
+      'order_id',
+      'timeslot_id',
+      'datetime',
+      'date',
+      'confirmed',
+      'dateCreated',
+      'dateUpdated',
+    ],
+  });
+  that = this;
 }
 
 Order.prototype.setTransactionNumber = (number) => {
@@ -196,6 +210,18 @@ Order.prototype.findAll = (skip, limit, filters, sortBy, sort) => {
       .offset(skip)
       .toQuery();
     log.info(query);
+  } else if (filters.sendMail) {
+    query = that.sqlTable
+      /*eslint-disable */
+      .select(that.sqlTable.star(), that.sqlTableTimeslotOrder.timeslot_id, that.sqlTableTimeslotOrder.date)
+      .from(that.sqlTable
+        .leftJoin(that.sqlTableTimeslotOrder)
+        .on(that.sqlTableTimeslotOrder.order_id.equals(that.sqlTable.id)))
+      .where(that.sqlTable.id.equals(filters.order_id))
+      .order(sortString)
+      .limit(limit)
+      .offset(skip)
+      .toQuery();
   } else {
     query = that.sqlTable
       .select(that.sqlTable.star())
@@ -314,7 +340,7 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
       value: 0,
     }).create) // Create transaction
     .then(() => {
-      that.getById(id)
+      that.findAll(0, 1, { order_id: id, sendMail: true })
         .then((resultList) => {
           if (resultList.length > 0) {
             const orderEntry = resultList[0];
@@ -329,8 +355,8 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
                     log.error(`Failed to send ${err}`);
                   });
               })
-              .catch(() => {});
-            new Orderseller({
+              .catch(() => { });
+              new Orderseller({
               order_id: orderEntry.id,
               partner_id: orderEntry.partner_id,
               orderNumber: orderEntry.number,
@@ -352,6 +378,7 @@ Order.prototype.processOrder = (id, gcList, tType) => new BluePromise((resolve, 
 
 
 Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, reject) => {
+  const timeslots = ['', '8:00AM - 10:00AM', '11:00AM - 1:00PM', '2:00PM - 4:00PM', '5:00PM - 7:00PM', '8:00PM - 10:00PM'];
   new OrderItem({}).findAll(0, 1000, {
     orderkey: orderEntry.orderkey,
   })
@@ -436,6 +463,10 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
                                   <img src="https://assets.honestbee.com/images/order-confirmation-info@2x.png" style="margin:0 auto;float:none" />
                                 </td> -->
                                 <td style="vertical-align:top;padding:0px 0px 10px;padding-left:20px;text-align:left!important">
+                                  <strong>Delivery Date: </strong>
+                                  <br>
+                                  ${moment(orderEntry.date).format('MMM D, YYYY')}, ${timeslots[orderEntry.timeslot_id]} 
+                                  <br>
                                   <strong>Deliver to</strong>
                                   <br>
                                   ${orderEntry.firstname}  ${orderEntry.lastname}
@@ -531,7 +562,7 @@ Order.prototype.mailConfirmation = orderEntry => new BluePromise((resolve, rejec
 `;
         resolve({
           from: 'info@eos.com.ph',
-          bcc: 'info@eos.com.ph',
+          bcc: 'raineerdelarita@gmail.com',
           to: orderEntry.email,
           subject: `OMG - Order confirmation ${orderEntry.transactionId}`,
           text: `Successfully paid and confirmed order # ${orderEntry.transactionId}`,
