@@ -370,8 +370,8 @@ Rating.prototype.mailConfirmation = (ratingEntry, order) => {
   return {
     from: config.mail.username,
     to: config.feedbackEmail,
-    subject: 'OMG - Feedback Rating review',
-    text: `Omg feedback e-mail ${order.email}`,
+    subject: 'FEEDBACK Rating review',
+    text: `feedback e-mail ${order.email}`,
     html: body,
   };
 };
